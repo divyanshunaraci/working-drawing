@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prototype</title>
+
+  <!-- import bootstrap 4 -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" />
+
+  <!-- import custom css -->
+  <link rel="stylesheet" href="static/css/style.css" />
+  <link rel="stylesheet" href="static/css/sidebar.css" />
+  <!-- import jquery -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    crossorigin="anonymous"></script>
+</head>
+
+<body>
+  <header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="z-index: 1000; padding-top: 0; padding-bottom: 0">
+      <a class="navbar-brand" href="#" style="padding-top: 0; padding-bottom: 2"><small>2D Floor Plan</small></a>
+
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li id="print" class="button">
+            <button class="w3-bar-item w3-button my-navitem">
+              <svg viewBox="0 0 512 512" width="30" height="30">
+                <g>
+                  <path
+                    d="M511.293,143.133h-114.81V42.48H115.544v100.653H0.707v257.523H92.57v68.863h326.857v-68.863h91.865V143.133 L511.293,143.133z M143.887,70.823h224.251v72.311H143.887V70.823z M391.084,441.177H120.915v-109.44h270.169V441.177z M482.95,372.312h-63.522v-68.92H92.571v68.92H29.05V171.477h453.901L482.95,372.312L482.95,372.312z">
+                  </path>
+                  <rect x="418.18" y="206.628" width="28.346" height="28.343"></rect>
+                </g>
+              </svg>
+            </button>
+          </li>
+          <li id="goPrev" class="button">
+            <button href="#" class="w3-bar-item w3-button my-navitem">
+              <svg viewBox="0 0 512 512" width="30" height="30">
+                <polygon
+                  points="62.805,256.017 345.135,30.704 345.135,145.226 449.195,145.226 449.195,366.773 345.135,366.773 345.135,481.297 ">
+                </polygon>
+              </svg>
+            </button>
+          </li>
+          <li>
+            <input href="#" class="" style="width: 40px !important; margin-top: 10px" id="currentPageNumber"
+              value="1" />
+          </li>
+          <li>
+            <span class="w3-bar-item" style="font-size: 25px; color: white; margin-top: 4px; margin-left: 5px">
+              /
+            </span>
+          </li>
+          <span style="color: white; font-size: 20px; margin-left: 5px; margin-top: 7px" id="totalPgNumber">1</span>
+          <li id="goForward">
+            <button href="#" class="w3-bar-item w3-button my-navitem">
+              <svg viewBox="0 0 512 512" width="30" height="30">
+                <polygon
+                  points="449.195,256.017 166.865,30.704 166.865,145.226 62.805,145.226 62.805,366.773 166.865,366.773 166.865,481.297 ">
+                </polygon>
+              </svg>
+            </button>
+          </li>
+
+          <li id="addPage">
+            <button href="#" class="w3-bar-item w3-button my-navitem">
+              <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 469.706 469.706"
+                style="enable-background: new 0 0 469.706 469.706" xml:space="preserve" width="30" height="30">
+                <g>
+                  <g>
+                    <path style="fill: white" d="M426.19,115.25c-0.036-0.525-0.131-1.032-0.304-1.533c-0.072-0.191-0.119-0.376-0.197-0.561
+											c-0.292-0.632-0.656-1.235-1.169-1.748L314.86,1.748c-0.513-0.507-1.116-0.877-1.748-1.164c-0.185-0.09-0.376-0.137-0.561-0.203
+											c-0.501-0.167-1.014-0.269-1.539-0.304C310.886,0.072,310.767,0,310.635,0H136.486c-3.294,0-5.967,2.673-5.967,5.967v91.854
+											H49.406c-3.294,0-5.967,2.673-5.967,5.967v359.951c0,3.3,2.673,5.967,5.967,5.967H333.22c3.294,0,5.967-2.667,5.967-5.967v-91.854
+											H420.3c3.294,0,5.967-2.667,5.967-5.967V115.626C426.267,115.495,426.202,115.375,426.19,115.25z M405.896,109.659h-89.288V20.371
+											L405.896,109.659z M327.253,457.766H55.373V109.755h81.114h81.108v103.692c0,3.294,2.673,5.967,5.967,5.967h103.692v146.505
+											V457.766z M229.528,118.192l89.288,89.288h-89.288V118.192z M339.187,359.951V213.447c0-0.131-0.066-0.251-0.078-0.376
+											c-0.036-0.525-0.131-1.032-0.304-1.533c-0.072-0.191-0.119-0.376-0.197-0.561c-0.292-0.632-0.656-1.235-1.169-1.748
+											L227.779,99.569c-0.513-0.513-1.116-0.877-1.748-1.17c-0.185-0.084-0.37-0.131-0.561-0.197c-0.501-0.173-1.008-0.274-1.539-0.304
+											c-0.125-0.006-0.245-0.078-0.376-0.078h-81.102V11.934h162.221v103.692c0,3.294,2.667,5.967,5.967,5.967h103.692v238.359H339.187z
+											" />
+                    <polygon style="fill: white"
+                      points="197.283,235.28 185.349,235.28 185.349,277.794 142.835,277.794 142.835,289.727 
+											185.349,289.727 185.349,332.241 197.283,332.241 197.283,289.727 239.797,289.727 239.797,277.794 197.283,277.794 		" />
+                  </g>
+                </g>
+              </svg>
+            </button>
+          </li>
+          <li id="removePage">
+            <button href="#" class="w3-bar-item w3-button my-navitem">
+              <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px"
+                y="0px" viewBox="0 0 1000 1000" enable-background="new 0 0 1000 1000" xml:space="preserve" width="30"
+                height="30">
+                <g>
+                  <g transform="translate(0.000000,512.000000) scale(0.100000,-0.100000)">
+                    <path
+                      d="M712.5,120v-4900H5000h4287.5v4283.7v4281.8l-618.2,618.2L8052.9,5020H4381.8H712.5V120z M7430.9,3795v-612.5h608.7h610.6l11.5-1133.1c7.7-624,13.4-2277.7,13.4-3675v-2541.9H5000H1325V120v4287.5h3052.9h3052.9V3795z" />
+                    <path d="M3162.5,120v-612.5H5000h1837.5V120v612.5H5000H3162.5V120z" />
+                  </g>
+                </g>
+              </svg>
+            </button>
+          </li>
+        </ul>
+
+        <form class="form-inline my-2 my-lg-0">
+          <div class="nav-item dropdown">
+            <img src="static/assets/icons/settings.ico" class="img-logo dropdown-toggle" data-toggle="dropdown"
+              alt="settings" id="settings_button" />
+            <div class="dropdown-menu dropdown-menu-right md-form" id="settings_dropdown">
+              <label class="dropdown-item" href="#" for="file" class="a_file">
+                Import JSON
+                <input type="file" id="file" class="file" />
+              </label>
+            </div>
+          </div>
+        </form>
+      </div>
+    </nav>
+  </header>
+  <div class="w3-sidebar w3-bar-block w3-xlarge bg-dark" style="width: 50px">
+    <a href="#" style="margin-top: 10px" class="w3-bar-item w3-button"><i class="fa fa-home"></i></a>
+    <button class="w3-bar-item w3-button my-sideitem" id="addImg">
+      <svg viewBox="0 0 512 512" width="100%" height="100%">
+        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1"
+          x="0px" y="0px" viewBox="0 0 315.58 315.58" style="enable-background: new 0 0 315.58 315.58"
+          xml:space="preserve">
+          <g>
+            <path
+              d="M310.58,33.331H5c-2.761,0-5,2.238-5,5v238.918c0,2.762,2.239,5,5,5h305.58c2.763,0,5-2.238,5-5V38.331   C315.58,35.569,313.343,33.331,310.58,33.331z M285.58,242.386l-68.766-71.214c-0.76-0.785-2.003-0.836-2.823-0.114l-47.695,41.979   l-60.962-75.061c-0.396-0.49-0.975-0.77-1.63-0.756c-0.631,0.013-1.22,0.316-1.597,0.822L30,234.797V63.331h255.58V242.386z">
+            </path>
+            <path
+              d="M210.059,135.555c13.538,0,24.529-10.982,24.529-24.531c0-13.545-10.991-24.533-24.529-24.533   c-13.549,0-24.528,10.988-24.528,24.533C185.531,124.572,196.511,135.555,210.059,135.555z">
+            </path>
+          </g>
+          <g></g>
+          <g></g>
+          <g></g>
+          <g></g>
+          <g></g>
+          <g></g>
+          <g></g>
+          <g></g>
+          <g></g>
+          <g></g>
+          <g></g>
+          <g></g>
+          <g></g>
+          <g></g>
+          <g></g>
+        </svg>
+      </svg>
+    </button>
+
+    <button class="w3-bar-item w3-button my-sideitem" id="addArrow">
+      <svg viewBox="0 0 512 512" width="100%" height="100%">
+        <path
+          d="M505.772,5.964L274.419,56.371l74.596,85.702L6.272,484.867c-5.689,5.689-5.689,14.906,0,20.596c2.844,2.845,6.571,4.267,10.297,4.267c3.726,0,7.453-1.422,10.297-4.267l341.316-341.369l70.939,81.502L505.772,5.964z">
+        </path>
+      </svg>
+    </button>
+    <button class="w3-bar-item w3-button my-sideitem" id="commentBox">
+      <svg viewBox="0 0 512 512" width="100%" height="100%">
+        <g>
+          <path
+            d="M43.419,109l-2.444,88h30.453l3.074-27.874c0.604-4.992,1.576-9.444,2.995-13.384c1.394-3.995,3.521-7.271,6.385-10.003c2.864-2.732,6.595-4.948,11.14-6.418c4.573-1.472,10.221-2.32,17-2.32H149v241.824c0,6.463-0.991,11.612-2.174,15.448c-1.182,3.836-2.992,6.727-5.041,8.829c-2.075,2.049-4.596,3.343-7.38,3.973c-2.811,0.683-5.99,0.926-9.378,0.926H107v24h155v-24h-18.951c-3.258,0-6.252-0.243-9.063-0.926c-2.785-0.63-5.256-1.961-7.384-4.009c-2.128-2.103-3.721-4.976-4.903-8.812c-1.182-3.836-1.698-8.967-1.698-15.43V137h36.056c6.751,0,12.428,0.865,16.973,2.337c4.572,1.471,8.275,3.638,11.142,6.371c2.889,2.733,5.018,6.075,6.41,10.069c1.392,3.94,2.391,8.342,2.968,13.333L296.86,197h30.215l-2.208-88H43.419z">
+          </path>
+          <polygon
+            points="471,28 471,0 416.925,0 389.875,0 336,0 336,28 390,28 390,485 336,485 336,512 471,512 471,485 417,485 417,28 	">
+          </polygon>
+        </g>
+      </svg>
+    </button>
+  </div>
+  <div id="loader"></div>
+  <div class="whole-container" style="margin-left: 40px">
+    <div class="main container-fluid" id="content">
+      <div class="working-drawing container-fluid" id="wd-0">
+        <div class="row">
+          <div class="col-9">
+            <div class="row">
+              <div class="col-12" style="text-align: center">
+                <span id="title">Ground Floor Plan</span>
+              </div>
+            </div>
+            <div class="row">
+              <div class="canvas-container">
+                <canvas></canvas>
+                <canvas class="overlay-canvas-container" id="c#0"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="col-3">
+            <div class="row" style="height: 2.5em">
+              <div class="col-12" style="text-align: center">
+                <span style="font-size: large">Legend</span>
+              </div>
+            </div>
+
+            <div class="table-responsive fixed-table-body">
+              <table class="table table-bordered side-table"></table>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <table class="table table-bordered">
+            <tbody>
+              <tr>
+                <td rowspan="3"></td>
+                <td class="drawing-title">Drawing Title:</td>
+                <td>Designed by:</td>
+                <td>Scale:</td>
+              </tr>
+              <tr>
+                <td>Project Title:</td>
+                <td>Drafted by:</td>
+                <td>Drawing Revision:</td>
+              </tr>
+              <tr>
+                <td>Location:</td>
+                <td>Checked by:</td>
+                <td>Date:</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- import js script -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.1.0/fabric.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
+  <script src="static/js/html2pdf.bundle.min.js"></script>
+
+  <!-- import custom js script -->
+  <script src="static/js/base.js"></script>
+  <script src="static/js/model.js"></script>
+  <script src="static/js/view.js"></script>
+  <script src="static/js/script.js"></script>
+  <script src="static/js/misc.js"></script>
+</body>
+
+</html>

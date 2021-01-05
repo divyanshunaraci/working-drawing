@@ -47,7 +47,7 @@ const readJSON = function (input) {
         let parsedData;
 
         // python server
-        const url = "http://127.0.0.1:4000/json";
+        const url = "http://0.0.0.0:5000/json";
         const othePram = {
           headers: {
             "content-type": "application/json; charset=UTF-8",

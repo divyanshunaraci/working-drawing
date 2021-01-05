@@ -42,4 +42,4 @@ def json_example():
 
 if __name__ == "__main__":
     app.secret_key = "This"
-    app.run(host="127.0.0.1", threaded=True, debug=True, port=4000)
+    app.run(host="0.0.0.0", threaded=True, debug=True, port=4000)

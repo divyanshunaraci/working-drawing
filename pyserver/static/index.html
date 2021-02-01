@@ -15,6 +15,7 @@
   <!-- import custom css -->
   <link rel="stylesheet" href="static/css/style.css" />
   <link rel="stylesheet" href="static/css/sidebar.css" />
+  <link rel="stylesheet" href="static/css/login.css" />
   <!-- import jquery -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
@@ -23,6 +24,7 @@
 </head>
 
 <body>
+  <!--
   <header>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="z-index: 1000; padding-top: 0; padding-bottom: 0">
       <a class="navbar-brand" href="#" style="padding-top: 0; padding-bottom: 2"><small>2D Floor Plan</small></a>
@@ -240,19 +242,29 @@
         </div>
       </div>
     </div>
-  </div>
-
+  </div>-->
+  <main id="main-holder">
+    <h1 id="login-header">Login</h1>
+    
+    <div id="login-error-msg-holder">
+      <p id="login-error-msg">Invalid username <span id="error-msg-second-line">and/or password</span></p>
+    </div>
+    
+    <form id="login-form">
+      <input type="text" name="username" id="username-field" class="login-form-field" placeholder="Username">
+      <input type="password" name="password" id="password-field" class="login-form-field" placeholder="Password">
+      <input type="submit" value="Login" id="login-form-submit">
+    </form>
+  
+  </main>
   <!-- import js script -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.1.0/fabric.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
   <script src="static/js/html2pdf.bundle.min.js"></script>
 
   <!-- import custom js script -->
-  <script src="static/js/base.js"></script>
-  <script src="static/js/model.js"></script>
-  <script src="static/js/view.js"></script>
-  <script src="static/js/script.js"></script>
-  <script src="static/js/misc.js"></script>
+  
+  <script src="static/js/login.js"></script>
 </body>
 
 </html>

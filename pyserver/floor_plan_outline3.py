@@ -19,9 +19,6 @@ class floor_plan_outline1(object):
         self.draw_1_hor_dict, self.draw_1_ver_dict,  self.x0, self.y0, self.xn, self.yn = self.__create_dict(
             self, drawing_list)
 
-        print 'self.draw_1_hor_dict: ', self.draw_1_hor_dict
-        print 'self.draw_1_ver_dict: ', self.draw_1_ver_dict
-
         self.org_hor, self.org_ver, self.thickness = copy.deepcopy(
             self.draw_1_hor_dict), copy.deepcopy(self.draw_1_ver_dict), thickness
 
@@ -390,6 +387,7 @@ class floor_plan_outline1(object):
             draw_hor_dict[item] = self.__truncate_list(draw_hor_dict[item])
         for item in draw_ver_dict:
             draw_ver_dict[item] = self.__truncate_list(draw_ver_dict[item])
+
         x0, y0, xn, yn = self.__find_thickness(
             self, draw_hor_dict, draw_ver_dict)
         return draw_hor_dict, draw_ver_dict, x0, y0, xn, yn
@@ -559,11 +557,10 @@ class floor_plan_additional(object):
         room_names = [item for item in j_object['floor_plan']
                       ['room_name_positions']]
 
-        #room_name = ['KITCHEN', 'GBR']  # ['GBR']#
         view_name = ['room_top_view', 'view_1',
-                     'view_2', 'view_3', 'view_4']  # ['view_1']#
+                     'view_2', 'view_3', 'view_4']
         view_angle = ['top_view', 'front_view',
-                      'internal_view']  # ['internal_view']# as
+                      'internal_view']
 
         for key1 in room_names:
             if j_object['rooms'].has_key(key1):
@@ -686,7 +683,7 @@ class floor_plan_component1(object):
             for items in j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library']:
                 drawing_2_list = []
                 # 'fillers'
-                for internal_items in ['internal', 'carcass', 'skirting', 'loft_skirting', 'cover_panels']:
+                for internal_items in ['carcass', 'skirting', 'loft_skirting', 'cover_panels']:
                     drawing_2_list += j_object['rooms'][room_name][view_name][view_angle][
                         'floor_components']['library'][items]['external_points'][internal_items]
                 for item in j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]['external_points']['shutter']:
@@ -1450,7 +1447,6 @@ class floor_plan_component1(object):
     @staticmethod
     def __creating_drawing_shade(dict_for_view):
         dict1 = dict_for_view
-        print 'dict1: ', dict1
         x00, y00 = dict1['outline']['dims']['x0'], dict1['outline']['dims']['y0']
         s = (dict1['outline']['dims']['xn']-x00,
              dict1['outline']['dims']['yn']-y00)  # xn-x0,yn-y0
@@ -1509,7 +1505,7 @@ class floor_plan_component1(object):
         # all the keys in ascending order
         ls1 = self.__reveal_keys(draw_hor_dict)
         ls2 = self.__reveal_keys(draw_ver_dict)
-        #print('hor',ls1, 'ver',ls2)
+        print('hor', ls1, 'ver', ls2)
 
         # r11=ls1[0:2] #first two y coordinates of the drawing
         # r12=ls1[-2:] # last two y coordinates of the drawing

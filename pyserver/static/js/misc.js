@@ -31,13 +31,15 @@ const scrollToPage = (pageNumber) => {
 // current-page-number input field onchange event
 $("#currentPageNumber").on("change", function (e) {
   const pageNumber = Number(e.target.value);
+
   if (!pageNumber) return;
+
   if (!state.roomViews) {
     return;
   }
 
-  if (pageNumber < 0 || pageNumber > state.roomViews.length) {
-    alert("Wrong page number! Please insert valid number.");
+  if (pageNumber < 1 || pageNumber > state.roomViews.length || !Number.isInteger(pageNumber)) {
+    alert("Wrong page number! Please insert a valid page number.");
   } else {
     currentPageNumber = pageNumber;
     scrollToPage(currentPageNumber);
@@ -84,10 +86,10 @@ document.querySelector(".main").addEventListener(
 
 // add new page
 document.querySelector("#addPage").addEventListener("click", function (e) {
-  if (currentPageNumber === 1) {
-    alert("You cannot add page here.");
-    return;
-  }
+  // if (currentPageNumber === 1) {
+  //   alert("You cannot add page here.");
+  //   return;
+  // }
   // show loading bar
   $("#loader").toggle();
   // save all commentbox overlay info
@@ -219,38 +221,44 @@ $(document).keydown(function (event) {
 });
 
 // insert image on empty_view canvas
-$("#addImg").on("click", function (e) {
+$("#addImg").on("change", function (e) {
   // exception error
   if (currentPageNumber == 1 && !state.roomViews) {
     alert("You first need to load JSON file!!!");
     return;
   }
 
-  // check if image insert is possible
+  // check if image insert image possible
   const view = state.roomViews[currentPageNumber - 1];
-  if (view.type !== "AdditionalView") {
-    alert("You are only allowed to insert image into empty view");
+  //if (view.type !== "AdditionalView") {
+  //  alert("You are only allowed to insert image into empty view");
+  //return;
+  //}
+
+  const canvas = overlayCanvases[currentPageNumber - 1];
+
+  const reader = new FileReader();
+  reader.onload = function (event) {
+    const data = event.target.result;
+    fabric.Image.fromURL(data, function (img) {
+      const oImg = img.set({ left: 50, top: 50, scaleX: 100 / img.width, scaleY: 100 / img.height });
+
+      canvas.add(oImg).renderAll();
+      canvas.setActiveObject(oImg);
+      canvas.selection = false;
+      canvas.calcOffset();
+    });
+  };
+
+  const fileType = e.target.files[0]["type"];
+  const validImageTypes = ["image/gif", "image/jpeg", "image/png"];
+  if (!validImageTypes.includes(fileType)) {
+    // invalid file type code goes here.
+    alert("No image file. Please input image file!");
     return;
+  } else {
+    reader.readAsDataURL(e.target.files[0]);
   }
-
-  let canvas = overlayCanvases[currentPageNumber - 1];
-
-  // get image url from the user input
-  let imageURL = window.prompt("Please type the image URL");
-  if (imageURL == "") {
-    alert("Please input valid url!");
-    return;
-  }
-
-  // 'http://fabricjs.com/assets/pug_small.jpg'
-  canvas.getObjects();
-  fabric.Image.fromURL(imageURL, function (myImg) {
-    canvas.add(myImg).setActiveObject(myImg);
-  });
-
-  canvas.selection = false;
-  canvas.renderAll();
-  canvas.calcOffset();
 });
 
 // add arrow shape on canvas

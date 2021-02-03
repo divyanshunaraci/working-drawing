@@ -13,8 +13,8 @@
   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" />
 
   <!-- import custom css -->
-  <link rel="stylesheet" href="static/css/style.css" />
-  <link rel="stylesheet" href="static/css/sidebar.css" />
+  <link rel="stylesheet" href="{{url_for('static', filename = 'css/style.css')}}" />
+  <link rel="stylesheet" href="{{url_for('static', filename= 'css/sidebar.css')}}" />
   <!-- import jquery -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
@@ -22,7 +22,7 @@
     crossorigin="anonymous"></script>
 </head>
 
-<body>
+<body onresize="renderAll()">
   <header>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="z-index: 1000; padding-top: 0; padding-bottom: 0">
       <a class="navbar-brand" href="#" style="padding-top: 0; padding-bottom: 2"><small>2D Floor Plan</small></a>
@@ -52,6 +52,8 @@
                   points="62.805,256.017 345.135,30.704 345.135,145.226 449.195,145.226 449.195,366.773 345.135,366.773 345.135,481.297 ">
                 </polygon>
               </svg>
+
+
             </button>
           </li>
           <li>
@@ -76,6 +78,8 @@
 
           <li id="addPage">
             <button href="#" class="w3-bar-item w3-button my-navitem">
+
+
               <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
                 xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 469.706 469.706"
                 style="enable-background: new 0 0 469.706 469.706" xml:space="preserve" width="30" height="30">
@@ -119,8 +123,8 @@
 
         <form class="form-inline my-2 my-lg-0">
           <div class="nav-item dropdown">
-            <img src="static/assets/icons/settings.ico" class="img-logo dropdown-toggle" data-toggle="dropdown"
-              alt="settings" id="settings_button" />
+            <img src="{{url_for('static', filename = 'assets/icons/settings.ico')}}" class="img-logo dropdown-toggle"
+              data-toggle="dropdown" alt="settings" id="settings_button" />
             <div class="dropdown-menu dropdown-menu-right md-form" id="settings_dropdown">
               <label class="dropdown-item" href="#" for="file" class="a_file">
                 Import JSON
@@ -132,9 +136,10 @@
       </div>
     </nav>
   </header>
-  <div class="w3-sidebar w3-bar-block w3-xlarge bg-dark" style="width: 50px">
+  <div class="w3-sidebar w3-bar-block w3-xlarge bg-dark" style="width: 50px; overflow: hidden">
     <a href="#" style="margin-top: 10px" class="w3-bar-item w3-button"><i class="fa fa-home"></i></a>
-    <button class="w3-bar-item w3-button my-sideitem" id="addImg">
+    <button class="w3-bar-item w3-button my-sideitem">
+      <input type="file" id="addImg" class="addImage" />
       <svg viewBox="0 0 512 512" width="100%" height="100%">
         <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1"
           x="0px" y="0px" viewBox="0 0 315.58 315.58" style="enable-background: new 0 0 315.58 315.58"
@@ -245,14 +250,14 @@
   <!-- import js script -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.1.0/fabric.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
-  <script src="static/js/html2pdf.bundle.min.js"></script>
+  <script src="{{url_for('static', filename = 'js/html2pdf.bundle.min.js')}}"></script>
 
   <!-- import custom js script -->
-  <script src="static/js/base.js"></script>
-  <script src="static/js/model.js"></script>
-  <script src="static/js/view.js"></script>
-  <script src="static/js/script.js"></script>
-  <script src="static/js/misc.js"></script>
+  <script src="{{url_for('static', filename = 'js/base.js')}}"></script>
+  <script src="{{url_for('static', filename = 'js/model.js')}}"></script>
+  <script src="{{url_for('static', filename = 'js/view.js')}}"></script>
+  <script src="{{url_for('static', filename = 'js/script.js')}}"></script>
+  <script src="{{url_for('static', filename = 'js/misc.js')}}"></script>
 </body>
 
 </html>

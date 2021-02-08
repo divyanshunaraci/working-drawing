@@ -19,6 +19,13 @@ body {
   width: 100px;
 }
 
+.addImage {
+  opacity: 0;
+  position: absolute;
+  left: 0px;
+  width: 50px;
+}
+
 .navbar {
   position: fixed;
   width: 100%;

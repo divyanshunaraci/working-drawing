@@ -133,9 +133,9 @@ const calcScaleOrigin = (viewBoxInfo, canvasWidth, canvasHeight) => {
 };
 
 // render ground floor plan
-const renderFloorPlan = (floorPlanView) => {
+const renderFloorPlan = (floorPlanView, id) => {
   /* draw lines */
-  const cx = document.querySelector("#wd-0 canvas").getContext("2d");
+  const cx = document.querySelector(`#wd-${id} canvas`).getContext("2d");
   const path = floorPlanView.getOutline();
   cx.beginPath();
   cx.strokeStyle = "black";

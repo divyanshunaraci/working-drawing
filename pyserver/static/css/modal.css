@@ -1,0 +1,110 @@
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+}
+
+/* The Close Button */
+.close {
+    color: #aaaaaa;
+    float: right !important;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+.btn-buy {
+	border: 1px solid #dedede;
+  border-bottom: 1px solid #b5b5b5;
+	border-right: none;
+	border-radius: 3px 0 0 3px;
+	font-size: 12px;
+	font-weight: bold;
+	padding: 6px 14px;
+	margin-top: 15px;
+	background: linear-gradient(#fff, #EFEFEF);
+}
+.btn-buy:hover {
+	background: #EFEFEF;
+}
+.btn-buy-list {
+	border: 1px solid #dedede;
+  border-bottom: 1px solid #b5b5b5;
+	border-radius: 0 3px 3px 0;
+	font-size: 12px;
+	font-weight: bold;
+	padding: 6px 10px;
+	background: linear-gradient(#fff, #EFEFEF);
+	margin-left: -10px;
+	position: relative;
+}
+.btn-buy-list:hover {
+	background: #EFEFEF;
+}
+.btn-buy:active,
+.btn-buy:focus,
+.btn-buy-list:active,
+.btn-buy-list:focus {
+	outline: none;
+	background: #ddd;
+}
+.btn-arrow {
+	width: 0;
+	height: 0;
+	border-top: 5px solid black;
+	border-right: 5px solid transparent;
+	border-bottom: 5px solid transparent;
+	border-left: 5px solid transparent;
+	position: relative;
+  top: 10px;
+}
+.dropdown-menu {
+  position: absolute;
+  z-index: 1000;
+	display: none;
+  min-width: 160px;
+  padding: 5px 0;
+  margin: -1px 0 0 0;
+  list-style: none;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+	box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+  background-clip: padding-box;
+}
+.dropdown-menu a {
+	text-decoration: none;
+}
+.dropdown-menu a li {
+	font-size: 12px;
+	font-family: arial,sans-serif;
+	color: #222;
+	padding: 5px 15px;
+}
+.dropdown-menu a li:hover {
+	background-color: #bae2fc;
+}
+
+

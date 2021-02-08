@@ -655,7 +655,8 @@ class floor_plan_component1(object):
             drawing_2_list = j_object['rooms'][room_name][view_name]['floor_components']['library'][items]['outline']
             drawing_2_list = self.__clean_drawing_list(drawing_2_list)
             # converting the list to dictionary for components
-            dict_for_view[items] = self.__create_dict(self, drawing_2_list)
+            dict_for_view[items] = self.__create_dict(
+                self, drawing_2_list)
             drawing_1_list += drawing_2_list
         #
         # Getting the dimension list from dictionary and the list of demarkation of rooms
@@ -683,24 +684,37 @@ class floor_plan_component1(object):
             for items in j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library']:
                 drawing_2_list = []
                 # 'fillers'
-                for internal_items in ['carcass', 'skirting', 'loft_skirting', 'cover_panels']:
-                    drawing_2_list += j_object['rooms'][room_name][view_name][view_angle][
-                        'floor_components']['library'][items]['external_points'][internal_items]
-                for item in j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]['external_points']['shutter']:
-                    drawing_2_list += j_object['rooms'][room_name][view_name][view_angle][
-                        'floor_components']['library'][items]['external_points']['shutter'][item]['outline']
+
+                if view_angle == 'top_view' or view_angle == 'front_view':
+                    for item in ['internal', 'carcass', 'skirting', 'loft_skirting', 'cover_panels']:
+                        print 'internal,carcass'
+                        if item != 'internal' and item == 'carcass' and j_object['rooms'][room_name][view_name][view_angle][
+                                'floor_components']['library'][items]['external_points'][item]:
+                            drawing_2_list += j_object['rooms'][room_name][view_name][view_angle][
+                                'floor_components']['library'][items]['external_points'][item]
+                            dict_for_view[items] = self.__create_dict(
+                                self, drawing_2_list)
+                            drawing_1_list += drawing_2_list
+                        elif item == 'internal':
+                            drawing_2_list += []
+
+                    for item in j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]['external_points']['shutter']:
+                        print 'floor_components'
+                        drawing_2_list += j_object['rooms'][room_name][view_name][view_angle][
+                            'floor_components']['library'][items]['external_points']['shutter'][item]['outline']
+                        dict_for_view[items] = self.__create_dict(
+                            self, drawing_2_list)
+                        drawing_1_list += drawing_2_list
+
                     # since no handle dimension needed#drawing_4_list= drawing_4_list+ j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]['external_points']['shutter'][item]['handle']['outline']
 
-                dict_for_view[items] = self.__create_dict(self, drawing_2_list)
-                # print(items+colorpalette[i])
-                #i += 1
-                drawing_1_list += drawing_2_list
-
             if view_angle == 'internal_view':
+                print 'Entering internal_view'
                 dimension_list = self.__creating_dimensions_internal(
                     self, dict_for_view, drawing_1_list)
 
             else:
+                print 'Entering not internal_view'
                 dimension_list = self.__creating_dimensions_top_front(
                     self, dict_for_view, drawing_1_list)
         else:
@@ -1447,6 +1461,7 @@ class floor_plan_component1(object):
     @staticmethod
     def __creating_drawing_shade(dict_for_view):
         dict1 = dict_for_view
+        print 'dict1: ', dict1
         x00, y00 = dict1['outline']['dims']['x0'], dict1['outline']['dims']['y0']
         s = (dict1['outline']['dims']['xn']-x00,
              dict1['outline']['dims']['yn']-y00)  # xn-x0,yn-y0
@@ -1476,6 +1491,7 @@ class floor_plan_component1(object):
 
     @staticmethod
     def __create_dict(self, drawing, outline_bool=False):
+        dims = {}
         draw_hor_list, draw_ver_list = self.__separate_hor_ver(drawing)
         draw_hor_dict = {item[0]: [] for item in draw_hor_list}
         draw_ver_dict = {item[0]: [] for item in draw_ver_list}
@@ -1496,8 +1512,10 @@ class floor_plan_component1(object):
         for item in draw_ver_dict:
             draw_ver_dict[item] = self.__truncate_list(draw_ver_dict[item])
         # x0, y0, xn, yn =
+
         dims = self.__find_thickness(
             self, draw_hor_dict, draw_ver_dict, outline_bool)
+
         return {'horizontal': draw_hor_dict, 'vertical': draw_ver_dict, 'dims': dims}
 
     @staticmethod
@@ -1505,7 +1523,9 @@ class floor_plan_component1(object):
         # all the keys in ascending order
         ls1 = self.__reveal_keys(draw_hor_dict)
         ls2 = self.__reveal_keys(draw_ver_dict)
-        print('hor', ls1, 'ver', ls2)
+
+        print 'ls1: ', ls1
+        print 'ls2: ', ls2
 
         # r11=ls1[0:2] #first two y coordinates of the drawing
         # r12=ls1[-2:] # last two y coordinates of the drawing

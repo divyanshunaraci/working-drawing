@@ -15,6 +15,7 @@
   <!-- import custom css -->
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="css/sidebar.css" />
+  <link rel="stylesheet" href="css/modal.css" />
   <!-- import jquery -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
@@ -116,11 +117,55 @@
             </button>
           </li>
         </ul>
+        <!-- Trigger/Open The Modal -->
+        <button class="btn btn-primary" id="myBtn" style="margin-right: 2%; border-radius: 20px;">Generate</button>
 
+        <!-- The Modal -->
+        <div id="myModal" class="modal">
+
+          <!-- Modal content -->
+          <div class="modal-content">
+
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span class="close" aria-hidden="true">&times;</span>
+            </button>
+
+            <!-- <div id="modal"></div> -->
+            <!-- <div id="versionNumber" style="display: flex;float: left;"></div> -->
+            <br>
+            
+            <table class="table">
+              <thead class="thead-light">
+                <tr>
+                  <th scope="col">Project No</th>
+                  <th scope="col" style="text-align: left;">Version</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td id="modal" style="text-align: center;"></td>
+                  <td id="versionNumber"></td>
+                </tr>
+
+              </tbody>
+            </table>
+
+          </div>
+
+        </div>
         <form class="form-inline my-2 my-lg-0">
+          <!-- <div class=""> -->
+          <!-- <button class="show btn modalbutton">Version </button>
+            <div class="modal" id="modal">
+              <div class="modal-box">
+                <span class="close-button">X</span>
+                <h1>Hello, my name is modal</h1>
+              </div>
+            </div> -->
+          <!-- </div> -->
           <div class="nav-item dropdown">
-            <img src="assets/icons/settings.ico" class="img-logo dropdown-toggle" data-toggle="dropdown"
-              alt="settings" id="settings_button" />
+            <img src="assets/icons/settings.ico" class="img-logo dropdown-toggle" data-toggle="dropdown" alt="settings"
+              id="settings_button" />
             <div class="dropdown-menu dropdown-menu-right md-form" id="settings_dropdown">
               <label class="dropdown-item" href="#" for="file" class="a_file">
                 Import JSON
@@ -253,6 +298,7 @@
   <script src="js/view.js"></script>
   <script src="js/script.js"></script>
   <script src="js/misc.js"></script>
+  <script src="js/modal.js"></script>
 </body>
 
 </html>

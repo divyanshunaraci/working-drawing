@@ -49,7 +49,7 @@ const readJSO = function (input) {
                     .then((response) => response.json())
                     .then((data) => {
                         parsedData = data;
-                        // console.log(parsedData);
+                        console.log(parsedData);
 
                         /* PARSE JSON data */
                         parseJSO(parsedData);
@@ -172,8 +172,8 @@ const renderAl = () => {
     // render views
     state.roomViews.forEach((view, id) => {
         // floorPlanView
-        if (id === 0) {
-            renderFloorPlan(view);
+        if (view.type === "FloorPlanView") {
+            renderFloorPlan(view,id);
         }
         // other views like RoomSubView, RenderView ...
         else {
@@ -215,16 +215,16 @@ function print() {
     datestr = datestr.replace(/[^0-9]/g, "");
     const filename = `Drawings_${datestr}.pdf`;
 
-    let doc = new jsPDF("l", "px", "a3");
+    let doc = new jsPDF("l", "px", [ele.clientWidth, ele.clientHeight]);
     if (totalPagesNumber === 1) {
         const ele = document.getElementById(`wd-0`);
         console.log(ele.clientWidth, ele.clientHeight);
         const opt = {
-            margin: 30,
+            // margin: 30,
             filename: filename,
             image: { type: "jpeg", quality: 1 },
             html2canvas: { scale: 3 },
-            jsPDF: { unit: "mm", format: "a3", orientation: "l" },
+            jsPDF: { unit: "px", format: [ele.clientWidth, ele.clientHeight], orientation: "l" },
         };
         html2pdf().set(opt).from(ele).save();
 
@@ -236,59 +236,54 @@ function print() {
             image: { type: "jpeg", quality: 5 },
             html2canvas: {
                 scale: 5,
-                dpi: 400,
+                dpi: 200,
                 letterRendering: true,
-                width: 1444, // 1145
-                height: 858, // 815
+                width: ele.clientWidth, // 1145
+                height: ele.clientHeight, // 815
+                useCORS: true
             },
         };
-        let id = (testid = 0);
-        let myTimer = setInterval(function () {
-            if (id === totalPagesNumber) {
-                myStopFunc();
-            }
-            if (id < totalPagesNumber) {
-                if (id !== testid || id == 0) {
-                    testid = id;
-                    if (id > 0) {
-                        doc.addPage();
-                    }
-                    const ele = document.querySelector(`#wd-${id}`);
+        var _results = [];
+        var proms = [];
+        for (var i = 0; i < totalPagesNumber; ++i) {
+            const ele = document.querySelector(`#wd-${i}`);
+            proms.push(
+                html2pdf().set(opt).from(ele).outputImg("dataurlstring").then((result) => { _results.push({ index: i, result: result }); })
+            );
+        }
 
-                    html2pdf()
-                        .set(opt)
-                        .from(ele)
-                        .outputImg("dataurlstring")
-                        .then((result) => {
-                            doc.addImage(
-                                result,
-                                "jpeg",
-                                0,
-                                0,
-                                doc.internal.pageSize.width,
-                                doc.internal.pageSize.height
-                            );
-                            id++;
-                        });
-                }
-            }
-        }, 600);
-        function myStopFunc() {
-            clearInterval(myTimer);
-
-            $("#loader").toggle();
-            $(".main").css({ opacity: 1 });
+        Promise.all(proms).then(() => {
+            _results.forEach((item, id) => {
+                if (id != 0) doc.addPage();
+                doc.addImage(
+                    item.result,
+                    "jpeg",
+                    0,
+                    0,
+                    doc.internal.pageSize.width,
+                    doc.internal.pageSize.height
+                );
+            })
 
             doc.save(filename);
-            delete doc;
             alert("Downloading PDF completed!!!");
-        }
+            $("#loader").toggle();
+            $(".main").css({ opacity: 1 });
+        });
     }
 }
 
-$(window).resize(resizeCanvas);
-
+// $(window).resize(resizeCanvas);
+var beforeWidth = $(window).width();
+var rtime;
+var timeout = false;
+var delta = 200;
 function resizeCanvas() {
+    rtime = new Date();
+    if (timeout === false) {
+        timeout = true;
+        setTimeout(resizeend, delta);
+    }
     let len = 0;
     if (!state.roomViews) {
         len = 1;
@@ -300,16 +295,24 @@ function resizeCanvas() {
 
         const canvas = overlayCanvases[i];
 
-        const ratio = canvas.getWidth() / canvas.getHeight();
+        // const ratio = canvas.getWidth() / canvas.getHeight();
         const containerWidth = outerCanvasContainer.clientWidth;
         const containerHeight = outerCanvasContainer.clientHeight;
 
-        const scale = containerWidth / canvas.getWidth();
-        const zoom = canvas.getZoom() * scale;
+        // const scale = containerWidth / canvas.getWidth();
+        // const zoom = canvas.getZoom() * scale;
         // canvas.setDimensions({ width: containerWidth, height: containerWidth / ratio });
         // canvas.setViewportTransform([zoom, 0, 0, zoom, 0, 0]);
-        canvas.setDimensions({ width: containerWidth, height: containerHeight });
-        canvas.setViewportTransform([zoom, 0, 0, 1, 0, 0]);
+        // canvas.setDimensions({ width: containerWidth, height: containerHeight });
+        // canvas.setViewportTransform([zoom, 0, 0, 1, 0, 0]);
+        if ($(window).width() !== beforeWidth) {
+            const scale = containerWidth / canvas.getWidth();
+            const zoom = canvas.getZoom() * scale;
+            canvas.setDimensions({ width: containerWidth, height: containerHeight });
+            canvas.setViewportTransform([zoom, 0, 0, 1, 0, 0]);
+        } else {
+            // empty
+        }
     }
 }
 
@@ -321,7 +324,41 @@ var btn = document.getElementById("myBtn");
 
 // Get the <span> element that closes the modal
 var span = document.getElementsByClassName("close")[0];
-var myArray = ["stone", "paper", "scissor"];
+// var myArray = ["stone", "paper", "scissor"];
+function resizeend() {
+    if (new Date() - rtime < delta) {
+        setTimeout(resizeend, delta);
+    } else {
+        timeout = false;
+
+        let len = 0;
+        if (!state.roomViews) {
+            len = 1;
+        } else {
+            len = state.roomViews.length;
+        }
+        for (let i = 0; i < len; i++) {
+            const outerCanvasContainer = $(".canvas-container")[i];
+
+            const canvas = overlayCanvases[i];
+
+            const containerWidth = outerCanvasContainer.clientWidth;
+            const containerHeight = outerCanvasContainer.clientHeight;
+
+            if ($(window).width() !== beforeWidth) {
+                // empty
+            } else {
+                const scale = containerHeight / canvas.getHeight();
+                const zoom = canvas.getZoom() * scale;
+                canvas.setDimensions({ width: containerWidth, height: containerHeight });
+                canvas.setViewportTransform([1, 0, 0, zoom, 0, 0]);
+            }
+        }
+    }
+}
+
+
+window.addEventListener("resize", renderAll());
 
 // When the user clicks the button, open the modal 
 window.onload = function () {
@@ -349,7 +386,7 @@ btn.onclick = function () {
     const userId = localStorage.getItem("userId");
     let userProject = [];
     console.log(document.getElementById('modal'), localStorage.getItem("token"), userId);
-    fetch('http://localhost:5000/api/project/wdProject', {
+    fetch('http://15.207.181.191:5000/api/project/wdProject', {
         method: 'GET',
         headers: {
             'Content-type': 'application/json', // The type of data you're sending
@@ -391,7 +428,7 @@ btn.onclick = function () {
             console.log(el);
             document.getElementById('versionNumber').innerHTML += '<br>'
             el.version.forEach(function (ele) {
-                ele.wdFile = 'https://naraci-test.s3.ap-south-1.amazonaws.com/5ea7fd5fc5c27f1e749fc39c/v1/New+Version+Test+Json+Kitchen+copy.json'
+                // ele.wdFile = 'https://naraci-test.s3.ap-south-1.amazonaws.com/5ea7fd5fc5c27f1e749fc39c/v1/New+Version+Test+Json+Kitchen+copy.json'
 
                 document.getElementById('versionNumber').innerHTML += ele.version + ' ' + `<i id=${ele.version}-${el.project_no} class="fa fa-download" style="margin-right:2%;"></i>` + '  '
             })
@@ -433,7 +470,7 @@ document.getElementById("versionNumber").onclick = function (e) {
             console.log(el);
             el.version.forEach(function (ele) {
                 console.log(ele.version, prjAndVersionArr[0]);
-                if (ele.version === prjAndVersionArr[0]) {
+                if (ele.version == prjAndVersionArr[0]) {
                     console.log(ele, 'wdFile');
                     readJSO(ele.wdFile)
                 }

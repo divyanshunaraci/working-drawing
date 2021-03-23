@@ -22,7 +22,8 @@ const getFloorPlan = (json) => {
     keys.forEach((key) => {
       if (key.includes("outline")) {
         outline = coords2Edges(json["floor_plan"][key]);
-      } else if (key.includes("room_name_positions")) {
+      }
+      else if (key.includes("room_name_positions")) {
         roomPos = json["floor_plan"][key];
       }
       // py dimens
@@ -80,30 +81,25 @@ const getRoomObjects = (rooms) => {
         //  handle 'room_top_view' data
         let temp = handleRoomTopViewDimens(rooms[name][compName], name);
         let views = handleRoomTopView(rooms[name][compName], name);
-
+        resultViews = [...resultViews, ...views];
         dimens = [...dimens, ...temp[0]]; // py dimens
         viewBoxInfo = [...viewBoxInfo, ...temp[1]];
-        resultViews = [...resultViews, ...views];
+
       } else if (compName == "render_individual_comps") {
         // handle 'render_individual_comps'
+        let temp = handleIndividualCompsDimens(rooms[name][compName], name);
         let views = handleIndividualComps(rooms[name][compName], name);
         resultViews = [...resultViews, ...views];
-        dimens = [...dimens, ...handleIndividualCompsDimens(rooms[name][compName], name)[0]]; // py dimens
-        viewBoxInfo = [
-          ...viewBoxInfo,
-          ...handleIndividualCompsDimens(rooms[name][compName], name)[1],
-        ];
+        dimens = [...dimens, ...temp[0]]; // py dimens
+        viewBoxInfo = [...viewBoxInfo, ...temp[1]];
+
       } else {
         //  handle 'view_1', 'view_2', ... 'view_n'
-
-        dimens = [...dimens, ...handleViewDimens(rooms[name][compName], `${name}+${compName}`)[0]]; // py dimens
-        viewBoxInfo = [
-          ...viewBoxInfo,
-          ...handleViewDimens(rooms[name][compName], `${name}+${compName}`)[1],
-        ];
-
+        let temp = handleViewDimens(rooms[name][compName], `${name}+${compName}`);
         let views = handleView(rooms[name][compName], `${name}+${compName}`);
         resultViews = [...resultViews, ...views];
+        dimens = [...dimens, ...temp[0]]; // py dimens
+        viewBoxInfo = [...viewBoxInfo, ...temp[1]];
       }
     });
   });
@@ -125,26 +121,29 @@ const handleRoomTopView = (data, roomName) => {
       outlineEdges = coords2Edges(data[key]);
     }
     // handle the 'library' and 'external' components
-    else if (key.includes("floor")) {
+    else if (key.includes("floor_components")) {
       floor_components = data[key];
+
+      if (floor_components.hasOwnProperty("library")) {
+        Object.keys(floor_components["library"]).forEach((compName, id) => {
+
+          const compID = compIds[`${roomName}+room_top_view`][compName];
+          let temp = parseComp1(
+            compID,
+            compName,
+            floor_components["library"][compName]
+          );
+          compObjects.push(temp);
+        });
+
+      }
+
     } else if (key.includes("external")) {
       external = data[key];
     }
   });
 
-  Object.keys(floor_components["library"]).forEach((compName, id) => {
-    // handle "floor_components" component
-    // get compid
-    const compID = compIds[`${roomName}+room_top_view`][compName];
-    let temp = parseComp1(
-      // roomName + '+room_top_view+floor_components+library+' + compName,
-      // `C-${id + 1}`,
-      compID,
-      compName,
-      floor_components["library"][compName]
-    );
-    compObjects.push(temp);
-  });
+
 
   Object.keys(external).forEach((objName) => {
     //  handle "external" component
@@ -156,25 +155,9 @@ const handleRoomTopView = (data, roomName) => {
     externObj.push(temp);
   });
 
-  // create components info table view from compObjects
-  let tabularView = getTabularView(
-    compObjects,
-    `${roomName}+room_top_view+table_view`,
-    `table_view`
-  );
 
-  // return [
-  //   new RoomSubView(
-  //     `${roomName}+room_top_view`,
-  //     `room_top_view`,
-  //     outlineEdges,
-  //     {},
-  //     compObjects,
-  //     externObj,
-  //     ""
-  //   ),
-  //   tabularView,
-  // ];
+
+
   return [
     new RoomSubView(
       `${roomName}+room_top_view`,
@@ -223,10 +206,6 @@ const handleRoomTopViewDimens = (data, roomName) => {
     }
   });
 
-  // return [
-  //   [dimens, []],
-  //   [viewBoxInfo, {}],
-  // ];
   return [[dimens], [viewBoxInfo]];
 };
 
@@ -319,16 +298,17 @@ const handleViewDimens = (data, roomName) => {
     }
     // handling registered view
     else {
-      // if (viewName === "top_view" || viewName === "front_view") {
-      if (viewName === "front_view") {
-        dimens = [...dimens, ...handleSubViewDimens(data[viewName], roomName, viewName)[0]];
-        viewBoxInfo = [
-          ...viewBoxInfo,
-          ...handleSubViewDimens(data[viewName], roomName, viewName)[1],
-        ];
-      } else {
-        dimens.push(handleSubViewDimens(data[viewName], roomName, viewName)[0]);
-        viewBoxInfo.push(handleSubViewDimens(data[viewName], roomName, viewName)[1]);
+      //
+      if (viewName === "front_view" && Object.keys(data[viewName]["dimension"]["IDs"]).length !== 0) {
+
+        var temp = handleSubViewDimens(data[viewName], roomName, viewName);
+        /* */
+        dimens = [...dimens, ...temp[0]];
+        viewBoxInfo = [...viewBoxInfo, ...temp[1]];
+      } /* */ else {
+        var temp = handleSubViewDimens(data[viewName], roomName, viewName);
+        dimens.push(temp[0]);
+        viewBoxInfo.push(temp[1]);
       }
       if (viewName === "internal_view") {
         dimens.push([]);
@@ -354,6 +334,7 @@ const handleSubView = (data, roomViewName, viewName) => {
   if (!data) return;
   // if render_wall_view
   if (viewName === "render_wall_view") {
+    // place a conditon whether image_url exists
     imgUrl = data["image_url"];
     let subView = new RenderView(`${roomViewName}+${viewName}`, viewName, imgUrl);
     return [subView];
@@ -372,12 +353,30 @@ const handleSubView = (data, roomViewName, viewName) => {
     // handle the 'floor_components'
     else if (key.includes("floor_components")) {
       floor_components = data[key];
+
+
+      if (viewName === 'front_view' && Object.keys(data["dimension"]["IDs"]).length !== 0) {
+
+        Object.keys(floor_components["library"]).forEach((compName, id) => {
+          //  handle 'floor_components' component
+          // get id from compIds
+          const compID = compIds[`${roomViewName}+${viewName}`][compName];
+          compObjects.push(
+            parseComp2(
+              compID,
+              compName,
+              floor_components["library"][compName]
+            )
+          );
+        });
+
+      }
+
     }
     // handle the 'external' components
     else if (key === "external") {
       extern = data[key];
     }
-
     // handle 'opening' property( 'window' and 'door' )
     else if (key.includes("openings")) {
       Object.keys(data[key]).forEach((name) => {
@@ -393,20 +392,7 @@ const handleSubView = (data, roomViewName, viewName) => {
       }
     }
   });
-  Object.keys(floor_components["library"]).forEach((compName, id) => {
-    //  handle 'floor_components' component
-    // get id from compIds
-    const compID = compIds[`${roomViewName}+${viewName}`][compName];
-    compObjects.push(
-      parseComp2(
-        // `${roomViewName}+${viewName}+floor_components+library+${compName}`,
-        // `C-${id + 1}`,
-        compID,
-        compName,
-        floor_components["library"][compName]
-      )
-    );
-  });
+
 
   Object.keys(extern).forEach((objName) => {
     //  handle 'extern' component => externObj
@@ -414,33 +400,30 @@ const handleSubView = (data, roomViewName, viewName) => {
       parseExtenal(`${roomViewName}+${viewName}+external+${objName}`, objName, extern[objName])
     );
   });
-  if (viewName == "front_view") {
+
+
+  let roomSubView = new RoomSubView(
+    `${roomViewName}+${viewName}`,
+    viewName,
+    outlineEdges,
+    openings,
+    compObjects,
+    externObj,
+    imgUrl
+  );
+
+
+  if (viewName == "front_view" && Object.keys(data["dimension"]["IDs"]).length !== 0) {
+
     let tabularView = getTabularView(
       compObjects,
       `${roomViewName}+${viewName}+table_view`,
       "table_view"
     );
-
-    let roomSubView = new RoomSubView(
-      `${roomViewName}+${viewName}`,
-      viewName,
-      outlineEdges,
-      openings,
-      compObjects,
-      externObj,
-      imgUrl
-    );
     return [roomSubView, tabularView];
-  } else {
-    let roomSubView = new RoomSubView(
-      `${roomViewName}+${viewName}`,
-      viewName,
-      outlineEdges,
-      openings,
-      compObjects,
-      externObj,
-      imgUrl
-    );
+
+  }
+  else {
     return [roomSubView];
   }
 };
@@ -458,7 +441,7 @@ const handleSubViewDimens = (data, roomViewName, viewName) => {
   }
   // if no data on "view"
   if (Object.keys(data).length === 0 || Object.keys(data).length === 1) {
-    // if (viewName === "top_view" || viewName === "front_view") {
+    // 
     if (viewName === "front_view") {
       return [[[]], [{}]];
     } else {
@@ -481,13 +464,17 @@ const handleSubViewDimens = (data, roomViewName, viewName) => {
     }
   });
 
-  // if (viewName === "top_view" || viewName === "front_view") {
-  if (viewName === "front_view") {
+  // 
+  if (viewName === "front_view" && Object.keys(data["dimension"]["IDs"]).length !== 0) {
+
+    /**/
+
     return [
       [dimens, []],
       [viewBoxInfo, {}],
     ];
-  } else {
+
+  } /* */else {
     return [dimens, viewBoxInfo];
   }
 };
@@ -509,6 +496,9 @@ const parseComp2 = (id, name, data) => {
     });
     return new Comp2(id, name, compDetail, externPts);
   }
+  else {
+    return;
+  }
 };
 
 // handle "external_points" attr
@@ -529,12 +519,12 @@ const parseExternPts = (data) => {
     if (Object.keys(objectData).includes(lowerProp)) {
       // if 'shutter' property
       if (prop === "shutter" || prop === "Shutter") {
-        objectData[prop] = getShutterObjs(data[prop]);
+        objectData[lowerProp] = getShutterObjs(data[prop]);
       }
       // other data
       else {
         if (Object.entries(data[prop]).length !== 0) {
-          objectData[prop] = coords2Edges(data[prop]);
+          objectData[lowerProp] = coords2Edges(data[prop]);
         }
       }
     }

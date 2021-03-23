@@ -40,6 +40,8 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
               <div class = 'row' style=" height: 2.5em">
 								<div class = 'col-12' style="text-align: center">
 									<span style="font-size: large">Legend</span>
+                   <button class="legend-add-row">+</button>
+                   <input type="file" class="legend-add-image" />
 								</div>
 							</div>
 					<div class = 'table-responsive fixed-table-body'>
@@ -50,11 +52,11 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
 				</div>
 			</div>
 			<div class="row">
-				<table class="table table-bordered">
+				<table class="table table-bordered bottom-table">
 					<tbody>
 						<tr>
 							<td rowspan="3" contenteditable = 'true'>
-              <img src = "${projectInfo.org_logo_url}" crossorigin="" width="300" height="50" alt= "logo" />
+              <img src = "${projectInfo.org_logo_url}" width="300" height="50" alt= "logo" />
               <span> ${projectInfo.org_name} : ${projectInfo.org_address}</span>
 							</td>
 							<td class='drawing-title' contenteditable = 'true'>Drawing TITLE: Floor Plan</td>
@@ -82,10 +84,35 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
     // add space
     document
       .querySelector(".main")
-      .insertAdjacentHTML("beforeend", '<div class = "tempPage container-fluid"></div>');
+      .insertAdjacentHTML(
+        "beforeend",
+        '<div class = "tempPage container-fluid"></div>'
+      );
     // initialize the current and total page number in menu bar
     document.querySelector("#totalPgNumber").textContent = viewsCnt;
     document.querySelector("#currentPageNumber").value = 1;
+
+    $('.bottom-table').find('td').on("input", function (e) {
+
+      $('.bottom-table').each(function () {
+        var tr = $(this).find('tr')[e.target.closest('tr').rowIndex];
+        var td = $(tr).find('td')[e.target.cellIndex]
+        if (td === e.target) {
+          return;
+        };
+        $(td).html(e.target.innerHTML);
+      })
+    })
+    // add row to 'legend' table
+    $(".legend-add-row").on("click", (e) => {
+      $(e.target).next().click()
+    });
+
+    $(".legend-add-image").on("change", (e) => {
+      addLegendRow(e);
+      $(".legend-add-image").val(null);
+    })
+
   } catch (err) {
     console.log(err);
   }
@@ -98,7 +125,11 @@ const calibrateCanvases = (viewBoxInfoes) => {
     const canvas = document.querySelector(`#wd-${i} canvas`);
     fix_dpi(canvas);
 
-    const newOrigin = calcScaleOrigin(viewBoxInfoes[i], canvas.width, canvas.height);
+    const newOrigin = calcScaleOrigin(
+      viewBoxInfoes[i],
+      canvas.width,
+      canvas.height
+    );
 
     state.viewBoxInfo[i].scale = newOrigin.scale;
     state.viewBoxInfo[i].newOriginX = newOrigin.x;
@@ -155,7 +186,10 @@ const renderFloorPlan = (floorPlanView, id) => {
 
     const canvas = overlayCanvases[0];
     const scale = state.viewBoxInfo[0]["scale"];
-    const origin = [state.viewBoxInfo[0]["newOriginX"], state.viewBoxInfo[0]["newOriginY"]];
+    const origin = [
+      state.viewBoxInfo[0]["newOriginX"],
+      state.viewBoxInfo[0]["newOriginY"],
+    ];
     Object.keys(room_pos).forEach((roomName) => {
       const pos = room_pos[roomName];
       const textbox = new fabric.Textbox(roomName, {
@@ -194,7 +228,7 @@ const renderFloorPlan = (floorPlanView, id) => {
 };
 
 // render individual view
-const renderView = (projectInfo, view, id) => {
+const renderView = (view, id) => {
   const viewType = [
     "room_top_view",
     "top_view",
@@ -219,7 +253,10 @@ const renderView = (projectInfo, view, id) => {
     }
 
     // render 'floor_components'
-    renderComponents(view, id);
+    if (view.getComps() !== []) {
+      renderComponents(view, id);
+    }
+
 
     // render 'external' items
     renderExternalItems(view, id);
@@ -244,7 +281,7 @@ const renderView = (projectInfo, view, id) => {
   }
 
   // render view details ( on footer table )
-  renderViewDetail(projectInfo, view, id);
+  renderViewDetail(view, id);
 };
 
 // render 'render_wall_view'
@@ -254,7 +291,6 @@ const renderRenderView = (imgURL, id) => {
   // reset the canvas transform( setTransform is absolute transformation )
   cx.setTransform(1, 0, 0, 1, 0, 0);
   const image = new Image(canvas.width, canvas.height);
-  image.setAttribute("crossorigin", "*")
   image.onload = drawImageActualSize; // Draw when image has loaded
 
   // Load an image of intrinsic size 300x227 in CSS pixels
@@ -275,31 +311,43 @@ const renderTitle = (view, id) => {
   $(`#wd-${id} #title`).text(viewName);
   switch (viewName) {
     case "room_top_view":
-      $(`#wd-${id} #title`).text(`${roomName} PLAN`);
+      $(`#wd-${id} #title`).text(`${roomName} ROOM PLAN`);
       break;
     case "render_wall_view":
-      $(`#wd-${id} #title`).text(`${roomName} ${temp[1].toUpperCase()} - RENDER VIEW`);
+      $(`#wd-${id} #title`).text(
+        `${roomName} ${temp[1].toUpperCase()} - RENDER VIEW`
+      );
       break;
     case "top_view":
       $(`#wd-${id} #title`).text(`${roomName} ${temp[1].toUpperCase()} - PLAN`);
       break;
     case "front_view":
-      $(`#wd-${id} #title`).text(`${roomName} ${temp[1].toUpperCase()} - ELEVATION`);
+      $(`#wd-${id} #title`).text(
+        `${roomName} ${temp[1].toUpperCase()} - ELEVATION`
+      );
       break;
     case "internal_view":
-      $(`#wd-${id} #title`).text(`${roomName} ${temp[1].toUpperCase()} - INTERNALS`);
+      $(`#wd-${id} #title`).text(
+        `${roomName} ${temp[1].toUpperCase()} - INTERNALS`
+      );
       break;
     case "Handles & Accessories":
-      $(`#wd-${id} #title`).text(`${roomName} ${temp[1].toUpperCase()} - HANDLES & ACCESSORIES`);
+      $(`#wd-${id} #title`).text(
+        `${roomName} ${temp[1].toUpperCase()} - HANDLES & ACCESSORIES`
+      );
       break;
     case "table_view":
-      $(`#wd-${id} #title`).text(`${roomName} ${temp[1].toUpperCase()} - ${temp[2].toUpperCase()}`);
+      $(`#wd-${id} #title`).text(
+        `${roomName} ${temp[1].toUpperCase()} - ${temp[2].toUpperCase()}`
+      );
       break;
     case "EXTRA_VIEW":
       $(`#wd-${id} #title`).text(viewName);
       break;
     default:
-      $(`#wd-${id} #title`).text(`${roomName} ${temp[2]} - ${temp[3].toUpperCase()}`);
+      $(`#wd-${id} #title`).text(
+        `${roomName} ${temp[2]} - ${temp[3].toUpperCase()}`
+      );
       break;
   }
 };
@@ -422,7 +470,9 @@ const getAccHandlesInfo = (haView) => {
   const textObject = {};
   const id = haView.getID();
   let corresFrontViewID = id.split("+").slice(0, -1).join("+") + "+front_view";
-  const roomView = state.roomViews.filter((view) => view.getID() === corresFrontViewID);
+  const roomView = state.roomViews.filter(
+    (view) => view.getID() === corresFrontViewID
+  );
   if (roomView.length == 0) return textObject;
   const comps = roomView[0].getComps();
   comps.forEach((comp2) => {
@@ -450,9 +500,9 @@ const getAccHandlesInfo = (haView) => {
   return textObject;
 };
 // render view name on footer table
-const renderViewDetail = (projectInfo, view, id) => {
+const renderViewDetail = (view, id) => {
   const viewID = view.getID();
-  $(`#wd-${id} .drawing-title`).text(`Drawing TITLE: ${viewID.split("+")[0]}`)
+  $(`#wd-${id} .drawing-title`).text(`Drawing TITLE: ${viewID.split("+")[0]}`);
 };
 
 // render 'external' items inside view
@@ -575,7 +625,10 @@ const getOutlineCenter = (outline) => {
     let ymin = Math.min(...tempy);
     let xmax = Math.max(...tempx);
     let ymax = Math.max(...tempy);
-    let tempEdge = new Edge([(xmin + xmax) / 2, ymin], [(xmin + xmax) / 2, ymax]);
+    let tempEdge = new Edge(
+      [(xmin + xmax) / 2, ymin],
+      [(xmin + xmax) / 2, ymax]
+    );
     return tempEdge.getMidPt();
   }
 };
@@ -587,7 +640,10 @@ const renderTexts = (textObject, id) => {
   if (!openNewJSON) return;
   const canvas = overlayCanvases[id];
   const scale = state.viewBoxInfo[id]["scale"];
-  const origin = [state.viewBoxInfo[id]["newOriginX"], state.viewBoxInfo[id]["newOriginY"]];
+  const origin = [
+    state.viewBoxInfo[id]["newOriginX"],
+    state.viewBoxInfo[id]["newOriginY"],
+  ];
   Object.keys(textObject).forEach((text) => {
     const outline = textObject[text];
     if (outline.length !== 0) {
@@ -783,7 +839,11 @@ const renderDimensions = (dimensions, id) => {
       if (!dimension.flippedBoundRect) {
         cx.fillText(dimension.label.toString(), position[0], -1 * position[1]);
       } else {
-        cx.fillText(dimension.label.toString(), position[0] - 200, -1 * (position[1] - 200));
+        cx.fillText(
+          dimension.label.toString(),
+          position[0] - 200,
+          -1 * (position[1] - 200)
+        );
       }
     }
     // y-axis parallel
@@ -796,7 +856,11 @@ const renderDimensions = (dimensions, id) => {
       } else {
         cx.rotate(Math.PI / 2);
       }
-      cx.fillText(dimension.label.toString(), 0, dimension.label.toString().length / 2);
+      cx.fillText(
+        dimension.label.toString(),
+        0,
+        dimension.label.toString().length / 2
+      );
       cx.restore();
     }
   });
@@ -809,7 +873,10 @@ const renderPyDimensions = (dimensions, id) => {
   // fabricjs
   const canvas = overlayCanvases[id];
   const scale = state.viewBoxInfo[id]["scale"];
-  const origin = [state.viewBoxInfo[id]["newOriginX"], state.viewBoxInfo[id]["newOriginY"]];
+  const origin = [
+    state.viewBoxInfo[id]["newOriginX"],
+    state.viewBoxInfo[id]["newOriginY"],
+  ];
 
   dimensions.forEach((dimension) => {
     let lineGroup;
@@ -817,7 +884,12 @@ const renderPyDimensions = (dimensions, id) => {
     let pt2 = jsonCoords2fabricCoords(dimension.pt2, scale, origin);
 
     let line1 = new fabric.Line(
-      [pt1[0] - 15 * scale, pt1[1] + 15 * scale, pt1[0] + 15 * scale, pt1[1] - 15 * scale],
+      [
+        pt1[0] - 15 * scale,
+        pt1[1] + 15 * scale,
+        pt1[0] + 15 * scale,
+        pt1[1] - 15 * scale,
+      ],
       {
         left: pt1[0] - 15 * scale,
         top: pt1[1] - 15 * scale,
@@ -827,7 +899,12 @@ const renderPyDimensions = (dimensions, id) => {
       }
     );
     let line2 = new fabric.Line(
-      [pt2[0] - 15 * scale, pt2[1] + 15 * scale, pt2[0] + 15 * scale, pt2[1] - 15 * scale],
+      [
+        pt2[0] - 15 * scale,
+        pt2[1] + 15 * scale,
+        pt2[0] + 15 * scale,
+        pt2[1] - 15 * scale,
+      ],
       {
         left: pt2[0] - 15 * scale,
         top: pt2[1] - 15 * scale,
@@ -836,9 +913,8 @@ const renderPyDimensions = (dimensions, id) => {
         objectCaching: false,
       }
     );
-
     // if the dimension is < 200, just draw line
-    if (Number(dimension.label) <= 200) {
+    if (Number(dimension.label) <= 50) { //
       let line3 = new fabric.Line([pt1[0], pt1[1], pt2[0], pt1[2]], {
         left: pt1[0],
         top: pt1[1],
@@ -848,9 +924,13 @@ const renderPyDimensions = (dimensions, id) => {
       });
       lineGroup = new fabric.Group([line1, line2, line3]);
     }
+
     // else if the dimension is > 200, then draw 2 lines
     else {
-      const midPts = getDimensionDrawPts(dimension, `${parseInt(15 / scale)}px`);
+      const midPts = getDimensionDrawPts(
+        dimension,
+        `${parseInt(15 / scale)}px`
+      );
       const mid1 = jsonCoords2fabricCoords(midPts[0], scale, origin);
       const mid2 = jsonCoords2fabricCoords(midPts[1], scale, origin);
 
@@ -887,18 +967,25 @@ const renderPyDimensions = (dimensions, id) => {
         });
       }
       lineGroup = new fabric.Group([line1, line2, line3, line4]);
+
     }
 
     // let lineGroup = new fabric.Group([line1, line2]);
     lineGroup.setControlsVisibility({
+      mtr: false,
       mt: false,
       mb: false,
+      ml: false,
+      mr: false,
       br: false,
       bl: false,
-      tl: false,
-      tr: false,
+      tl: true,
+      tr: true,
     });
+    lineGroup.lockScalingX = true;
     lineGroup.lockScalingY = true;
+    lineGroup.lockMovementX = true;
+    lineGroup.lockMovementY = true;
 
     canvas.getObjects();
     canvas.add(lineGroup);
@@ -912,7 +999,7 @@ const renderPyDimensions = (dimensions, id) => {
       (dimension.pt1[1] + dimension.pt2[1]) / 2,
     ];
 
-    const textAligni = Number(dimension.label) > 200 ? "center" : "bottom";
+    const textAligni = Number(dimension.label) > 50 ? "center" : "bottom"; //200
     const textbox = new fabric.Textbox(dimension.label.toString(), {
       left: ((position[0] + origin[0] - 20) * scale) / dpi,
       top: ((-1 * position[1] + origin[1]) * scale) / dpi,
@@ -933,14 +1020,20 @@ const renderPyDimensions = (dimensions, id) => {
     }
 
     textbox.setControlsVisibility({
+      mtr: false,
       mt: false,
       mb: false,
+      ml: false,
+      mr: false,
       br: false,
       bl: false,
       tl: false,
       tr: false,
     });
+    textbox.lockScalingX = true;
     textbox.lockScalingY = true;
+    textbox.lockMovementX = true;
+    textbox.lockMovementY = true;
 
     canvas.getObjects();
     canvas.add(textbox);
@@ -1047,7 +1140,12 @@ const getWholeBoundRect = (dimension) => {
 
 // render material thumbnails
 const renderMaterialThumbnails = (matThumbnails, id) => {
-  if (matThumbnails.length === 0 || !matThumbnails) return;
+  if (!matThumbnails) {
+    return;
+  }
+  if (matThumbnails.length === 0) {
+    return;
+  }
 
   // get side-table element
   let table = document.querySelector(`#wd-${id} .side-table`);
@@ -1093,7 +1191,6 @@ const generateTable = (table, data) => {
         img.style.width = "20px";
         img.style.height = "30px";
         img.src = element[key];
-        img.setAttribute("crossorigin", "*")
         cell.appendChild(img);
       } else {
         cell.contentEditable = true;
@@ -1110,6 +1207,8 @@ const renderTableView = (tableView, id) => {
 
   // get handle of view container and clean the innerHTML of container
   const container = document.querySelector(`#wd-${id} .canvas-container`);
+
+  // container.style.overflow = "auto";
 
   // create table
   let table = document.createElement("table");
@@ -1137,7 +1236,10 @@ const renderTableView = (tableView, id) => {
   generateTable(table, data);
 
   // add table to container
-  container.replaceChild(table, document.querySelector(`#wd-${id} .canvas-container canvas`));
+  container.replaceChild(
+    table,
+    document.querySelector(`#wd-${id} .canvas-container canvas`)
+  );
   container.style.pointerEvents = "all";
 };
 

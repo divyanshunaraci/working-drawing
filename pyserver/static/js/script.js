@@ -21,14 +21,20 @@ var currentPageNumber = 1;
 const viewTypes = ["room_top_view", "top_view", "front_view", "internal_view"];
 
 var openNewJSON = false;
-
 // import file from file dialog
 $("#file").on("change", function (e) {
     // add loading bar & blur the background
     $("#loader").toggle();
-    $(".main").css({ opacity: 0.5 });
+    $('.loader-msg').html("Validating JSON")
+    $('.loader-msg').toggle();
+    $(".main").css({ opacity: 0 });
 
+    setTimeout(() => {
+        $('.loader-msg').html("Processing JSON");
+    }, 3000);
     readJSON(this);
+
+    $("#file").val(null)
 });
 
 const readJSON = function (input) {
@@ -37,6 +43,7 @@ const readJSON = function (input) {
 
         if (input.files && input.files[0] && filename.includes(".json")) {
             const reader = new FileReader();
+
             reader.onload = function (e) {
                 // open .json file
                 const data = e.target.result;
@@ -63,14 +70,44 @@ const readJSON = function (input) {
                     .then((data) => {
                         parsedData = data;
 
+                        // Logging warning messages if present in all cases 
+                        if (parsedData.warning_log) {
+
+
+                            console.warn("Warning Messages: ");
+                            for (let warning of parsedData.warning_log) {
+                                console.warn(warning);
+
+                            }
+                        }
+
+                        // Logging error messages if present and returning 
+                        if (parsedData.error_log) {
+                            console.error("Error Messages: ")
+                            for (let error of parsedData.error_log) {
+                                console.error(error)
+                            }
+                            alert('Data contains error! Correct the data and import again')
+                            $("#loader").toggle();
+                            $('.loader-msg').html("")
+                            $('.loader-msg').toggle()
+                            $(".main").css({ opacity: 1 });
+
+                            return
+                        }
+
+                        $(".main").empty();
+
                         /* PARSE JSON data */
-                        parseJSON(parsedData);
+                        parseJSON(parsedData); //this part is changed if error is sent
 
                         /*     RENDER PART     */
                         renderAll();
 
                         // remove loading bar & restore the background
                         $("#loader").toggle();
+                        $('.loader-msg').html("")
+                        $('.loader-msg').toggle();
                         $(".main").css({ opacity: 1 });
                     });
                 /*
@@ -165,6 +202,7 @@ const renderAll = () => {
 
         if (canvasJSONs.length !== 0) {
             // restore canvas objects state
+            console.log(canvasJSONs[id])
             if (Object.keys(canvasJSONs[id]) !== 0) {
                 let json = canvasJSONs[id];
                 //
@@ -189,7 +227,7 @@ const renderAll = () => {
         }
         // other views like RoomSubView, RenderView ...
         else {
-            renderView(state.projectInfo, view, id);
+            renderView(view, id);
             if (viewTypes.includes(view.getName())) {
             }
             if (view.type === "ImageView") {
@@ -203,7 +241,8 @@ const renderAll = () => {
         state.dimens.forEach((dimensions, id) => {
             const viewName = state.roomViews[id].getName();
             if (viewName != "table_view") {
-                renderPyDimensions(dimensions, id);
+
+                ; renderPyDimensions(dimensions, id);
             }
         });
     }
@@ -281,8 +320,10 @@ function print() {
             alert("Downloading PDF completed!!!");
             $("#loader").toggle();
             $(".main").css({ opacity: 1 });
-        });
+            $(".main").empty();
 
+        });
+        $(".main").empty();
 
     }
 }

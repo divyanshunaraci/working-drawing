@@ -6,7 +6,7 @@ class floor_plan_validation(object):
         self.j_object = j_object
         self.error_log = []
         self.warning_log = []
-        self.room_view_names = []
+        self.room_view_names = {}
         self.room_name = []
         self.update_all(self)
 
@@ -36,9 +36,9 @@ class floor_plan_validation(object):
 
     @property
     def room_view_name(self):
-        room_view_name1 = self.room_view_names
-        room_view_name1 = list(set(room_view_name1))
-        return room_view_name1
+        return self.room_view_names
+    
+    
 
 
     @staticmethod
@@ -106,6 +106,7 @@ class floor_plan_validation(object):
             json_floor_plan = json_object['floor_plan']
             if json_floor_plan.has_key('room_name_positions') and json_floor_plan.has_key('outline'):
                 error_log, warning_log, limit_coord = self._outline('Json object[floor_plan][outline]', json_floor_plan['outline'], error_log, warning_log)
+                json_floor_plan["thickness"] = self._thickness(limit_coord,'floor_plan')
                 if json_floor_plan['room_name_positions']:
                     for keys in json_floor_plan['room_name_positions']:
                         room_names.append(keys)
@@ -127,6 +128,22 @@ class floor_plan_validation(object):
             error_log.append('Json object does not contain the key name: floor_plan.' )
 
         return error_log, warning_log, room_names
+
+    @staticmethod
+    def _thickness(limit_coords,plan_name):
+        x1, y1, x2, y2 = limit_coords[0][0],limit_coords[0][1],limit_coords[1][0],limit_coords[1][1]
+        diagonal = np.sqrt(np.power((x2-x1),2)+np.power((y2-y1),2))
+        thickness = 250
+        if plan_name == 'floor_plan':
+            thickness = diagonal/60
+        elif  plan_name == 'room_top_view':
+            thickness = diagonal/40
+        
+        if thickness == abs(np.inf):
+            thickness = 250
+        
+        return thickness
+
 
 
     @staticmethod
@@ -171,13 +188,14 @@ class floor_plan_validation(object):
                 error_log.append('Json object[rooms] is empty.')
             else:
                 
-                for items in list(json_rooms):
+                for items in list(json_rooms): #for all the rooms in room names
                     
                     if items in room_names: #when item exits in the list
+                        self.room_view_names[items] = []
                         self.room_name.append(items)
                         json_room = json_rooms[items]
                         if json_room.has_key('room_top_view'):
-                            self.room_view_names.append('room_top_view')
+                            self.room_view_names[items].append('room_top_view')
                             string_id = 'Json object[rooms]['+items+'][room_top_view]'
                             error_log, warning_log = self._room_top_view(self,string_id,json_room['room_top_view'],error_log, warning_log)
                         else:
@@ -210,7 +228,7 @@ class floor_plan_validation(object):
                                 if not json_room[view_number_name]:
                                     warning_log.append('Json object[rooms]['+items+']['+view_number_name+'] is empty.') #error
                                 else:
-                                    self.room_view_names.append(view_number_name)
+                                    self.room_view_names[items].append(view_number_name)
                                     string_id_view_number ='Json object[rooms]['+items+']['+view_number_name+']'
                                     error_log, warning_log = self._room_view_number(self,string_id_view_number,json_room[view_number_name],error_log, warning_log)
                                 view_number += 1
@@ -218,6 +236,12 @@ class floor_plan_validation(object):
                                 if view_number == 1:
                                     warning_log.append('The room ' + items + ' contains no views.' ) #error
                                 view_number =0
+                        
+                        fake_room_name_list = self.room_view_names[items] #using it to delete additional items
+                        fake_room_name_list.append('render_individual_comps')
+                        for room_items in list(json_room):
+                            if not room_items in fake_room_name_list:
+                                del json_room[room_items]
                     
                     elif items == 'material_thumbnails':
                         check_len = len(json_rooms['material_thumbnails'])
@@ -234,6 +258,10 @@ class floor_plan_validation(object):
 
                     else: 
                         warning_log.append('Additional key name: '+items+' exists in the rooms.')
+
+            print(self.room_view_names)
+                
+
                     
         
         else:
@@ -257,6 +285,7 @@ class floor_plan_validation(object):
             if check_con:
                 room_top_view_outline = json_room_top_view['outline']
                 error_log, warning_log, limit_coord = self._outline(string_id+'[outline]', room_top_view_outline, error_log, warning_log)
+                json_room_top_view["thickness"] = self._thickness(limit_coord,'room_top_view')
                 
                 check_len_outline = len(room_top_view_outline)
                 

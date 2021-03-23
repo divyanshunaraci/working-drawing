@@ -15,16 +15,17 @@ import json
 
 
 
-j_open = open('dev/json/export_wd_notworking.json',) # opening json file
+j_open = open('dev/json/New Version Test Json Kitchen no error.json',) # opening json file
 data = json.load(j_open) #returns json object as dictionary
 
 new_val = fpv.floor_plan_validation(data)
 
 
-#new_json = fpo1.floor_plan_additional(new_val.json_object,new_val.room_names,new_val.room_view_name)
+#new_val.warning
+#new_val.error
 
-new_val.warning
-new_val.error
+new_json = fpo1.floor_plan_additional(new_val.json_object,new_val.room_names,new_val.room_view_name)
+
 
 with open('dev/newData.json', 'w') as outfile:
     json.dump(new_val.json_object, outfile)

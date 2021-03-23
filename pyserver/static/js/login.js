@@ -10,7 +10,7 @@ loginButton.addEventListener("click", (e) => {
         "email": loginForm.username.value,
         "password": loginForm.password.value
     }
-    fetch('http://15.207.19.54:8080/api/user/login', {
+    fetch('http://35.154.121.217:8080/api/user/login', {
         method: 'POST',
         body: JSON.stringify(data), // The data
         headers: {
@@ -26,6 +26,7 @@ loginButton.addEventListener("click", (e) => {
         localStorage.setItem('token', data.token)
         userId = data.user['_id']
         localStorage.setItem('userId', data.user['_id'])
+        localStorage.setItem('orgId',data.user['orgId']['_id'])
         location.pathname = "static/wdPdf.html"
         console.log(data);
     }).catch(function (error) {

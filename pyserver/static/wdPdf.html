@@ -11,6 +11,7 @@
     integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" />
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
 
   <!-- import custom css -->
   <link rel="stylesheet" href="css/style.css" />
@@ -23,7 +24,7 @@
     crossorigin="anonymous"></script>
 </head>
 
-<body>
+<body onresize="renderAll()">
   <header>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="z-index: 1000; padding-top: 0; padding-bottom: 0">
       <a class="navbar-brand" href="#" style="padding-top: 0; padding-bottom: 2"><small>2D Floor Plan</small></a>
@@ -60,11 +61,21 @@
               value="1" />
           </li>
           <li>
-            <span class="w3-bar-item" style="font-size: 25px; color: white; margin-top: 4px; margin-left: 5px">
+            <span class="w3-bar-item" style="
+                  font-size: 25px;
+                  color: white;
+                  margin-top: 4px;
+                  margin-left: 5px;
+                ">
               /
             </span>
           </li>
-          <span style="color: white; font-size: 20px; margin-left: 5px; margin-top: 7px" id="totalPgNumber">1</span>
+          <span style="
+                color: white;
+                font-size: 20px;
+                margin-left: 5px;
+                margin-top: 7px;
+              " id="totalPgNumber">1</span>
           <li id="goForward">
             <button href="#" class="w3-bar-item w3-button my-navitem">
               <svg viewBox="0 0 512 512" width="30" height="30">
@@ -117,7 +128,7 @@
             </button>
           </li>
         </ul>
-        <!-- Trigger/Open The Modal -->
+
         <button class="btn btn-primary" id="myBtn" style="margin-right: 2%; border-radius: 20px;">Generate</button>
 
         <!-- The Modal -->
@@ -153,19 +164,11 @@
           </div>
 
         </div>
+
         <form class="form-inline my-2 my-lg-0">
-          <!-- <div class=""> -->
-          <!-- <button class="show btn modalbutton">Version </button>
-            <div class="modal" id="modal">
-              <div class="modal-box">
-                <span class="close-button">X</span>
-                <h1>Hello, my name is modal</h1>
-              </div>
-            </div> -->
-          <!-- </div> -->
           <div class="nav-item dropdown">
-            <img src="assets/icons/settings.ico" class="img-logo dropdown-toggle" data-toggle="dropdown" alt="settings"
-              id="settings_button" />
+            <img src="assets/icons/settings.ico" class="img-logo dropdown-toggle"
+              data-toggle="dropdown" alt="settings" id="settings_button" />
             <div class="dropdown-menu dropdown-menu-right md-form" id="settings_dropdown">
               <label class="dropdown-item" href="#" for="file" class="a_file">
                 Import JSON
@@ -177,9 +180,10 @@
       </div>
     </nav>
   </header>
-  <div class="w3-sidebar w3-bar-block w3-xlarge bg-dark" style="width: 50px">
+  <div class="w3-sidebar w3-bar-block w3-xlarge bg-dark" style="width: 50px; overflow: hidden">
     <a href="#" style="margin-top: 10px" class="w3-bar-item w3-button"><i class="fa fa-home"></i></a>
-    <button class="w3-bar-item w3-button my-sideitem" id="addImg">
+    <button class="w3-bar-item w3-button my-sideitem ">
+      <input type="file" id="addImg" class="addImage" />
       <svg viewBox="0 0 512 512" width="100%" height="100%">
         <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1"
           x="0px" y="0px" viewBox="0 0 315.58 315.58" style="enable-background: new 0 0 315.58 315.58"
@@ -209,6 +213,7 @@
           <g></g>
         </svg>
       </svg>
+      
     </button>
 
     <button class="w3-bar-item w3-button my-sideitem" id="addArrow">
@@ -217,8 +222,9 @@
           d="M505.772,5.964L274.419,56.371l74.596,85.702L6.272,484.867c-5.689,5.689-5.689,14.906,0,20.596c2.844,2.845,6.571,4.267,10.297,4.267c3.726,0,7.453-1.422,10.297-4.267l341.316-341.369l70.939,81.502L505.772,5.964z">
         </path>
       </svg>
+      
     </button>
-    <button class="w3-bar-item w3-button my-sideitem" id="commentBox">
+    <button class="w3-bar-item w3-button my-sideitem" id="commentBox" >
       <svg viewBox="0 0 512 512" width="100%" height="100%">
         <g>
           <path
@@ -230,8 +236,57 @@
         </g>
       </svg>
     </button>
+    <button class="w3-bar-item w3-button my-sideitem" id="blueDimen">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+        <path fill="white"
+          d="M256.236,504,120,367.764V329.608h72v-144H120V146.98L255.766,11.216,392,147.452v38.156H320v144h72v38.627ZM159.1,361.608l97.137,97.137,97.137-97.137H288v-208h64.9L255.766,56.471l-97.138,97.137H224v208Z"
+          class="ci-primary" />
+      </svg>
+      
+    </button>
+    <button class="w3-bar-item w3-button my-sideitem" id="addTableRow" >
+      <svg class="svg-icon" style="
+            width: 1.0009765625em;
+            height: 1em;
+            vertical-align: middle;
+            fill: white;
+            overflow: hidden;
+          " viewBox="0 0 1025 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+        <path
+          d="M128 320l576 0c35.392 0 64-28.672 64-64L768 128c0-35.328-28.608-64-64-64L128 64C92.608 64 64 92.672 64 128l0 128C64 291.328 92.608 320 128 320zM576 128l128 0 0 128L576 256 576 128zM320 128l192 0 0 128L320 256 320 128zM128 128l128 0 0 128L128 256 128 128zM704 512 128 512C92.608 512 64 540.672 64 576l0 320c0 35.392 28.608 64 64 64l576 0c35.392 0 64-28.608 64-64L768 576C768 540.672 739.392 512 704 512zM256 896 128 896l0-128 128 0L256 896zM256 704 128 704 128 576l128 0L256 704zM512 896 320 896l0-128 192 0L512 896zM512 704 320 704 320 576l192 0L512 704zM704 896 576 896l0-128 128 0L704 896zM704 704 576 704 576 576l128 0L704 704zM955.84 263.36l-168.192 112.512c-27.776 18.624-27.776 61.76 0 80.384l168.192 112.512c29.696 19.84 68.288-2.816 68.288-40.192L1024.128 303.552C1024.128 266.176 985.472 243.52 955.84 263.36z" />
+      </svg>
+    </button>
+    <button class="w3-bar-item w3-button my-sideitem" id="addTableColumn">
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+        xmlns:svgjs="http://svgjs.com/svgjs" version="1.1" width="22" height="22" x="0" y="0" viewBox="0 0 512 512"
+        style="enable-background:new 0 0 512 512" xml:space="preserve" class="">
+        <g>
+          <path xmlns="http://www.w3.org/2000/svg"
+            d="m181.332031 106.667969c-3.925781 0-7.828125-1.429688-10.921875-4.3125l-80-74.664063c-4.820312-4.480468-6.378906-11.457031-3.96875-17.558594 2.410156-6.121093 8.320313-10.132812 14.890625-10.132812h160c6.570313 0 12.480469 4.011719 14.871094 10.132812 2.410156 6.125.851563 13.078126-3.96875 17.558594l-80 74.664063c-3.070313 2.882812-6.976563 4.3125-10.902344 4.3125zm-39.421875-74.667969 39.421875 36.777344 39.425781-36.777344zm0 0"
+            fill="#ffffff" data-original="#000000" style="" class="" />
+          <path xmlns="http://www.w3.org/2000/svg"
+            d="m90.667969 512h-53.335938c-20.585937 0-37.332031-16.746094-37.332031-37.332031v-330.667969c0-20.585938 16.746094-37.332031 37.332031-37.332031h53.335938c20.585937 0 37.332031 16.746093 37.332031 37.332031v330.667969c0 20.585937-16.746094 37.332031-37.332031 37.332031zm-53.335938-373.332031c-2.941406 0-5.332031 2.386719-5.332031 5.332031v330.667969c0 2.941406 2.390625 5.332031 5.332031 5.332031h53.335938c2.941406 0 5.332031-2.390625 5.332031-5.332031v-330.667969c0-2.945312-2.390625-5.332031-5.332031-5.332031zm0 0"
+            fill="#ffffff" data-original="#000000" style="" class="" />
+          <path xmlns="http://www.w3.org/2000/svg"
+            d="m432 512h-160c-20.585938 0-37.332031-16.746094-37.332031-37.332031v-330.667969c0-20.585938 16.746093-37.332031 37.332031-37.332031h160c20.585938 0 37.332031 16.746093 37.332031 37.332031v330.667969c0 20.585937-16.746093 37.332031-37.332031 37.332031zm-160-373.332031c-2.945312 0-5.332031 2.386719-5.332031 5.332031v330.667969c0 2.941406 2.386719 5.332031 5.332031 5.332031h160c2.945312 0 5.332031-2.390625 5.332031-5.332031v-330.667969c0-2.945312-2.386719-5.332031-5.332031-5.332031zm0 0"
+            fill="#ffffff" data-original="#000000" style="" class="" />
+          <path xmlns="http://www.w3.org/2000/svg"
+            d="m112 325.332031h-96c-8.832031 0-16-7.167969-16-16s7.167969-16 16-16h96c8.832031 0 16 7.167969 16 16s-7.167969 16-16 16zm0 0"
+            fill="#ffffff" data-original="#000000" style="" class="" />
+          <path xmlns="http://www.w3.org/2000/svg"
+            d="m453.332031 325.332031h-202.664062c-8.832031 0-16-7.167969-16-16s7.167969-16 16-16h202.664062c8.832031 0 16 7.167969 16 16s-7.167969 16-16 16zm0 0"
+            fill="#ffffff" data-original="#000000" style="" class="" />
+          <path xmlns="http://www.w3.org/2000/svg"
+            d="m352 512c-8.832031 0-16-7.167969-16-16v-373.332031c0-8.832031 7.167969-16 16-16s16 7.167969 16 16v373.332031c0 8.832031-7.167969 16-16 16zm0 0"
+            fill="#ffffff" data-original="#000000" style="" class="" />
+        </g>
+      </svg>
+
+
+    </button>
   </div>
   <div id="loader"></div>
+  <p class="loader-msg"></p>
   <div class="whole-container" style="margin-left: 40px">
     <div class="main container-fluid" id="content">
       <div class="working-drawing container-fluid" id="wd-0">
@@ -253,6 +308,10 @@
             <div class="row" style="height: 2.5em">
               <div class="col-12" style="text-align: center">
                 <span style="font-size: large">Legend</span>
+                <button class="legend-add-row">
+                  +
+                </button>
+                <input type="file" class="legend-add-image" />
               </div>
             </div>
 

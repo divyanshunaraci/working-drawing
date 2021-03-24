@@ -54,7 +54,7 @@ const readJSON = function (input) {
                 let parsedData;
 
                 // python server
-                const url = "http://127.0.0.1:4000/json";
+                const url = "http://13.235.82.47:4000/json";
                 const othePram = {
                     headers: {
                         "content-type": "application/json; charset=UTF-8",
@@ -227,7 +227,7 @@ const renderAll = () => {
         }
         // other views like RoomSubView, RenderView ...
         else {
-            renderView(view, id);
+            renderView(state.projectInfo, view, id);
             if (viewTypes.includes(view.getName())) {
             }
             if (view.type === "ImageView") {

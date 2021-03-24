@@ -173,11 +173,11 @@ const renderAl = () => {
     state.roomViews.forEach((view, id) => {
         // floorPlanView
         if (view.type === "FloorPlanView") {
-            renderFloorPlan(view,id);
+            renderFloorPlan(view, id);
         }
         // other views like RoomSubView, RenderView ...
         else {
-            renderView(view, id);
+            renderView(state.projectInfo, view, id);
             if (viewType.includes(view.getName())) {
             }
             if (view.type === "ImageView") {
@@ -386,7 +386,7 @@ btn.onclick = function () {
     const userId = localStorage.getItem("userId");
     let userProject = [];
     console.log(document.getElementById('modal'), localStorage.getItem("token"), userId);
-    fetch('http://15.207.181.191:8080/api/project/wdProject', {
+    fetch('http://localhost:5000/api/project/wdProject', {
         method: 'GET',
         headers: {
             'Content-type': 'application/json', // The type of data you're sending

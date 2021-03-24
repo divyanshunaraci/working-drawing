@@ -173,7 +173,7 @@ const renderAl = () => {
     state.roomViews.forEach((view, id) => {
         // floorPlanView
         if (view.type === "FloorPlanView") {
-            renderFloorPlan(view,id);
+            renderFloorPlan(view, id);
         }
         // other views like RoomSubView, RenderView ...
         else {
@@ -361,9 +361,20 @@ function resizeend() {
 window.addEventListener("resize", renderAll());
 
 // When the user clicks the button, open the modal 
+var userPrj = [], version = [];
 window.onload = function () {
+    if (window.location.search) {
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const token = urlParams.get('token')
+        localStorage.setItem('token', token);
+        const versionNo = urlParams.get('versionNo')
+        const projectNo = urlParams.get('project_no')
+        getProjects(projectNo, versionNo);
+        $("#loader").toggle();
+        $(".main").css({ opacity: 1 });
 
-
+    }
 
     // fetch('https://naraci-test.s3.ap-south-1.amazonaws.com/5ea7fd5fc5c27f1e749fc39c/v1/New+Version+Test+Json+Kitchen+copy.json').then(response=>response.json()).then(res=> {
     //     console.log(res)
@@ -373,11 +384,57 @@ window.onload = function () {
 
 
 }
-// downloadFile = function(id){
-//     console.log(id);
-//     // document.getElementById(id).previousElementSibling
-// }
-var userPrj = [], version = [];
+
+function getProjects(projectNo, versionNo) {
+    let userProject = [], version = [];;
+    fetch('http://13.233.101.175:8080/api/project/wdProject', {
+        method: 'GET',
+        headers: {
+            'Content-type': 'application/json', // The type of data you're sending
+            'authorization': localStorage.getItem("token")
+        }
+    }).then(function (response) {
+        console.log(response)
+        if (response.ok) {
+            return response.json();
+        }
+        return Promise.reject(response);
+    }).then(function (data) {
+        console.log(data);
+        $("#loader").toggle();
+        $(".modal").css({ opacity: 1 });
+        let project = [];
+        data.forEach(el => {
+            console.log(data, 'data');
+            if (el.workingDrawing) {
+                let obj = {
+                    "project_no": el.project_no,
+                    "version": el.workingDrawing
+                }
+                userProject.push(el.project_no);
+                // version.push(el.workingDrawing);
+                version.push(obj);
+            }
+        })
+        userPrj = [...userProject]
+        console.log(version, 'wdFile');
+        version.forEach(function (el) {
+            if (el.project_no === projectNo) {
+                console.log(el);
+                el.version.forEach(function (ele) {
+                    console.log(projectNo, versionNo);
+                    if (ele.version == versionNo) {
+                        readJSO(ele.wdFile)
+                    }
+                })
+            }
+        })
+
+    }).catch(function (error) {
+        console.warn('Something went wrong.', error);
+    });
+}
+
 btn.onclick = function () {
     modal.style.display = "block";
     userPrj = [], version = [];
@@ -386,7 +443,7 @@ btn.onclick = function () {
     const userId = localStorage.getItem("userId");
     let userProject = [];
     console.log(document.getElementById('modal'), localStorage.getItem("token"), userId);
-    fetch('http://15.207.181.191:8080/api/project/wdProject', {
+    fetch('http://13.233.101.175:8080/api/project/wdProject', {
         method: 'GET',
         headers: {
             'Content-type': 'application/json', // The type of data you're sending

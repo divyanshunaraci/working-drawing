@@ -56,7 +56,7 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
 					<tbody>
 						<tr>
 							<td rowspan="3" contenteditable = 'true'>
-              <img src = "${projectInfo.org_logo_url}" crossorigin="" width="300" height="50" alt= "logo" />
+              <img src = "${projectInfo.org_logo_url}" width="300" height="50" alt= "logo" />
               <span> ${projectInfo.org_name} : ${projectInfo.org_address}</span>
 							</td>
 							<td class='drawing-title' contenteditable = 'true'>Drawing TITLE: Floor Plan</td>
@@ -228,7 +228,7 @@ const renderFloorPlan = (floorPlanView, id) => {
 };
 
 // render individual view
-const renderView = (projectInfo, view, id) => {
+const renderView = (view, id) => {
   const viewType = [
     "room_top_view",
     "top_view",
@@ -248,9 +248,9 @@ const renderView = (projectInfo, view, id) => {
     renderOutline(outline, id, "view");
 
     // render 'opening'('window', 'door') except for top_view
-    if (viewName !== "top_view") {
+    //if (viewName !== "top_view") { //openings
       renderWindowDoor(view, id);
-    }
+    //}
 
     // render 'floor_components'
     if (view.getComps() !== []) {
@@ -281,7 +281,7 @@ const renderView = (projectInfo, view, id) => {
   }
 
   // render view details ( on footer table )
-  renderViewDetail(projectInfo, view, id);
+  renderViewDetail(view, id);
 };
 
 // render 'render_wall_view'
@@ -291,7 +291,7 @@ const renderRenderView = (imgURL, id) => {
   // reset the canvas transform( setTransform is absolute transformation )
   cx.setTransform(1, 0, 0, 1, 0, 0);
   const image = new Image(canvas.width, canvas.height);
-  image.setAttribute("crossorigin", "*")
+  
   image.onload = drawImageActualSize; // Draw when image has loaded
 
   // Load an image of intrinsic size 300x227 in CSS pixels
@@ -501,7 +501,7 @@ const getAccHandlesInfo = (haView) => {
   return textObject;
 };
 // render view name on footer table
-const renderViewDetail = (projectInfo, view, id) => {
+const renderViewDetail = (view, id) => {
   const viewID = view.getID();
   $(`#wd-${id} .drawing-title`).text(`Drawing TITLE: ${viewID.split("+")[0]}`);
 };
@@ -542,13 +542,13 @@ const renderShutter = (shutter, id) => {
       lines = [new Edge(temp[0], midPt), new Edge(midPt, temp[1])];
       renderOutline(lines, id, "component", [50, 50]);
       break;
-    case "up":
+    case "down":
       midPt = outline[3].getMidPt();
       temp = outline[1].getCoords();
       lines = [new Edge(temp[0], midPt), new Edge(midPt, temp[1])];
       renderOutline(lines, id, "component", [50, 50]);
       break;
-    case "down":
+    case "up":
       midPt = outline[1].getMidPt();
       temp = outline[3].getCoords();
       lines = [new Edge(temp[0], midPt), new Edge(midPt, temp[1])];
@@ -1192,7 +1192,7 @@ const generateTable = (table, data) => {
         img.style.width = "20px";
         img.style.height = "30px";
         img.src = element[key];
-        img.setAttribute("crossorigin", "*")
+
         cell.appendChild(img);
       } else {
         cell.contentEditable = true;

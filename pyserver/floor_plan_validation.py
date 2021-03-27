@@ -463,8 +463,10 @@ class floor_plan_validation(object):
                                         if check_len !=0:
                                             json_room_view_name_library = json_room_view_number[view_items]['floor_components']['library']
                                             for items in list(json_room_view_name_library):
+                                                del_yes = 1
                                                 if not json_room_view_name_library[items]:
                                                     warning_log.append(string_floor_library+'['+items+'] is empty.')
+                                                    del_yes *=0
                                                 else:
                                                     if json_room_view_name_library[items].has_key('comp_details'):
                                                         if len(json_room_view_name_library[items]['comp_details']) < 5:
@@ -474,15 +476,25 @@ class floor_plan_validation(object):
                                                     else:
                                                         warning_log.append(string_floor_library+'['+items+'] has no key comp_details.')
                                                     
-                                                    if json_room_view_name_library[items].has_key('external_points'):
-                                                        error_log, warning_log, lines = self._library_external_points(self, string_floor_library+'['+items+'][external_points]',json_room_view_name_library[items]['external_points'],error_log, warning_log)
-                                                        x_list_min.append(lines[0][0])
-                                                        x_list_max.append(lines[1][0])
-                                                        y_list_min.append(lines[0][1])
-                                                        y_list_max.append(lines[1][1])
-                                                        #component
+                                                    if 'external_points' in list(json_room_view_name_library[items]):
+                                                        check_len_ext = len(json_room_view_name_library[items]['external_points'])
+                                                        if check_len_ext != 0 :
+                                                            error_log, warning_log, lines = self._library_external_points(self, string_floor_library+'['+items+'][external_points]',json_room_view_name_library[items]['external_points'],error_log, warning_log)
+                                                            x_list_min.append(lines[0][0])
+                                                            x_list_max.append(lines[1][0])
+                                                            y_list_min.append(lines[0][1])
+                                                            y_list_max.append(lines[1][1])
+                                                            #component
+                                                        else:
+                                                            warning_log.append(string_floor_library+'['+items+'][external_points] is empty.')
+                                                            del_yes *=0
+
                                                     else:
                                                         warning_log.append(string_floor_library+'['+items+'] has no key external_points.') 
+                                                        del_yes *=0
+                                                if del_yes ==0:
+                                                    del json_room_view_name_library[items]
+                                                    
                                         else: #library is empty
                                             del json_room_view_number[view_items]['floor_components']
                                             warning_log.append(string_id + '][' +view_items + '][floor_components][library] is empty.')

@@ -600,6 +600,10 @@ class floor_plan_component1(object):
                                 if len(drawing_2_list) != 0:
                                     drawing_1_list += drawing_2_list 
                                     dict_for_view[items] = self.__create_dict(self,drawing_2_list)
+                                    if view_angle == 'front_view':
+                                        print(items)
+                                        for keys11 in dict_for_view[items] :
+                                            print(dict_for_view[items][keys11]) 
                                     
 
                                     
@@ -612,6 +616,8 @@ class floor_plan_component1(object):
                     dimension_list = self.__creating_dimensions_internal(self,dict_for_view,drawing_1_list)
                 else: #front view and top view
                     dimension_list = self.__creating_dimensions_top_front(self,dict_for_view,drawing_1_list)
+                    if view_angle == 'front_view':
+                        print(dimension_list['IDs'])
                     
             else:
                 dimension_list = {}
@@ -627,6 +633,14 @@ class floor_plan_component1(object):
         x0, y0 = outline_dim['x0'], outline_dim['y0']
         com_dtemp = {}
         rank = []
+        def __unique_rank_number(rank, keys, com_dtemp, r1):
+            if not r1 in list(com_dtemp):
+                com_dtemp[r1] = keys
+                rank.append(r1)
+            else:
+                r1 += 1
+                rank=__unique_rank_number(rank, keys, com_dtemp, r1)
+            return rank
         for keys in dict1:
             if keys == 'outline':
                 continue
@@ -635,15 +649,27 @@ class floor_plan_component1(object):
             x0c, y0c, xnc, ync = t_d2['x0'], t_d2['y0'], t_d2['xn'], t_d2['yn']
             xc, yc = (x0c+xnc)/2, (y0c+ync)/2
             r1 = np.sqrt((xc-x0)^2+(yc-y0)^2)+np.power((yc-y0),2)
-            com_dtemp[r1] = keys
-            rank.append(r1)
+            
+            rank = __unique_rank_number(rank, keys, com_dtemp, r1)
+            """com_dtemp[r1] = keys
+            rank.append(r1) """
         #ascend the rank then call the com_dtemp to define the names
         rank = sorted(rank)
         com_ID={}
+        print(rank,'line643')
         for i in range(len(rank)):
             c_ID = 'C-'+str(i+1)
             com_ID[com_dtemp[rank[i]]] = c_ID
         return com_ID
+
+        def __unique_rank_number(rank, keys, com_dtemp, r1):
+            if not r1 in list(com_dtemp):
+                com_dtemp[r1] = keys
+                rank.append(r1)
+            else:
+                r1 += 1
+                rank=__unique_rank_number(rank, keys, com_dtemp, r1)
+            return rank
 
 
 

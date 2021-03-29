@@ -302,10 +302,10 @@ const handleViewDimens = (data, roomName) => {
       if (viewName === "front_view" && Object.keys(data[viewName]["dimension"]["IDs"]).length !== 0) {
 
         var temp = handleSubViewDimens(data[viewName], roomName, viewName);
-        /* */
+        
         dimens = [...dimens, ...temp[0]];
         viewBoxInfo = [...viewBoxInfo, ...temp[1]];
-      } /* */ else {
+      } else {
         var temp = handleSubViewDimens(data[viewName], roomName, viewName);
         dimens.push(temp[0]);
         viewBoxInfo.push(temp[1]);
@@ -467,14 +467,14 @@ const handleSubViewDimens = (data, roomViewName, viewName) => {
   // 
   if (viewName === "front_view" && Object.keys(data["dimension"]["IDs"]).length !== 0) {
 
-    /**/
+    
 
     return [
       [dimens, []],
       [viewBoxInfo, {}],
     ];
 
-  } /* */else {
+  } else {
     return [dimens, viewBoxInfo];
   }
 };

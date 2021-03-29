@@ -320,10 +320,10 @@ function print() {
             alert("Downloading PDF completed!!!");
             $("#loader").toggle();
             $(".main").css({ opacity: 1 });
-            $(".main").empty();
+            // $(".main").empty();
 
         });
-        $(".main").empty();
+        // $(".main").empty();
 
     }
 }

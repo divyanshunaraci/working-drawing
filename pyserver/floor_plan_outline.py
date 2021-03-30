@@ -15,7 +15,7 @@ class floor_plan_outline1(object):
         #this class id called from floor_plan_additional- the input thickness value can be changed in floor_plan_additional class
         self.draw_1_hor_dict, self.draw_1_ver_dict,  self.x0, self.y0, self.xn, self.yn = self.__create_dict(self,drawing_list) #this function identifies the outlines , the end corners for the drawing. It creates the horizontal and vertical dictionary each dictionary his keys as the one common coordinate for a line. For example the vertical line has common X coordinate and the horizontal line has common Y coordinate. Therefore in the horizontal dictionary the keys would be the vertical coordinates. Eight each of the key value, list of all the lines exist at that horizontal or vertical coordinate the list contents they start not in the end node and in each of the list there could be several of those segments of line . The first 2 items of the list are just the start an endnote data  data. If the third item exists in the dictionary that means it has been identified as one of the wall. The walls could be exterior wall left bottom top and right the interior wall left bottom right and stop N external internal wall again left right top bottom. The third item is a list where the first item is the string that is identifying the type of the wall internal external or external internal and the second 2 items shows the dimension coordinates for start node and the end node the items are XYNXY however this will be confirmed soon. 
         self.org_hor, self.org_ver, self.thickness  = copy.deepcopy(self.draw_1_hor_dict), copy.deepcopy(self.draw_1_ver_dict), thickness
-        print(self.org_hor, self.org_ver)
+        #print(self.org_hor, self.org_ver)
         self.__update_dicts() #all the data gets identified based on interier wall, inside of exterior wall
 
         self.all_detail = {'horizontal' : self.draw_1_hor_dict, 'vertical' : self.draw_1_ver_dict} #this data get updated in remove duplicate function. That means finally this variable does not contend the duplicate horizontal or vertical dimension labels. 
@@ -453,7 +453,7 @@ class floor_plan_additional(object):
                 view_name = room_view_name[key1] #['room_top_view','view_1','view_2']#['view_1']# 
                 for key2 in view_name:
                     if j_object['rooms'][key1].has_key(key2):
-                        print(key1,key2)
+                        #print(key1,key2)
                         if key2 == 'room_top_view':
                             drawing_list1 = self.output_list_room_top_views(key1, key2, j_object)
                             fp1 = floor_plan_outline1(drawing_list1,j_object['rooms'][key1][key2]['thickness']) # need changes to this value
@@ -464,7 +464,7 @@ class floor_plan_additional(object):
                             del j_object['rooms'][key1][key2]['thickness']
                         else:
                             for key3 in view_angle:
-                                print(key3)
+                                #print(key3)
                                 if j_object['rooms'][key1][key2].has_key(key3):
                                     fp3 = floor_plan_component1(key1, key2, key3, j_object)
                                     j_object['rooms'][key1][key2][key3]['dimension'] = fp3.data     
@@ -604,10 +604,7 @@ class floor_plan_component1(object):
                                 if len(drawing_2_list) != 0:
                                     drawing_1_list += drawing_2_list 
                                     dict_for_view[items] = self.__create_dict(self,drawing_2_list)
-                                    if view_angle == 'front_view':
-                                        print(items)
-                                        for keys11 in dict_for_view[items] :
-                                            print(dict_for_view[items][keys11]) 
+                                    
                                     
 
                                     
@@ -620,8 +617,7 @@ class floor_plan_component1(object):
                     dimension_list = self.__creating_dimensions_internal(self,dict_for_view,drawing_1_list)
                 else: #front view and top view
                     dimension_list = self.__creating_dimensions_top_front(self,dict_for_view,drawing_1_list)
-                    if view_angle == 'front_view':
-                        print(dimension_list['IDs'])
+                    
                     
             else:
                 dimension_list = {}
@@ -863,7 +859,7 @@ class floor_plan_component1(object):
                 hor_up_down, ver_up_down = -1, 1
                 quadrant = 4
 
-            print (keys,"    ",quadrant)
+           
             #check whether to draw horizontal or vertical dim
             hor_dim_check = True
             ver_dim_check = True
@@ -951,7 +947,9 @@ class floor_plan_component1(object):
         dim_dict['ver'][ver_string] = [x1, [y0,yn]]
         dimension_list.append([[x1,y0],[x1,yn]])
 
-       
+        dimension_list = self.__distance_to_component(self, dict1, outer_dim_dict, dim_dict, dimension_list, 100)
+        
+
         lengths = {'x0' :x0, 'y0' : y0 , 'xn' : xn, 'yn' :yn, 'length' : xn-x0, 'width' : yn- y0}
         com_ID= self.__component_ID_detail(dict1)
         
@@ -1093,13 +1091,11 @@ class floor_plan_component1(object):
                 pe = ync +100
                 while pe < xn-200: #it was yn -200
                     ps = pe - 100
-                    print("-------")
-                    print(ps,x0,pe,x0,x0c,y0,xnc,y0)
+                    
                     if np.sum(the_array[ps-x0:pe-x0,x0c-y0:xnc-y0]) < 100:
                         
                         y2 = pe
-                        print(pe-x0,x0c-y0,xnc-y0)
-                        print(the_array.shape)
+                        
 
                         the_array[pe-x0,x0c-y0:xnc-y0] = np.ones(xnc-x0c)
                         bool_y2 = False
@@ -1246,7 +1242,7 @@ class floor_plan_component1(object):
                     if np.sum(the_array[ps-x0:pe-x0,x0c-y0:xnc-y0]) < 100:
                         #we found it
                         y2 = pe
-                        # print('x0c',x0c,'y0',y0,'xnc',xnc,'y0',y0,'pe',pe,'y2',y2,'x0',x0)
+                       
                         the_array[pe-x0,x0c-y0:xnc-y0] = np.ones(xnc-x0c)
                         bool_y2 = False
                         break

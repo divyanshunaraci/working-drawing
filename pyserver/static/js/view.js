@@ -131,6 +131,8 @@ const calibrateCanvases = (viewBoxInfoes) => {
       canvas.height
     );
 
+    //console.log(i, newOrigin.scale, newOrigin.x, newOrigin.y);
+
     state.viewBoxInfo[i].scale = newOrigin.scale;
     state.viewBoxInfo[i].newOriginX = newOrigin.x;
     state.viewBoxInfo[i].newOriginY = newOrigin.y;
@@ -248,8 +250,9 @@ const renderView = (view, id) => {
     renderOutline(outline, id, "view");
 
     // render 'opening'('window', 'door') except for top_view
-    //if (viewName !== "top_view") { //openings
-      renderWindowDoor(view, id);
+
+    // if (viewName !== "top_view") { //openings
+    renderWindowDoor(view, id);
     //}
 
     // render 'floor_components'
@@ -291,7 +294,6 @@ const renderRenderView = (imgURL, id) => {
   // reset the canvas transform( setTransform is absolute transformation )
   cx.setTransform(1, 0, 0, 1, 0, 0);
   const image = new Image(canvas.width, canvas.height);
-  
   image.onload = drawImageActualSize; // Draw when image has loaded
 
   // Load an image of intrinsic size 300x227 in CSS pixels
@@ -556,6 +558,29 @@ const renderShutter = (shutter, id) => {
       break;
     case "sliding":
       // Todo: outline(8 edges)
+      if (state.roomViews[id].getName() !== "front_view") break;
+      const mids = outline.map((line) => line.getMidPt());
+      const xs = mids.map((mid) => mid[0]);
+      const ys = mids.map((mid) => mid[1]);
+      const minx = Math.min(...xs);
+      const maxx = Math.max(...xs);
+      const miny = Math.min(...ys);
+      const maxy = Math.max(...ys);
+      const mid = [(minx + maxx) / 2, (miny + maxy) / 2];
+      lines = [];
+      lines.push(
+        new Edge([mid[0] - 200, mid[1] - 40], [mid[0] + 200, mid[1] - 40])
+      );
+      lines.push(
+        new Edge([mid[0] - 200, mid[1] + 40], [mid[0] + 200, mid[1] + 40])
+      );
+      lines.push(
+        new Edge([mid[0] - 140, mid[1] - 100], [mid[0] - 200, mid[1] - 40])
+      );
+      lines.push(
+        new Edge([mid[0] + 140, mid[1] + 100], [mid[0] + 200, mid[1] + 40])
+      );
+      renderOutline(lines, id, "component", [30, 30]);
       break;
     case "pullout":
       lines = [
@@ -1192,7 +1217,6 @@ const generateTable = (table, data) => {
         img.style.width = "20px";
         img.style.height = "30px";
         img.src = element[key];
-
         cell.appendChild(img);
       } else {
         cell.contentEditable = true;
@@ -1218,6 +1242,25 @@ const renderTableView = (tableView, id) => {
   table.setAttribute("border", "1");
   table.classList.add("main-table");
 
+  //canvas width and height- console.log
+  console.log(container.clientHeight, container.clientWidth);
+
+  //font size of the text
+  var multiply = container.clientHeight * container.clientWidth;
+
+  if (multiply / 4 < 6) {
+
+    table.style.fontSize = "8px";
+  } else if (multiply / 4 >= 6 && multiply / 4 < 12) {
+    table.style.fontSize = multiply / 4 + 'px';
+  } else {
+    table.style.fontSize = '12px';
+  }
+
+  console.log(compsInfo);
+  console.log(compsInfo.length);
+
+
   // generate table head
   const headData = ["S.No", ...Object.keys(compsInfo[0])];
   generateTableHead(table, headData);
@@ -1227,6 +1270,9 @@ const renderTableView = (tableView, id) => {
     return Number(a.id.replace(/\D/g, "")) - Number(b.id.replace(/\D/g, ""));
   });
 
+
+
+
   // generate main content of table
   const data = [];
   compsInfo.forEach((item, id) => {
@@ -1235,7 +1281,11 @@ const renderTableView = (tableView, id) => {
       ...item,
     });
   });
+
+  //change the text size 6 px 
   generateTable(table, data);
+
+
 
   // add table to container
   container.replaceChild(

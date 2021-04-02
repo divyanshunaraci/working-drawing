@@ -7,6 +7,7 @@ import requests
 import copy
 import numpy as np
 import threading
+import internal_fix
 
 
 # This class is used to develop the data for ground floors and room_top_view
@@ -629,12 +630,20 @@ class floor_plan_component1(object):
                                 # 'fillers'
                                 for internal_items in ['internal', 'carcass', 'skirting', 'loft_skirting', 'cover_panels', 'fillers']:
                                     if internal_items in j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]['external_points']:
+                                        test_int = internal_fix.testing(
+                                            j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]['external_points'][internal_items])
+                                        if test_int == 0:
+                                            continue
                                         drawing_2_list += j_object['rooms'][room_name][view_name][view_angle][
                                             'floor_components']['library'][items]['external_points'][internal_items]
 
                                     if 'shutter' in j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]['external_points']:
                                         for item in j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]['external_points']['shutter']:
                                             if 'outline' in j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]['external_points']['shutter'][item]:
+                                                test_int = internal_fix.testing(
+                                                    j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]['external_points']['shutter'][item]['outline'])
+                                                if test_int == 0:
+                                                    continue
                                                 drawing_2_list += j_object['rooms'][room_name][view_name][view_angle][
                                                     'floor_components']['library'][items]['external_points']['shutter'][item]['outline']
                                                 # since no handle dimension needed#drawing_4_list= drawing_4_list+ j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]['external_points']['shutter'][item]['handle']['outline']

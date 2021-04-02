@@ -177,7 +177,7 @@ const renderAl = () => {
         }
         // other views like RoomSubView, RenderView ...
         else {
-            renderView(view, id);
+            renderView(state.projectInfo, view, id);
             if (viewType.includes(view.getName())) {
             }
             if (view.type === "ImageView") {
@@ -583,12 +583,12 @@ btn.onclick = function () {
         version.forEach(function (el) {
             console.log(el);
             document.getElementById('modal').innerHTML += el.project_no;
-            if(window.innerWidth == screen.width){
+            if (window.innerWidth == screen.width) {
                 for (let i = 0; i < el.version.length / 14; i++) {
                     document.getElementById('modal').innerHTML += '<br>'
                 }
             }
-            else if(window.innerWidth < screen.width){
+            else if (window.innerWidth < screen.width) {
                 for (let i = 0; i < el.version.length / 11; i++) {
                     document.getElementById('modal').innerHTML += '<br>'
                 }
@@ -598,14 +598,14 @@ btn.onclick = function () {
             el.version.forEach(function (ele) {
                 // ele.wdFile = 'https://naraci-test.s3.ap-south-1.amazonaws.com/5ea7fd5fc5c27f1e749fc39c/v1/New+Version+Test+Json+Kitchen+copy.json'
                 ++i;
-                document.getElementById('versionNumber').innerHTML += ele.version + ' ' + `<i id=${ele.version}-${el.project_no} class="fa fa-download" style="margin-right:2%;"></i>` 
+                document.getElementById('versionNumber').innerHTML += ele.version + ' ' + `<i id=${ele.version}-${el.project_no} class="fa fa-download" style="margin-right:2%;"></i>`
                 if (i == 15 && window.innerWidth == screen.width) {
                     document.getElementById('versionNumber').innerHTML += '<br>';
-                    i=1;
+                    i = 1;
                 }
                 if (i == 11 && window.innerWidth < screen.width) {
                     document.getElementById('versionNumber').innerHTML += '<br>';
-                    i=1;
+                    i = 1;
                 }
             })
             document.getElementById('versionNumber').innerHTML += '<br>'

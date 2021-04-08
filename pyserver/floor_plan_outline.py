@@ -758,14 +758,14 @@ class floor_plan_component1(object):
                         max(dict1[keys][f_str1][ls1[i]][0][0],
                             dict1[keys][f_str1][ls1[i+1]][0][0])
                     dim_dict[str1][ver_string] = [x_opt, [ls1[i], ls1[i+1]]]
-                    if str1 == 'ver':
-                        randomNumber = 1
-                        #dimension_list.append(
-                        #    [[x_opt, ls1[i]], [x_opt, ls1[i+1]]])
-                    else:
-                        randomNumber = 1
-                        #dimension_list.append(
-                        #    [[ls1[i], x_opt], [ls1[i+1], x_opt]])
+                    # if str1 == 'ver':
+                    #     randomNumber = 1
+                    #     #dimension_list.append(
+                    #     #    [[x_opt, ls1[i]], [x_opt, ls1[i+1]]])
+                    # else:
+                    #     randomNumber = 1
+                    #     #dimension_list.append(
+                    #     #    [[ls1[i], x_opt], [ls1[i+1], x_opt]])
         return dim_dict, dimension_list
 
     @staticmethod

@@ -127,6 +127,7 @@ class floor_plan_outline1(object):
             if i_list > len(list_keys)-1:
                 break
             key = list_keys[i_list]
+            
             for i in range(len(draw_1_hor_dict[list_keys[i_list]])):
                 values = draw_1_hor_dict[key][i]
                 # plotted for whole length
@@ -575,7 +576,6 @@ class floor_plan_component1(object):
         #
         dict_for_view = {}
         room_name, view_name, j_object = self.room_name, self.view_name, self.j_object
-
         if 'outline' in j_object['rooms'][room_name][view_name]:
             drawing_1_list = j_object['rooms'][room_name][view_name]['outline']
             if len(drawing_1_list) != 0:
@@ -759,11 +759,13 @@ class floor_plan_component1(object):
                             dict1[keys][f_str1][ls1[i+1]][0][0])
                     dim_dict[str1][ver_string] = [x_opt, [ls1[i], ls1[i+1]]]
                     if str1 == 'ver':
-                        dimension_list.append(
-                            [[x_opt, ls1[i]], [x_opt, ls1[i+1]]])
+                        randomNumber = 1
+                        #dimension_list.append(
+                        #    [[x_opt, ls1[i]], [x_opt, ls1[i+1]]])
                     else:
-                        dimension_list.append(
-                            [[ls1[i], x_opt], [ls1[i+1], x_opt]])
+                        randomNumber = 1
+                        #dimension_list.append(
+                        #    [[ls1[i], x_opt], [ls1[i+1], x_opt]])
         return dim_dict, dimension_list
 
     @staticmethod
@@ -792,7 +794,7 @@ class floor_plan_component1(object):
                         self, t_d2, the_array, outline_dim, outer_dim_dict, 'y_opt')
 
                 dim_dict['hor'][hor_string] = [y_opt, [x0c, xnc]]
-                dimension_list.append([[x0c, y_opt], [xnc, y_opt]])
+                #dimension_list.append([[x0c, y_opt], [xnc, y_opt]])
 
             # horizontal exists but vertical does not exists
             elif dim_dict['hor'].has_key(hor_string) and not dim_dict['ver'].has_key(ver_string):
@@ -804,7 +806,7 @@ class floor_plan_component1(object):
                         self, t_d2, the_array, outline_dim, outer_dim_dict, 'x_opt')
 
                 dim_dict['ver'][ver_string] = [x_opt, [y0c, ync]]
-                dimension_list.append([[x_opt, y0c], [x_opt, ync]])
+                #dimension_list.append([[x_opt, y0c], [x_opt, ync]])
 
             else:  # both L and B of the component do not exist
                 if str1 == 'room_top_view':
@@ -816,10 +818,10 @@ class floor_plan_component1(object):
                 # the problem is y_opt does not take into acccount if x1-x2 has already been shown
 
                 dim_dict['hor'][hor_string] = [y_opt, [x0c, xnc]]
-                dimension_list.append([[x0c, y_opt], [xnc, y_opt]])
+                #dimension_list.append([[x0c, y_opt], [xnc, y_opt]])
 
                 dim_dict['ver'][ver_string] = [x_opt, [y0c, ync]]
-                dimension_list.append([[x_opt, y0c], [x_opt, ync]])
+                #dimension_list.append([[x_opt, y0c], [x_opt, ync]])
 
         return dimension_list
 
@@ -883,7 +885,6 @@ class floor_plan_component1(object):
             t_d2 = dict1[keys]['dims']
             x0c, y0c = t_d2['x0'], t_d2['y0']
             xnc, ync = t_d2['xn'], t_d2['yn']
-
             # Drawing the horizontal distance first
             quadrant_x = x0c - xc0  # if negative then on the left side, otherwise right
             quadrant_y = y0c - yc0  # if negative then on the bottom side, otherwise top

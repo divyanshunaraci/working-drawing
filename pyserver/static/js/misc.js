@@ -1,6 +1,5 @@
 var persistProperties = ['lockScalingX', 'lockScalingY', 'lockMovementX', 'lockMovementY', '_controlsVisibility']
 
-
 // go to previous page
 document.querySelector("#goPrev").addEventListener("click", function (e) {
   if (currentPageNumber == 1) return;
@@ -227,9 +226,17 @@ $(document).keydown(function (event) {
   // 'Delete' key pressed
   if (event.which == 46 || event.which == 8) {
     console.log(event.key)
-    if (canvas.getActiveObject()) {
-      // remove fabric active object
-      canvas.remove(canvas.getActiveObject());
+    for(let i=0;i<overlayCanvases.length;i++){
+      // if (canvas.getActiveObject()) {
+      //   // remove fabric active object
+      //   canvas.remove(canvas.getActiveObject());
+      // }
+      if (overlayCanvases[i].getActiveObject()) {
+        // remove fabric active object
+        console.log(i,'i');
+        overlayCanvases[i].remove(overlayCanvases[i].getActiveObject());
+        
+      }
     }
   }
 });

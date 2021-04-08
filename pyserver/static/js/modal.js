@@ -35,7 +35,7 @@ const readJSO = function (input) {
                 let parsedData;
                 console.log(JSON.stringify(res));
                 // python server
-                const url = "http://13.235.82.47:4000/json";
+                const url = "http://localhost:4000/json";
                 const othePram = {
                     headers: {
                         "content-type": "application/json; charset=UTF-8",
@@ -202,7 +202,7 @@ $("#print").on("click", function (e) {
     print();
 });
 
-function print() {
+const print = async () => {
     $("#loader").toggle();
     $(".main").css({ opacity: 0.5 });
 
@@ -233,9 +233,9 @@ function print() {
     } else {
         // Todo: create multiple pages
         const opt = {
-            image: { type: "jpeg", quality: 5 },
+            image: { type: "jpeg", quality: 3 },
             html2canvas: {
-                scale: 5,
+                scale: 3,
                 dpi: 200,
                 letterRendering: true,
                 width: ele.clientWidth, // 1145
@@ -243,32 +243,27 @@ function print() {
                 useCORS: true
             },
         };
-        var _results = [];
-        var proms = [];
-        for (var i = 0; i < totalPagesNumber; ++i) {
-            const ele = document.querySelector(`#wd-${i}`);
-            proms.push(
-                html2pdf().set(opt).from(ele).outputImg("dataurlstring").then((result) => { _results.push({ index: i, result: result }); })
+        await createPDF(doc, opt, totalPagesNumber);
+        doc.save(filename);
+        alert("Downloading PDF completed!!!");
+        $("#loader").toggle();
+        $(".main").css({ opacity: 1 });
+    }
+}
+
+const createPDF = async (pdfDoc, options, totalPagesNumber) => {
+    for (var pageIndex = 0; pageIndex < totalPagesNumber; pageIndex++) {
+        const ele = document.querySelector(`#wd-${pageIndex}`);
+        await html2pdf().set(options).from(ele).outputImg("dataurlstring").then((result) => {
+            if (pageIndex != 0) pdfDoc.addPage();
+            pdfDoc.addImage(
+                result,
+                "jpeg",
+                0,
+                0,
+                pdfDoc.internal.pageSize.width,
+                pdfDoc.internal.pageSize.height
             );
-        }
-
-        Promise.all(proms).then(() => {
-            _results.forEach((item, id) => {
-                if (id != 0) doc.addPage();
-                doc.addImage(
-                    item.result,
-                    "jpeg",
-                    0,
-                    0,
-                    doc.internal.pageSize.width,
-                    doc.internal.pageSize.height
-                );
-            })
-
-            doc.save(filename);
-            alert("Downloading PDF completed!!!");
-            $("#loader").toggle();
-            $(".main").css({ opacity: 1 });
         });
     }
 }

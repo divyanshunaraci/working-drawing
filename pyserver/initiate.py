@@ -15,7 +15,7 @@ import json
 
 
 
-j_open = open('dev/json/New Version Test Json Kitchen no error.json',) # opening json file
+j_open = open('dev/json/JSON_233.json',) # opening json file
 data = json.load(j_open) #returns json object as dictionary
 
 new_val = fpv.floor_plan_validation(data)

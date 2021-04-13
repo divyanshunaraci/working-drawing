@@ -35,7 +35,7 @@ const readJSO = function (input) {
                 let parsedData;
                 console.log(JSON.stringify(res));
                 // python server
-                const url = "http://13.235.82.47:4000/json";
+                const url = "http://localhost:4000/json";
                 const othePram = {
                     headers: {
                         "content-type": "application/json; charset=UTF-8",
@@ -202,7 +202,7 @@ $("#print").on("click", function (e) {
     print();
 });
 
-function print() {
+const print = async () => {
     $("#loader").toggle();
     $(".main").css({ opacity: 0.5 });
 
@@ -233,9 +233,9 @@ function print() {
     } else {
         // Todo: create multiple pages
         const opt = {
-            image: { type: "jpeg", quality: 5 },
+            image: { type: "jpeg", quality: 3 },
             html2canvas: {
-                scale: 5,
+                scale: 3,
                 dpi: 200,
                 letterRendering: true,
                 width: ele.clientWidth, // 1145
@@ -243,32 +243,27 @@ function print() {
                 useCORS: true
             },
         };
-        var _results = [];
-        var proms = [];
-        for (var i = 0; i < totalPagesNumber; ++i) {
-            const ele = document.querySelector(`#wd-${i}`);
-            proms.push(
-                html2pdf().set(opt).from(ele).outputImg("dataurlstring").then((result) => { _results.push({ index: i, result: result }); })
+        await createPDF(doc, opt, totalPagesNumber);
+        doc.save(filename);
+        alert("Downloading PDF completed!!!");
+        $("#loader").toggle();
+        $(".main").css({ opacity: 1 });
+    }
+}
+
+const createPDF = async (pdfDoc, options, totalPagesNumber) => {
+    for (var pageIndex = 0; pageIndex < totalPagesNumber; pageIndex++) {
+        const ele = document.querySelector(`#wd-${pageIndex}`);
+        await html2pdf().set(options).from(ele).outputImg("dataurlstring").then((result) => {
+            if (pageIndex != 0) pdfDoc.addPage();
+            pdfDoc.addImage(
+                result,
+                "jpeg",
+                0,
+                0,
+                pdfDoc.internal.pageSize.width,
+                pdfDoc.internal.pageSize.height
             );
-        }
-
-        Promise.all(proms).then(() => {
-            _results.forEach((item, id) => {
-                if (id != 0) doc.addPage();
-                doc.addImage(
-                    item.result,
-                    "jpeg",
-                    0,
-                    0,
-                    doc.internal.pageSize.width,
-                    doc.internal.pageSize.height
-                );
-            })
-
-            doc.save(filename);
-            alert("Downloading PDF completed!!!");
-            $("#loader").toggle();
-            $(".main").css({ opacity: 1 });
         });
     }
 }
@@ -435,6 +430,104 @@ function getProjects(projectNo, versionNo) {
     });
 }
 
+const heightOutput = document.querySelector('#height');
+const widthOutput = document.querySelector('#width');
+
+function reportWindowSize() {
+    heightOutput.textContent = window.innerHeight;
+    widthOutput.textContent = window.innerWidth;
+}
+
+// window.onresize
+
+// function showVersionAndPrjNo() {
+//     modal.style.display = "block";
+//     document.getElementById('versionNumber').innerHTML = ''
+//     document.getElementById('modal').innerHTML = ''
+//     userPrj = [], version = [];
+//     $("#loader").toggle();
+//     $(".modal").css({ opacity: 0.5 });
+//     const userId = localStorage.getItem("userId");
+//     let userProject = [];
+//     console.log(document.getElementById('modal'), localStorage.getItem("token"), userId);
+//     fetch('http://13.233.101.175:8080/api/project/wdProject', {
+//         method: 'GET',
+//         headers: {
+//             'Content-type': 'application/json', // The type of data you're sending
+//             'authorization': localStorage.getItem("token")
+//         }
+//     }).then(function (response) {
+//         console.log(response)
+//         if (response.ok) {
+//             return response.json();
+//         }
+//         return Promise.reject(response);
+//     }).then(function (data) {
+//         console.log(data);
+//         $("#loader").toggle();
+//         $(".modal").css({ opacity: 1 });
+//         let project = [];
+//         data.forEach(el => {
+//             console.log(data, 'data');
+//             if (el.workingDrawing) {
+//                 let obj = {
+//                     "project_no": el.project_no,
+//                     "version": el.workingDrawing
+//                 }
+//                 userProject.push(el.project_no);
+//                 // version.push(el.workingDrawing);
+//                 version.push(obj);
+//             }
+//         })
+//         if (userProject.length === 0 && version.length === 0) {
+//             document.getElementById('modal').innerHTML += '<br>' + 'Version not found';
+//             return;
+//         }
+//         userPrj = [...userProject]
+//         console.log(userPrj);
+//         // userPrj.forEach(function (el) {
+//         //     document.getElementById('modal').innerHTML += '<br>' + el;
+//         // })
+//         console.log(version, 'version');
+//         version.forEach(function (el) {
+//             console.log(el);
+//             document.getElementById('modal').innerHTML += el.project_no;
+//             if (window.innerWidth == screen.width) {
+//                 for (let i = 0; i < el.version.length / 14; i++) {
+//                     document.getElementById('modal').innerHTML += '<br>'
+//                 }
+//             }
+//             else if (window.innerWidth < screen.width) {
+//                 for (let i = 0; i < el.version.length / 11; i++) {
+//                     document.getElementById('modal').innerHTML += '<br>'
+//                 }
+//             }
+//             let i = 0;
+//             // document.getElementById('versionNumber').innerHTML += '<br>'
+//             el.version.forEach(function (ele) {
+//                 // ele.wdFile = 'https://naraci-test.s3.ap-south-1.amazonaws.com/5ea7fd5fc5c27f1e749fc39c/v1/New+Version+Test+Json+Kitchen+copy.json'
+//                 ++i;
+//                 document.getElementById('versionNumber').innerHTML += ele.version + ' ' + `<i id=${ele.version}-${el.project_no} class="fa fa-download" style="margin-right:2%;"></i>`
+//                 if (i == 14 && window.innerWidth == screen.width) {
+//                     document.getElementById('versionNumber').innerHTML += '<br>';
+//                     i = 0;
+//                 }
+//                 if (i == 11 && window.innerWidth < screen.width) {
+//                     document.getElementById('versionNumber').innerHTML += '<br>';
+//                     i = 1;
+//                 }
+//             })
+//             document.getElementById('versionNumber').innerHTML += '<br>'
+//         })
+//         console.log(userPrj.length, version.length);
+
+//     }).catch(function (error) {
+//         console.warn('Something went wrong.', error);
+//     });
+// }
+
+// btn.onclick = showVersionAndPrjNo()
+
 btn.onclick = function () {
     modal.style.display = "block";
     userPrj = [], version = [];
@@ -477,19 +570,40 @@ btn.onclick = function () {
             return;
         }
         userPrj = [...userProject]
-        userPrj.forEach(function (el) {
-            document.getElementById('modal').innerHTML += '<br>' + el;
-        })
+        console.log(userPrj);
+        // userPrj.forEach(function (el) {
+        //     document.getElementById('modal').innerHTML += '<br>' + el;
+        // })
         console.log(version, 'version');
         version.forEach(function (el) {
             console.log(el);
-            document.getElementById('versionNumber').innerHTML += '<br>'
+            document.getElementById('modal').innerHTML += el.project_no;
+            if (window.innerWidth == screen.width) {
+                for (let i = 0; i < el.version.length / 14; i++) {
+                    document.getElementById('modal').innerHTML += '<br>'
+                }
+            }
+            else if (window.innerWidth < screen.width) {
+                for (let i = 0; i < el.version.length / 11; i++) {
+                    document.getElementById('modal').innerHTML += '<br>'
+                }
+            }
+            let i = 0;
+            // document.getElementById('versionNumber').innerHTML += '<br>'
             el.version.forEach(function (ele) {
                 // ele.wdFile = 'https://naraci-test.s3.ap-south-1.amazonaws.com/5ea7fd5fc5c27f1e749fc39c/v1/New+Version+Test+Json+Kitchen+copy.json'
-
-                document.getElementById('versionNumber').innerHTML += ele.version + ' ' + `<i id=${ele.version}-${el.project_no} class="fa fa-download" style="margin-right:2%;"></i>` + '  '
+                ++i;
+                document.getElementById('versionNumber').innerHTML += ele.version + ' ' + `<i id=${ele.version}-${el.project_no} class="fa fa-download" style="margin-right:2%;"></i>`
+                if (i == 15 && window.innerWidth == screen.width) {
+                    document.getElementById('versionNumber').innerHTML += '<br>';
+                    i = 1;
+                }
+                if (i == 11 && window.innerWidth < screen.width) {
+                    document.getElementById('versionNumber').innerHTML += '<br>';
+                    i = 1;
+                }
             })
-            // document.getElementById('versionNumber').innerHTML +=  '<br>'
+            document.getElementById('versionNumber').innerHTML += '<br>'
         })
         console.log(userPrj.length, version.length);
 

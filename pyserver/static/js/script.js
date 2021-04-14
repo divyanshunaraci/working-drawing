@@ -227,7 +227,7 @@ const renderAll = () => {
         }
         // other views like RoomSubView, RenderView ...
         else {
-            renderView(state.projectInfo, view, id);
+            renderView(view, id);
             if (viewTypes.includes(view.getName())) {
             }
             if (view.type === "ImageView") {

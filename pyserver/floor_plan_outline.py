@@ -7,7 +7,6 @@ import requests
 import copy
 import numpy as np
 import threading
-import internal_fix
 
 
 # This class is used to develop the data for ground floors and room_top_view
@@ -59,9 +58,7 @@ class floor_plan_outline1(object):
                     if len(values) == 3:
                         if len(values[2]) == 3:
                             if lines == 'horizontal':
-                                str_name = 'h' + \
-                                    str(values[2][1][0])+'&' + \
-                                    str(values[2][1][1])
+                                str_name = 'h'+str(values[2][1][0])+'&'+str(values[2][1][1])
                                 list_hor.append(str_name)
                                 if len(list_hor) == len(list(set(list_hor))):
                                     hori.append([[values[2][1][0], values[2][2][0]], [
@@ -70,26 +67,19 @@ class floor_plan_outline1(object):
                                 else:
                                     list_hor = list(set(list_hor))
                                     strr2 = all_detail_dict[lines][keys][i][2][0]
-                                    # if it shouldnt be drawn then change the value to just string without x1 y1x2y2 here we are also updating the original dataset and remove the duplicate dimension from the points. It helps to keep a clean data for the future uses. However this data has not been used again in this code currently.
-                                    self.all_detail[lines][keys][i][2] = [
-                                        strr2]
+                                    self.all_detail[lines][keys][i][2] =[strr2]## if it shouldnt be drawn then change the value to just string without x1 y1x2y2 here we are also updating the original dataset and remove the duplicate dimension from the points. It helps to keep a clean data for the future uses. However this data has not been used again in this code currently. 
                             else:
-                                str_name = 'v' + \
-                                    str(values[2][2][0])+'&' + \
-                                    str(values[2][2][1])
+                                str_name = 'v'+str(values[2][2][0])+'&'+str(values[2][2][1])
                                 list_ver.append(str_name)
                                 if len(list_ver) == len(list(set(list_ver))):
-                                    vert.append([[values[2][1][0], values[2][2][0]], [
-                                                values[2][1][1], values[2][2][1]]])
-
+                                    vert.append([[values[2][1][0],values[2][2][0]],[values[2][1][1],values[2][2][1]]])
+                                    
                                 else:
                                     list_ver = list(set(list_ver))
                                     strr2 = all_detail_dict[lines][keys][i][2][0]
-                                    self.all_detail[lines][keys][i][2] = [
-                                        strr2]
-        lengths = {'x0': self.x0, 'y0': self.y0, 'xn': self.xn, 'yn': self.yn,
-                   'length': self.xn-self.x0, 'width': self.yn - self.y0}
-        return {'dimension': hori+vert, 'lengths': lengths}
+                                    self.all_detail[lines][keys][i][2] =[strr2]##
+        lengths = {'x0' :self.x0, 'y0' : self.y0 , 'xn' : self.xn, 'yn' :self.yn, 'length' : self.xn-self.x0, 'width' : self.yn- self.y0}
+        return {'dimension' : hori+vert, 'lengths' : lengths}
 
     """@property
     #The following method was used for development purposes
@@ -445,10 +435,6 @@ class floor_plan_outline1(object):
         return ls
 
 
-class floor_plan_validation(object):
-    def __init__(self, j_object):
-        self.j_object = j_object
-
 
 # This is the main class where data comes from HTML and sent back to HTML using hte object named .new_object
 class floor_plan_additional(object):
@@ -472,15 +458,16 @@ class floor_plan_additional(object):
             drawing_1_list, j_object['floor_plan']['thickness'])
         # fp0.plot_all_outer_dim
         j_object['floor_plan']['dimension'] = fp0.data
+        j_object['room_names'] = room_names
         del j_object['floor_plan']['thickness']
 
         #room_name =['KITCHEN','GBR']#['GBR']#
 
-        view_angle = ['front_view', 'internal_view']  # ['internal_view']# as
+        view_angle =['top_view','front_view','internal_view'] #
 
         for key1 in room_names:
             if j_object['rooms'].has_key(key1):
-                # ['room_top_view','view_1','view_2']#['view_1']#
+                
                 view_name = room_view_name[key1]
                 for key2 in view_name:
                     if j_object['rooms'][key1].has_key(key2):
@@ -496,6 +483,8 @@ class floor_plan_additional(object):
                             fp4 = floor_plan_component1(
                                 key1, key2, data_from_1_room_top_view, j_object)
                             j_object['rooms'][key1][key2]['dimension'] = fp4.data
+                            j_object['rooms'][key1][key2]['component'] = fp4.components
+                            j_object['rooms'][key1][key2]['texts'] = fp4.texts
                             del j_object['rooms'][key1][key2]['thickness']
                         else:
                             for key3 in view_angle:
@@ -504,9 +493,7 @@ class floor_plan_additional(object):
                                     fp3 = floor_plan_component1(
                                         key1, key2, key3, j_object)
                                     j_object['rooms'][key1][key2][key3]['dimension'] = fp3.data
-                                removed_value = j_object['rooms'][key1][key2].pop(
-                                    'top_view', 'No Key found')
-                                print ('removed_value: ', removed_value)
+                                    j_object['rooms'][key1][key2][key3]['component'] = fp3.components
 
         return j_object
 
@@ -518,8 +505,7 @@ class floor_plan_additional(object):
                 if 'library' in j_object['rooms'][room_name][view_name]['floor_components']:
                     for items in j_object['rooms'][room_name][view_name]['floor_components']['library']:
                         if 'outline' in j_object['rooms'][room_name][view_name]['floor_components']['library'][items]:
-                            drawing_4_list = drawing_4_list + \
-                                j_object['rooms'][room_name][view_name]['floor_components']['library'][items]['outline']
+                            drawing_4_list= drawing_4_list+ j_object['rooms'][room_name][view_name]['floor_components']['library'][items]['outline']
             for i in range(len(drawing_4_list)-1, 0, -1):
                 if len(drawing_4_list[i][0]) == 0:
                     del drawing_4_list[i]
@@ -544,11 +530,19 @@ class floor_plan_component1(object):
 
             self.all_1_data = view_angle
 
-        self.dimension_dict = self.return_new_j_object(self)
+        self.dimension_list, self.component, self.ID_dict = self.return_new_j_object(self)
 
     @property
-    def data(self):  # data to return
-        return self.dimension_dict
+    def components(self):
+        return self.component    
+    
+    @property
+    def data(self): #data to return
+        return self.dimension_list
+    
+    @property
+    def texts(self):
+        return self.ID_dict
 
     # @property
     # def draw_c_outline(self):
@@ -557,10 +551,10 @@ class floor_plan_component1(object):
     @staticmethod
     def return_new_j_object(self):
         if self.view_name == 'room_top_view':
-            drawing_list = self.output_list_room_top_views(self)
+            drawing_list, component_list, ID_dict = self.output_list_room_top_views(self)  
         else:
-            drawing_list = self.output_list_views(self)
-        return drawing_list
+            drawing_list, component_list, ID_dict = self.output_list_views(self)
+        return drawing_list, component_list, ID_dict
 
     @staticmethod
     def __clean_drawing_list(drawing_list):
@@ -575,8 +569,10 @@ class floor_plan_component1(object):
     def output_list_room_top_views(self):
         #
         dict_for_view = {}
+        ID_dict = {}
         room_name, view_name, j_object = self.room_name, self.view_name, self.j_object
         if 'outline' in j_object['rooms'][room_name][view_name]:
+            component_list = []
             drawing_1_list = j_object['rooms'][room_name][view_name]['outline']
             if len(drawing_1_list) != 0:
                 drawing_1_list = self.__clean_drawing_list(drawing_1_list)
@@ -596,76 +592,72 @@ class floor_plan_component1(object):
                             dict_for_view[items] = self.__create_dict(
                                 self, drawing_2_list)
                             drawing_1_list += drawing_2_list
+                            component_list += drawing_2_list
+                            ID_dict[items] =  dict_for_view[items]['dims']
 
                         # Getting the dimension list from dictionary and the list of demarkation of rooms
                 dimension_list = self.__creating_dimensions_room_top_view(
                     self, dict_for_view, drawing_1_list)
 
-                return dimension_list
+                """ t_d2 = dict1[keys]['dims']
+            x0c, y0c = t_d2['x0'], t_d2['y0']
+            xnc, ync = t_d2['xn'], t_d2['yn']"""
+                return dimension_list, component_list, ID_dict
             else:  # if outline of room top view is empty
-                return {}
+                return [], [], {}
         else:  # if outline does not exist in room top view
-            return {}
+            return [], [], {}
 
     @staticmethod
     def output_list_views(self):
 
-        dict_for_view = {}
-
-        room_name, view_name, view_angle, j_object = self.room_name, self.view_name, self.view_angle, self.j_object
-
+        dict_for_view={}
+              
+        room_name, view_name, view_angle, j_object = self.room_name,self.view_name,self.view_angle, self.j_object
+        component_list = []
+        
         if j_object['rooms'][room_name][view_name][view_angle].has_key('outline'):
             drawing_1_list = []
-            drawing_1_list = j_object['rooms'][room_name][view_name][view_angle]['outline']
+            drawing_1_list = j_object['rooms'][room_name][view_name][view_angle]['outline'] 
 
-            if len(drawing_1_list) != 0:
-                dict_for_view['outline'] = self.__create_dict(
-                    self, drawing_1_list, True)
-
+            if len(drawing_1_list) != 0 :
+                dict_for_view['outline'] = self.__create_dict(self,drawing_1_list,True)
+                
                 if 'floor_components' in j_object['rooms'][room_name][view_name][view_angle]:
                     if 'library' in j_object['rooms'][room_name][view_name][view_angle]['floor_components']:
                         for items in j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library']:
                             if 'external_points' in j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]:
                                 drawing_2_list = []
-                                # 'fillers'
-                                for internal_items in ['internal', 'carcass', 'skirting', 'loft_skirting', 'cover_panels', 'fillers']:
+                                for internal_items in ['internal','carcass','skirting','loft_skirting','cover_panels','fillers']: #'fillers'
                                     if internal_items in j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]['external_points']:
-                                        test_int = internal_fix.testing(
-                                            j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]['external_points'][internal_items])
-                                        if test_int == 0:
-                                            continue
-                                        drawing_2_list += j_object['rooms'][room_name][view_name][view_angle][
-                                            'floor_components']['library'][items]['external_points'][internal_items]
-
+                                        drawing_2_list+= j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]['external_points'][internal_items]
+                                    
                                     if 'shutter' in j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]['external_points']:
                                         for item in j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]['external_points']['shutter']:
                                             if 'outline' in j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]['external_points']['shutter'][item]:
-                                                test_int = internal_fix.testing(
-                                                    j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]['external_points']['shutter'][item]['outline'])
-                                                if test_int == 0:
-                                                    continue
-                                                drawing_2_list += j_object['rooms'][room_name][view_name][view_angle][
-                                                    'floor_components']['library'][items]['external_points']['shutter'][item]['outline']
-                                                # since no handle dimension needed#drawing_4_list= drawing_4_list+ j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]['external_points']['shutter'][item]['handle']['outline']
-
+                                                drawing_2_list+= j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]['external_points']['shutter'][item]['outline']
+                                            if 'handle' in j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]['external_points']['shutter'][item]:
+                                                if 'outline' in j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]['external_points']['shutter'][item]['handle']:
+                                                    if len(j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]['external_points']['shutter'][item]['handle']['outline']) != 0:
+                                                        component_list += j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]['external_points']['shutter'][item]['handle']['outline']
+                                
+                                 
                                 if len(drawing_2_list) != 0:
-                                    drawing_1_list += drawing_2_list
-                                    dict_for_view[items] = self.__create_dict(
-                                        self, drawing_2_list)
+                                    drawing_1_list += drawing_2_list 
+                                    component_list += drawing_2_list
+                                    dict_for_view[items] = self.__create_dict(self,drawing_2_list)
+
 
                 if view_angle == 'internal_view':
-                    dimension_list = self.__creating_dimensions_internal(
-                        self, dict_for_view, drawing_1_list)
-                else:  # front view and top view
-                    dimension_list = self.__creating_dimensions_top_front(
-                        self, dict_for_view, drawing_1_list)
-
+                    dimension_list = self.__creating_dimensions_internal(self,dict_for_view,drawing_1_list)
+                else: #front view and top view
+                    dimension_list = self.__creating_dimensions_top_front(self,dict_for_view,drawing_1_list) 
+                    
             else:
-                dimension_list = {}
+                dimension_list = []
         else:
-            dimension_list = {}
-        # plt.show()
-        return dimension_list
+            dimension_list = []
+        return dimension_list, component_list, {}
 
     @staticmethod
     def __component_ID_detail(dict1):
@@ -716,63 +708,50 @@ class floor_plan_component1(object):
     @staticmethod
     def __creating_dimensions_internal(self, dict1, drawing_list):
         #the_array = self.__creating_drawing_shade(dict1)
-        dim_dict, dimension_list, outline_dim = {
-            'hor': {}, 'ver': {}}, [], dict1['outline']['dims']
+        dim_dict, dimension_list, outline_dim = {'hor':{}, 'ver': {}}, [], dict1['outline']['dims']
+       
+        dim_dict, dimension_list = self.draw_inner_dimension_component(self,dim_dict,dimension_list,dict1)
+        
+        x0, y0, xn, yn = outline_dim['x0'], outline_dim['y0'], outline_dim['xn'], outline_dim['yn']    #xi0, yi0, xin, yin = outline_dim['xi0'], outline_dim['yi0'], outline_dim['xin'], outline_dim['yin']   
+        lengths = {'x0' :x0, 'y0' : y0 , 'xn' : xn, 'yn' :yn, 'length' : xn-x0, 'width' : yn- y0}
+        com_ID= self.__component_ID_detail(dict1)
+        
 
-        dim_dict, dimension_list = self.draw_inner_dimension_component(
-            self, dim_dict, dimension_list, dict1)
-
-        # xi0, yi0, xin, yin = outline_dim['xi0'], outline_dim['yi0'], outline_dim['xin'], outline_dim['yin']
-        x0, y0, xn, yn = outline_dim['x0'], outline_dim['y0'], outline_dim['xn'], outline_dim['yn']
-        lengths = {'x0': x0, 'y0': y0, 'xn': xn,
-                   'yn': yn, 'length': xn-x0, 'width': yn - y0}
-        com_ID = self.__component_ID_detail(dict1)
-
-        return {'dimension': dimension_list, 'lengths': lengths, 'IDs': com_ID}
+        return {'dimension': dimension_list, 'lengths': lengths, 'IDs':com_ID}
 
     @staticmethod
     def draw_inner_dimension_component(self, dim_dict, dimension_list, dict1):
-        for keys in dict1:  # this we are doing for inner dimension of the component
+        for keys in dict1: #this we are doing for inner dimension of the component
             if keys == 'outline':
                 continue
+            
+            ls1, ls2 = self.__reveal_keys(dict1[keys]['horizontal']), self.__reveal_keys(dict1[keys]['vertical'])
 
-            ls1, ls2 = self.__reveal_keys(
-                dict1[keys]['horizontal']), self.__reveal_keys(dict1[keys]['vertical'])
-
-            dim_dict, dimension_list = self.make_horizontal_vertical_line_internal(
-                ls1, 'ver', dim_dict, dimension_list, keys, dict1)  # str1 ==ver or hor
-            dim_dict, dimension_list = self.make_horizontal_vertical_line_internal(
-                ls2, 'hor', dim_dict, dimension_list, keys, dict1)  # str1 ==ver or hor
+            dim_dict, dimension_list =self.make_horizontal_vertical_line_internal(ls1,'ver',dim_dict,dimension_list,keys,dict1) #str1 ==ver or hor
+            dim_dict, dimension_list =self.make_horizontal_vertical_line_internal(ls2,'hor',dim_dict,dimension_list,keys,dict1) #str1 ==ver or hor
         return dim_dict, dimension_list
 
     @staticmethod
     # str1 ==ver or hor
     def make_horizontal_vertical_line_internal(ls1, str1, dim_dict, dimension_list, keys, dict1):
         f_str1 = 'horizontal' if str1 == 'ver' else 'vertical'
-        for i in range(len(ls1)-2):
+        for i in range(len(ls1)-2):        
             if ls1[i+1] - ls1[i] > 50:
-                ver_string = 'v' + str(ls1[i]) + '&' + str(
-                    ls1[i+1]) if str1 == 'ver' else 'h' + str(ls1[i]) + '&' + str(ls1[i+1])
+                ver_string = 'v' + str(ls1[i]) + '&' + str(ls1[i+1]) if str1 == 'ver' else 'h' + str(ls1[i]) + '&' + str(ls1[i+1])
                 if not dim_dict[str1].has_key(ver_string):
-                    x_opt = 100 + \
-                        max(dict1[keys][f_str1][ls1[i]][0][0],
-                            dict1[keys][f_str1][ls1[i+1]][0][0])
-                    dim_dict[str1][ver_string] = [x_opt, [ls1[i], ls1[i+1]]]
-                    # if str1 == 'ver':
-                    #     randomNumber = 1
-                    #     #dimension_list.append(
-                    #     #    [[x_opt, ls1[i]], [x_opt, ls1[i+1]]])
-                    # else:
-                    #     randomNumber = 1
-                    #     #dimension_list.append(
-                    #     #    [[ls1[i], x_opt], [ls1[i+1], x_opt]])
+                    x_opt = 100 + max(dict1[keys][f_str1][ls1[i]][0][0],dict1[keys][f_str1][ls1[i+1]][0][0])
+                    dim_dict[str1][ver_string] = [x_opt,[ls1[i],ls1[i+1]]]
+                    if str1 == 'ver':
+                        dimension_list.append([[x_opt,ls1[i]],[x_opt,ls1[i+1]]])  
+                    else:
+                        dimension_list.append([[ls1[i],x_opt],[ls1[i+1],x_opt]]) 
         return dim_dict, dimension_list
 
     @staticmethod
     def __draw_overall_dimension_component(self, dict1, str1, dim_dict, the_array, outline_dim, outer_dim_dict, dimension_list):
-        # this we are doing for overall dimension of the component
+        #this we are doing for overall dimension of the component
 
-        for keys in dict1:
+        for keys in dict1: 
             if keys == 'outline':
                 continue
             t_d2 = dict1[keys]['dims']
@@ -782,46 +761,38 @@ class floor_plan_component1(object):
             ver_string = 'v' + str(y0c) + '&' + str(ync)
 
             if dim_dict['hor'].has_key(hor_string) and dim_dict['ver'].has_key(ver_string):
-                then_chill = 1  # because both the dimensions are already displayed and listed in dim_dict
+                then_chill = 1 #because both the dimensions are already displayed and listed in dim_dict
 
-            # vertical exists but horizontal does not exist
-            elif not dim_dict['hor'].has_key(hor_string) and dim_dict['ver'].has_key(ver_string):
+            elif not dim_dict['hor'].has_key(hor_string) and dim_dict['ver'].has_key(ver_string): #vertical exists but horizontal does not exist
                 if str1 == 'room_top_view':
-                    y_opt = self.__update_hornver_dim_room_top_view(
-                        self, t_d2, the_array, outline_dim, outer_dim_dict, 'y_opt')
+                    y_opt = self.__update_hornver_dim_room_top_view(self,t_d2,the_array,outline_dim,outer_dim_dict,'y_opt')
                 else:
-                    y_opt = self.__update_hornver_dim(
-                        self, t_d2, the_array, outline_dim, outer_dim_dict, 'y_opt')
-
-                dim_dict['hor'][hor_string] = [y_opt, [x0c, xnc]]
-                #dimension_list.append([[x0c, y_opt], [xnc, y_opt]])
-
-            # horizontal exists but vertical does not exists
-            elif dim_dict['hor'].has_key(hor_string) and not dim_dict['ver'].has_key(ver_string):
+                    y_opt = self.__update_hornver_dim(self,t_d2,the_array,outline_dim,outer_dim_dict,'y_opt')
+                
+                dim_dict['hor'][hor_string] = [y_opt, [x0c,xnc]]
+                dimension_list.append([[x0c,y_opt],[xnc,y_opt]])
+            
+            elif dim_dict['hor'].has_key(hor_string) and not dim_dict['ver'].has_key(ver_string): #horizontal exists but vertical does not exists
                 if str1 == 'room_top_view':
-                    x_opt = self.__update_hornver_dim_room_top_view(
-                        self, t_d2, the_array, outline_dim, outer_dim_dict, 'x_opt')
+                    x_opt = self.__update_hornver_dim_room_top_view(self,t_d2,the_array,outline_dim,outer_dim_dict,'x_opt')
                 else:
-                    x_opt = self.__update_hornver_dim(
-                        self, t_d2, the_array, outline_dim, outer_dim_dict, 'x_opt')
+                    x_opt = self.__update_hornver_dim(self,t_d2,the_array,outline_dim,outer_dim_dict,'x_opt')
 
-                dim_dict['ver'][ver_string] = [x_opt, [y0c, ync]]
-                #dimension_list.append([[x_opt, y0c], [x_opt, ync]])
+                dim_dict['ver'][ver_string] = [x_opt, [y0c,ync]]
+                dimension_list.append([[x_opt,y0c],[x_opt,ync]])
 
-            else:  # both L and B of the component do not exist
+            else: # both L and B of the component do not exist
                 if str1 == 'room_top_view':
-                    x_opt, y_opt = self.__update_hornver_dim_room_top_view(
-                        self, t_d2, the_array, outline_dim, outer_dim_dict, 'xy_opt')
+                    x_opt, y_opt = self.__update_hornver_dim_room_top_view(self,t_d2,the_array,outline_dim,outer_dim_dict,'xy_opt')
                 else:
-                    x_opt, y_opt = self.__update_hornver_dim(
-                        self, t_d2, the_array, outline_dim, outer_dim_dict, 'xy_opt')
+                    x_opt, y_opt = self.__update_hornver_dim(self,t_d2,the_array,outline_dim,outer_dim_dict,'xy_opt')
                 # the problem is y_opt does not take into acccount if x1-x2 has already been shown
-
-                dim_dict['hor'][hor_string] = [y_opt, [x0c, xnc]]
-                #dimension_list.append([[x0c, y_opt], [xnc, y_opt]])
-
-                dim_dict['ver'][ver_string] = [x_opt, [y0c, ync]]
-                #dimension_list.append([[x_opt, y0c], [x_opt, ync]])
+                
+                dim_dict['hor'][hor_string] = [y_opt, [x0c,xnc]]
+                dimension_list.append([[x0c,y_opt],[xnc,y_opt]])
+            
+                dim_dict['ver'][ver_string] = [x_opt, [y0c,ync]]
+                dimension_list.append([[x_opt,y0c],[x_opt,ync]])
 
         return dimension_list
 
@@ -844,8 +815,8 @@ class floor_plan_component1(object):
             self, dict1, 'room_top_view', dim_dict, the_array, outline_dim, outer_dim_dict, dimension_list)
 
         # drawing inner dimension of hte component
-        dim_dict, dimension_list = self.draw_inner_dimension_component(
-            self, dim_dict, dimension_list, dict1)
+        # dim_dict, dimension_list = self.draw_inner_dimension_component(
+        #     self, dim_dict, dimension_list, dict1)
 
         x0, y0 = dict1['outline']['dims']['x0'], dict1['outline']['dims']['y0']
         xn, yn = dict1['outline']['dims']['xn'], dict1['outline']['dims']['yn']
@@ -864,8 +835,8 @@ class floor_plan_component1(object):
 
         # Add distances for components
 
-        dimension_list = self.__distance_to_component(
-            self, dict1, outer_dim_dict, dim_dict, dimension_list, 200)
+        # dimension_list = self.__distance_to_component(
+        #     self, dict1, outer_dim_dict, dim_dict, dimension_list, 200)
 
         lengths = {'x0': x0, 'y0': y0, 'xn': xn,
                    'yn': yn, 'length': xn-x0, 'width': yn - y0}
@@ -878,41 +849,45 @@ class floor_plan_component1(object):
         x0, y0 = dict1['outline']['dims']['x0'], dict1['outline']['dims']['y0']
         xn, yn = dict1['outline']['dims']['xn'], dict1['outline']['dims']['yn']
         xc0, yc0 = (x0 + xn)/2, (y0 + yn)/2
-
+        quad_info = {'hor':{1:set(),2:set(),3:set(),4:set()},'ver':{1:set(),2:set(),3:set(),4:set()} }
         for keys in dict1:
             if keys == 'outline':
                 continue
             t_d2 = dict1[keys]['dims']
             x0c, y0c = t_d2['x0'], t_d2['y0']
             xnc, ync = t_d2['xn'], t_d2['yn']
-            # Drawing the horizontal distance first
-            quadrant_x = x0c - xc0  # if negative then on the left side, otherwise right
-            quadrant_y = y0c - yc0  # if negative then on the bottom side, otherwise top
+            #Drawing the horizontal distance first
+            quadrant_x = (x0c+xnc)/2 - xc0 #if negative then on the left side, otherwise right
+            quadrant_y = (y0c+ync)/2 - yc0 #if negative then on the bottom side, otherwise top
 
             # total 4 cases
             if quadrant_x == 0 and quadrant_y == 0 or quadrant_x >= 0 and quadrant_y >= 0:  # quadrant 1 - top right
                 # define x1, x2, y1 and y2 for each case
                 x1, x2, y1, y2 = xnc, xn, ync, yn
-                hor_start_pt, ver_start_pt = yn + 200, xn + 200
+                #hor_start_pt, ver_start_pt = yn + 200, xn + 200
                 hor_up_down, ver_up_down = 1, 1
+                hor_start_pt, ver_start_pt = yn + hor_up_down * 200, xn + ver_up_down * 200
                 quadrant = 1
 
             elif quadrant_x <= 0 and quadrant_y <= 0:  # quadrant 3 - bottom left
                 x1, x2, y1, y2 = x0, x0c, y0, y0c
-                hor_start_pt, ver_start_pt = y0 - 200, x0 - 200
+                #hor_start_pt, ver_start_pt = y0 - 200, x0 - 200
                 hor_up_down, ver_up_down = -1, -1
+                hor_start_pt, ver_start_pt = y0 + hor_up_down * 200, x0 + ver_up_down * 200
                 quadrant = 3
 
             elif quadrant_x <= 0 and quadrant_y >= 0:  # quadrant 2 - top left
                 x1, x2, y1, y2 = x0, x0c, ync, yn
-                hor_start_pt, ver_start_pt = yn + 200, x0 - 200
+                #hor_start_pt, ver_start_pt = yn + 200, x0 - 200
                 hor_up_down, ver_up_down = 1, -1
+                hor_start_pt, ver_start_pt = yn + hor_up_down * 200, x0 + ver_up_down * 200
                 quadrant = 2
 
             elif quadrant_x >= 0 and quadrant_y <= 0:  # quadrant 4 - bottom right
                 x1, x2, y1, y2 = xnc, xn, y0, ync
-                hor_start_pt, ver_start_pt = y0 - 200, xn + 200
+                #hor_start_pt, ver_start_pt = y0 - 200, xn + 200
                 hor_up_down, ver_up_down = -1, 1
+                hor_start_pt, ver_start_pt = y0 + hor_up_down * 200, xn + ver_up_down * 200
                 quadrant = 4
 
             # check whether to draw horizontal or vertical dim
@@ -925,22 +900,69 @@ class floor_plan_component1(object):
                 ver_dim_check = False
 
             if hor_dim_check:
-                hor_string = 'h' + str(x1) + '&' + str(x2)
-                # then only draw later add it too
-                if not dim_dict['hor'].has_key(hor_string):
-                    y_new = self.__checking_outer_existence(
-                        self, outer_dim_dict, 'hor', hor_start_pt, hor_up_down, x1, x2, x0, xn, thickness)
+                quad_info['hor'][quadrant].add(x1) # storing the data earlier to squeeze it
+                quad_info['hor'][quadrant].add(x2) 
+
+            if ver_dim_check:
+                quad_info['ver'][quadrant].add(y1) # storing the data earlier to squeeze it
+                quad_info['ver'][quadrant].add(y2)
+
+        """ 
+            1: xn, yn, yn +1, xn +1
+            2: x0, yn, yn +1, x0 -1
+            3: x0, y0, y0 -1, x0 -1
+            4: xn, y0, y0 -1, xn +1 
+            """
+
+        #####
+        help_outer_dim_dis = {'hor':{1:1,2:1,3:-1,4:-1},'ver':{1:1,2:-1,3:-1,4:1}}
+
+        for dirn in list(quad_info): #'hor 'ver'
+            if dirn == 'hor': #when horizonal
+                zz = [y0, yn]
+                ww = [x0, xn]
+            else: #when vertical
+                zz = [x0, xn]
+                ww = [y0, yn]
+            for quad in list(quad_info[dirn]): #1 2 3 4 
+                all_coords = list(quad_info[dirn][quad])
+                all_coords.sort()
+                quad_info[dirn][quad] = all_coords
+                pick = 1 if help_outer_dim_dis[dirn][quad] == 1 else 0 #this determines which end is chosen
+                start_pt = zz[pick] + help_outer_dim_dis[dirn][quad]*200
+                up_down = help_outer_dim_dis[dirn][quad]
+                if len(all_coords) < 2:
+                    continue
+
+                z_optimum = self.__checking_outer_existence(self, outer_dim_dict, dirn, start_pt, up_down, all_coords[0], all_coords[-1], ww[0], ww[1], thickness) 
+                # at the location of z_optimum all the dimension are drawn in all_coords
+                for it1 in range(0, len(all_coords)-1):
+                    if all_coords[it1+1] - all_coords[it1] < 30 :
+                        continue
+                    zer_string = dirn[0] + str(all_coords[it1]) +'&'+ str(all_coords[it1+1])
+                    if not dim_dict[dirn].has_key(zer_string): #then only we draw and add
+                        #no need ot calculate the new location cause it is already calculated
+                        dim_dict[dirn][zer_string] = [z_optimum, [all_coords[it1], all_coords[it1+1]]]
+                        if dirn == 'hor':
+                            dimension_list.append([[all_coords[it1],z_optimum],[all_coords[it1+1],z_optimum]])
+                        else: #then 'ver'
+                            dimension_list.append([[z_optimum,all_coords[it1]],[z_optimum,all_coords[it1+1]]])
+
+
+            """if hor_dim_check:
+                hor_string = 'h' + str(x1) + '&' + str(x2) 
+                if not dim_dict['hor'].has_key(hor_string): #then only draw later add it too
+                    y_new = self.__checking_outer_existence(self,outer_dim_dict, 'hor', hor_start_pt, hor_up_down, x1, x2, x0, xn, thickness)
                     dim_dict['hor'][hor_string] = [y_new, [x1, x2]]
                     dimension_list.append([[x1, y_new], [x2, y_new]])
 
+            
             if ver_dim_check:
                 ver_string = 'v' + str(y1) + '&' + str(y2)
-                # then only draw later add it too
-                if not dim_dict['ver'].has_key(ver_string):
-                    x_new = self.__checking_outer_existence(
-                        self, outer_dim_dict, 'ver', ver_start_pt, ver_up_down, y1, y2, y0, yn, thickness)
+                if not dim_dict['ver'].has_key(ver_string): #then only draw later add it too
+                    x_new = self.__checking_outer_existence(self,outer_dim_dict, 'ver', ver_start_pt, ver_up_down, y1, y2, y0, yn, thickness)
                     dim_dict['ver'][ver_string] = [x_new, [y1, y2]]
-                    dimension_list.append([[x_new, y1], [x_new, y2]])
+                    dimension_list.append([[x_new,y1],[x_new,y2]])"""
 
         return dimension_list
 
@@ -955,13 +977,16 @@ class floor_plan_component1(object):
         outer_dim_dict = {'hor': {}, 'ver': {}}
         dimension_list = []
 
+        #distance to component
+        dimension_list = self.__distance_to_component(self, dict1, outer_dim_dict, dim_dict, dimension_list, 100)
+
         # drwaing overall component dimensions
         dimension_list = self.__draw_overall_dimension_component(
             self, dict1, 'top_front', dim_dict, the_array, outline_dim, outer_dim_dict, dimension_list)
 
         # drawing ineer dimension of hte componenets
-        dim_dict, dimension_list = self.draw_inner_dimension_component(
-            self, dim_dict, dimension_list, dict1)
+        # dim_dict, dimension_list = self.draw_inner_dimension_component(
+        #     self, dim_dict, dimension_list, dict1)
 
         x0, y0 = dict1['outline']['dims']['x0'], dict1['outline']['dims']['y0']
         xn, yn = dict1['outline']['dims']['xn'], dict1['outline']['dims']['yn']

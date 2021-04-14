@@ -249,84 +249,84 @@ const renderAll = () => {
 };
 
 // print statement
-$("#print").on("click", function (e) {
-    print();
-});
+// $("#print").on("click", function (e) {
+//     print();
+// });
 
-function print() {
-    $("#loader").toggle();
-    $(".main").css({ opacity: 0.5 });
+// function print() {
+//     $("#loader").toggle();
+//     $(".main").css({ opacity: 0.5 });
 
-    let totalPagesNumber = state.roomViews ? state.roomViews.length : 1;
-    const ele = document.querySelector(`#wd-0`);
-    ele.scrollIntoView({ block: "start" });
+//     let totalPagesNumber = state.roomViews ? state.roomViews.length : 1;
+//     const ele = document.querySelector(`#wd-0`);
+//     ele.scrollIntoView({ block: "start" });
 
-    let date = new Date();
-    let datestr = date.toISOString();
-    datestr = datestr.replace(/[^0-9]/g, "");
-    const filename = `Drawings_${datestr}.pdf`;
+//     let date = new Date();
+//     let datestr = date.toISOString();
+//     datestr = datestr.replace(/[^0-9]/g, "");
+//     const filename = `Drawings_${datestr}.pdf`;
 
-    let doc = new jsPDF("l", "px", [ele.clientWidth, ele.clientHeight]);
-    if (totalPagesNumber === 1) {
-        const ele = document.getElementById(`wd-0`);
-        //console.log(ele.clientWidth, ele.clientHeight);
-        const opt = {
-            filename: filename,
-            image: { type: "jpeg", quality: 1 },
-            html2canvas: { scale: 3 },
-            jsPDF: { unit: "px", format: [ele.clientWidth, ele.clientHeight], orientation: "l" },
-        };
-        html2pdf().set(opt).from(ele).save();
+//     let doc = new jsPDF("l", "px", [ele.clientWidth, ele.clientHeight]);
+//     if (totalPagesNumber === 1) {
+//         const ele = document.getElementById(`wd-0`);
+//         //console.log(ele.clientWidth, ele.clientHeight);
+//         const opt = {
+//             filename: filename,
+//             image: { type: "jpeg", quality: 1 },
+//             html2canvas: { scale: 3 },
+//             jsPDF: { unit: "px", format: [ele.clientWidth, ele.clientHeight], orientation: "l" },
+//         };
+//         html2pdf().set(opt).from(ele).save();
 
-        $("#loader").toggle();
-        $(".main").css({ opacity: 1 });
-    } else {
-        // Todo: create multiple pages
-        const opt = {
-            image: { type: "jpeg", quality: 5 },
-            html2canvas: {
-                scale: 5,
-                dpi: 200,
-                letterRendering: true,
-                width: ele.clientWidth,
-                height: ele.clientHeight,
-                useCORS: true
-            },
-        };
+//         $("#loader").toggle();
+//         $(".main").css({ opacity: 1 });
+//     } else {
+//         // Todo: create multiple pages
+//         const opt = {
+//             image: { type: "jpeg", quality: 5 },
+//             html2canvas: {
+//                 scale: 5,
+//                 dpi: 200,
+//                 letterRendering: true,
+//                 width: ele.clientWidth,
+//                 height: ele.clientHeight,
+//                 useCORS: true
+//             },
+//         };
 
-        var _results = [];
-        var proms = [];
-        for (var i = 0; i < totalPagesNumber; ++i) {
-            const ele = document.querySelector(`#wd-${i}`);
-            proms.push(
-                html2pdf().set(opt).from(ele).outputImg("dataurlstring").then((result) => { _results.push({ index: i, result: result }); })
-            );
-        }
+//         var _results = [];
+//         var proms = [];
+//         for (var i = 0; i < totalPagesNumber; ++i) {
+//             const ele = document.querySelector(`#wd-${i}`);
+//             proms.push(
+//                 html2pdf().set(opt).from(ele).outputImg("dataurlstring").then((result) => { _results.push({ index: i, result: result }); })
+//             );
+//         }
 
-        Promise.all(proms).then(() => {
-            _results.forEach((item, id) => {
-                if (id != 0) doc.addPage();
-                doc.addImage(
-                    item.result,
-                    "jpeg",
-                    0,
-                    0,
-                    doc.internal.pageSize.width,
-                    doc.internal.pageSize.height
-                );
-            })
+//         Promise.all(proms).then(() => {
+//             _results.forEach((item, id) => {
+//                 if (id != 0) doc.addPage();
+//                 doc.addImage(
+//                     item.result,
+//                     "jpeg",
+//                     0,
+//                     0,
+//                     doc.internal.pageSize.width,
+//                     doc.internal.pageSize.height
+//                 );
+//             })
 
-            doc.save(filename);
-            alert("Downloading PDF completed!!!");
-            $("#loader").toggle();
-            $(".main").css({ opacity: 1 });
-            // $(".main").empty();
+//             doc.save(filename);
+//             alert("Downloading PDF completed!!!");
+//             $("#loader").toggle();
+//             $(".main").css({ opacity: 1 });
+//             // $(".main").empty();
 
-        });
-        // $(".main").empty();
+//         });
+//         // $(".main").empty();
 
-    }
-}
+//     }
+// }
 
 //$(window).resize(resizeCanvas);
 var beforeWidth = $(window).width();

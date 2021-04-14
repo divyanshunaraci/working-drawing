@@ -263,6 +263,7 @@ const renderView = (view, id) => {
 
     // render 'external' items
     renderExternalItems(view, id);
+    // renderTableForRoom(view,id);
   }
   // else if view is 'AdditionalView'
   else if (viewName === "EXTRA_VIEW") {
@@ -281,6 +282,9 @@ const renderView = (view, id) => {
   else {
     const imgURL = view.getImgURL();
     renderRenderView(imgURL, id);
+  }
+  if(view.type == "RoomSubView"){
+    renderTableForRoom(view,id);
   }
 
   // render view details ( on footer table )
@@ -608,7 +612,6 @@ const renderOutline = (outline, id, type, dashPattern = []) => {
     externItem: { strokeStyle: "gray", lineWidth: "8" },
     opening: { strokeStyle: "lightblue", lineWidth: "8" },
   };
-
   const cx = document.querySelector(`#wd-${id} canvas`).getContext("2d");
 
   const path = outline;
@@ -1226,6 +1229,79 @@ const generateTable = (table, data) => {
     }
   }
 };
+const renderTableForRoom = (tableView,id) => {
+  // tableView.type = "TableView"
+  const compInfo = [];
+  for(let i=0;i<tableView.floorComponents.length;i++){
+    let obj = {};
+    obj.id = tableView.floorComponents[i].id
+    obj.name = tableView.floorComponents[i].name
+    obj.depth = tableView.floorComponents[i].details.depth
+    obj.height = tableView.floorComponents[i].details.height
+    obj.width = tableView.floorComponents[i].details.width
+    obj.accessories = tableView.floorComponents[i].details.accessories
+    obj.materials = tableView.floorComponents[i].details.materials
+    compInfo.push(obj);
+  }
+  if(compInfo.length>0){
+    const container = document.querySelector(`#wd-${id} .canvas-container`);
+
+    // container.style.overflow = "auto";
+
+    // create table
+    let table = document.createElement("table");
+    table.style.width = "100%";
+    table.setAttribute("border", "1");
+    table.classList.add("main-table");
+
+    //canvas width and height- console.log
+
+    //font size of the text
+    var multiply = container.clientHeight * container.clientWidth;
+
+    if (multiply / 4 < 6) {
+
+      table.style.fontSize = "8px";
+    } else if (multiply / 4 >= 6 && multiply / 4 < 12) {
+      table.style.fontSize = multiply / 4 + 'px';
+    } else {
+      table.style.fontSize = '12px';
+    }
+
+    // generate table head
+    const headData = ["S.No", ...Object.keys(compInfo[0])];
+    generateTableHead(table, headData);
+
+    // reorder compsInfo array
+    compInfo.sort(function (a, b) {
+      return Number(a.id.replace(/\D/g, "")) - Number(b.id.replace(/\D/g, ""));
+    });
+
+
+
+
+    // generate main content of table
+    const data = [];
+    compInfo.forEach((item, id) => {
+      data.push({
+        no: id + 1,
+        ...item,
+      });
+    });
+
+    //change the text size 6 px 
+    generateTable(table, data);
+
+
+
+    // add table to container
+    container.replaceChild(
+      table,
+      document.querySelector(`#wd-${id} .canvas-container canvas`)
+    );
+    container.style.pointerEvents = "all";
+  }
+}
 
 // render 'TableView'
 const renderTableView = (tableView, id) => {
@@ -1243,7 +1319,6 @@ const renderTableView = (tableView, id) => {
   table.classList.add("main-table");
 
   //canvas width and height- console.log
-  console.log(container.clientHeight, container.clientWidth);
 
   //font size of the text
   var multiply = container.clientHeight * container.clientWidth;
@@ -1256,9 +1331,6 @@ const renderTableView = (tableView, id) => {
   } else {
     table.style.fontSize = '12px';
   }
-
-  console.log(compsInfo);
-  console.log(compsInfo.length);
 
 
   // generate table head

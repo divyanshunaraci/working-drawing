@@ -25,7 +25,6 @@ var openNewJSON = false;
 
 const readJSO = function (input) {
     try {
-
         $("#loader").toggle();
         $(".main").css({ opacity: 0.5 });
         if (input) {
@@ -49,8 +48,7 @@ const readJSO = function (input) {
                     .then((response) => response.json())
                     .then((data) => {
                         parsedData = data;
-                        console.log(parsedData);
-
+                        // console.log(parsedData);
                         /* PARSE JSON data */
                         parseJSO(parsedData);
 

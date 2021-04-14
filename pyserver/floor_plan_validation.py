@@ -246,7 +246,7 @@ class floor_plan_validation(object):
                             warning_log.append('The room ' + items + ' does not contain render_individual_comps.' ) #warning
 
 
-                        view_number = 1
+                        '''view_number = 1
                         
                         while view_number !=0 :
                             view_number_name = 'view_' + str(view_number)
@@ -261,7 +261,16 @@ class floor_plan_validation(object):
                             else:
                                 if view_number == 1:
                                     warning_log.append('The room ' + items + ' contains no views.' ) #error
-                                view_number =0
+                                view_number =0'''
+                        
+                        for k in json_room.keys():
+                            if (k != 'room_top_view' and k != 'render_individual_components'):
+                                string_id_view_number = 'Json object[rooms][' + \
+                                    items+']['+k+']'
+                                error_log, warning_log = self._room_view_number(
+                                    self, string_id_view_number, json_room[k], error_log, warning_log)
+                                self.room_view_names[items].append(
+                                    k)
                         
                         
                         fake_room_name_list = self.room_view_names[items] #using it to delete additional items

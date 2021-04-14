@@ -230,7 +230,7 @@ const renderFloorPlan = (floorPlanView, id) => {
 };
 
 // render individual view
-const renderView = (view, id) => {
+const renderView = (projectInfo, view, id) => {
   const viewType = [
     "room_top_view",
     "top_view",
@@ -284,7 +284,7 @@ const renderView = (view, id) => {
   }
 
   // render view details ( on footer table )
-  renderViewDetail(view, id);
+  renderViewDetail(projectInfo, view, id);
 };
 
 // render 'render_wall_view'
@@ -294,7 +294,7 @@ const renderRenderView = (imgURL, id) => {
   // reset the canvas transform( setTransform is absolute transformation )
   cx.setTransform(1, 0, 0, 1, 0, 0);
   const image = new Image(canvas.width, canvas.height);
-  // image.setAttribute("crossorigin", "*")
+  image.setAttribute("crossorigin", "*")
   image.onload = drawImageActualSize; // Draw when image has loaded
 
   // Load an image of intrinsic size 300x227 in CSS pixels
@@ -504,7 +504,7 @@ const getAccHandlesInfo = (haView) => {
   return textObject;
 };
 // render view name on footer table
-const renderViewDetail = (view, id) => {
+const renderViewDetail = (projectInfo, view, id) => {
   const viewID = view.getID();
   $(`#wd-${id} .drawing-title`).text(`Drawing TITLE: ${viewID.split("+")[0]}`);
 };

@@ -1,8 +1,9 @@
 
 """
-cd ~
+cd ..
 cd myproject
 . venv/bin/activate
+cd Abhishek
 cd '/Volumes/GoogleDrive/My Drive/LAB PC and LAPTOP/Professional Initiatives/Upwork/Freelancer- Agency/Current Projects/Abhinshek/GitHub/floor-plan-unmerged'
 python2 server.py
 """

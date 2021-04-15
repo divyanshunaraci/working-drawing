@@ -593,7 +593,7 @@ btn.onclick = function () {
             el.version.forEach(function (ele) {
                 // ele.wdFile = 'https://naraci-test.s3.ap-south-1.amazonaws.com/5ea7fd5fc5c27f1e749fc39c/v1/New+Version+Test+Json+Kitchen+copy.json'
                 ++i;
-                document.getElementById('versionNumber').innerHTML += ele.version + ' ' + `<i id=${ele.version}-${el.project_no} class="fa fa-download" style="margin-right:2%;"></i>`
+                document.getElementById('versionNumber').innerHTML += ele.version + ' ' + `<i id=${ele.version}_${el.project_no} class="fa fa-download" style="margin-right:2%;"></i>`
                 if (i == 15 && window.innerWidth == screen.width) {
                     document.getElementById('versionNumber').innerHTML += '<br>';
                     i = 1;
@@ -634,8 +634,8 @@ window.onclick = function (event) {
 
 
 document.getElementById("versionNumber").onclick = function (e) {
-    console.log(e.target.id.split('-'), 'versionNumber', version);
-    prjAndVersionArr = e.target.id.split('-');
+    console.log(e.target.id.split('_'), 'versionNumber', version);
+    prjAndVersionArr = e.target.id.split('_');
     version.forEach(function (el) {
         if (el.project_no === prjAndVersionArr[1]) {
             console.log(el);

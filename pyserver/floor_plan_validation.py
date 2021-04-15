@@ -327,11 +327,7 @@ class floor_plan_validation(object):
                 if(json_room_top_view.has_key('views')):
                     json_room_top_view_views = json_room_top_view['views']
                     for views in json_room_top_view_views.keys():
-                        print(views,'LOL')
-                        print(len(json_room_top_view['views'][views]), 'LENGTH')
                         for i in range(0,(len(json_room_top_view['views'][views]))):
-                            print(i,'Range')
-                            print(json_room_top_view['views'][views][i][0][0], 'VIEWS')
                             json_room_top_view['views'][views][i][0][0] = json_room_top_view['views'][views][i][0][0] - limit_coord[0][0]
                             json_room_top_view['views'][views][i][0][1] = json_room_top_view['views'][views][i][0][1] - limit_coord[0][1]
                             json_room_top_view['views'][views][i][1][0] = json_room_top_view['views'][views][i][1][0] - limit_coord[0][0]

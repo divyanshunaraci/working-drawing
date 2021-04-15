@@ -113,6 +113,7 @@ const handleRoomTopView = (data, roomName) => {
     external = {},
     outlineEdges = [],
     compObjects = [],
+    compObjectsTopView = [],
     externObj = [];
   if (!data) return;
   Object.keys(data).forEach((key) => {
@@ -123,6 +124,23 @@ const handleRoomTopView = (data, roomName) => {
     // handle the 'library' and 'external' components
     else if (key.includes("floor_components")) {
       floor_components = data[key];
+
+      if (Object.keys(data["dimension"]["IDs"]).length !== 0) {
+
+        Object.keys(floor_components["library"]).forEach((compName, id) => {
+          //  handle 'floor_components' component
+          // get id from compIds
+          const compID = compIds[`${roomName}+room_top_view`][compName];
+          compObjectsTopView.push(
+            parseComp3(
+              compID,
+              compName,
+              floor_components["library"][compName]
+            )
+          );
+        });
+
+      }
 
       if (floor_components.hasOwnProperty("library")) {
         Object.keys(floor_components["library"]).forEach((compName, id) => {
@@ -155,11 +173,14 @@ const handleRoomTopView = (data, roomName) => {
     externObj.push(temp);
   });
 
+  if (Object.keys(data["dimension"]["IDs"]).length !== 0) {
 
-
-
-  return [
-    new RoomSubView(
+    let tabularView = getTabularView(
+      compObjectsTopView,
+      `${roomName}+room_top_view+table_view`,
+      "table_view"
+    );
+    return [new RoomSubView(
       `${roomName}+room_top_view`,
       `room_top_view`,
       outlineEdges,
@@ -167,8 +188,23 @@ const handleRoomTopView = (data, roomName) => {
       compObjects,
       externObj,
       ""
-    ),
-  ];
+    ), tabularView];
+
+  }
+  else {
+    return [
+      new RoomSubView(
+        `${roomName}+room_top_view`,
+        `room_top_view`,
+        outlineEdges,
+        {},
+        compObjects,
+        externObj,
+        ""
+      ),
+    ];
+  }
+
 };
 
 // create table view of components(instances)
@@ -205,8 +241,15 @@ const handleRoomTopViewDimens = (data, roomName) => {
       compIds[`${roomName}+room_top_view`] = data["dimension"]["IDs"]; // 10.27
     }
   });
+  if (Object.keys(data["dimension"]["IDs"]).length !== 0) {
 
-  return [[dimens], [viewBoxInfo]];
+    return [
+      [dimens, []],
+      [viewBoxInfo, {}],
+    ];
+  } else {
+    return [[dimens], [viewBoxInfo]];
+  }
 };
 
 // parse components of 'room_top_view'
@@ -302,7 +345,7 @@ const handleViewDimens = (data, roomName) => {
       if (viewName === "front_view" && Object.keys(data[viewName]["dimension"]["IDs"]).length !== 0) {
 
         var temp = handleSubViewDimens(data[viewName], roomName, viewName);
-        
+
         dimens = [...dimens, ...temp[0]];
         viewBoxInfo = [...viewBoxInfo, ...temp[1]];
       } else {
@@ -467,7 +510,7 @@ const handleSubViewDimens = (data, roomViewName, viewName) => {
   // 
   if (viewName === "front_view" && Object.keys(data["dimension"]["IDs"]).length !== 0) {
 
-    
+
 
     return [
       [dimens, []],
@@ -491,6 +534,27 @@ const parseComp2 = (id, name, data) => {
       if (prop === "comp_details") {
         compDetail = getCompDetail(data[prop]);
       } else if (prop === "external_points") {
+        externPts = parseExternPts(data[prop]);
+      }
+    });
+    return new Comp2(id, name, compDetail, externPts);
+  }
+  else {
+    return;
+  }
+};
+
+const parseComp3 = (id, name, data) => {
+  if (!data) return;
+  const propNames = Object.keys(data);
+
+  let compDetail, externPts;
+  // check existence of keys
+  if (propNames.includes("comp_details") && propNames.includes("outline")) {
+    propNames.forEach((prop) => {
+      if (prop === "comp_details") {
+        compDetail = getCompDetail(data[prop]);
+      } else if (prop === "outline") {
         externPts = parseExternPts(data[prop]);
       }
     });

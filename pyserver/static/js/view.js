@@ -1252,11 +1252,11 @@ const renderTableView = (tableView, id) => {
 
   if (multiply / 4 < 6) {
 
-    table.style.fontSize = "8px";
+    table.style.fontSize = "6px";
   } else if (multiply / 4 >= 6 && multiply / 4 < 12) {
     table.style.fontSize = multiply / 4 + 'px';
   } else {
-    table.style.fontSize = '12px';
+    table.style.fontSize = '8px';
   }
 
   console.log(compsInfo);

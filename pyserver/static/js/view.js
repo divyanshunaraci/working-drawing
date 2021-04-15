@@ -259,7 +259,8 @@ const renderView = (projectInfo, view, id) => {
     if (view.getComps() !== []) {
       renderComponents(view, id);
     }
-
+    
+    
 
     // render 'external' items
     renderExternalItems(view, id);
@@ -510,6 +511,40 @@ const renderViewDetail = (projectInfo, view, id) => {
 };
 
 // render 'external' items inside view
+const renderExternalItem = (view, id) => {
+  const viewName = view.getName();
+  const extItems = view.getExternalItems();
+  console.log(viewName, 'View names')
+  if(viewName === "room_top_view"){
+    let compsCoords = {};
+    extItems.forEach((item,id) => {
+      const outline = item.getOutline();
+      renderOutline(outline, id, "externItem");
+
+      const ID = item.id;
+      compsCoords[ID] = outline;
+
+      
+      const compID = item.id;
+      const temp = {};
+      temp[compID] = outline;
+      renderTexts(temp, id);
+    });
+    
+    
+    const reducedDimens = removeRedun(compsCoords);
+    
+  }
+  // const extItems = view.getExternalItems();
+  // console.log(extItems, 'lol')
+  // extItems.forEach((item) => {
+  //   const outline = item.getOutline();
+  //   renderOutline(outline, id, "externItem");
+  // });
+  
+  
+};
+
 const renderExternalItems = (view, id) => {
   const extItems = view.getExternalItems();
   extItems.forEach((item) => {

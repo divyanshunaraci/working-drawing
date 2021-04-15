@@ -111,8 +111,12 @@ class floor_plan_validation(object):
                 if json_floor_plan['room_name_positions']:
                     for keys in json_floor_plan['room_name_positions']:
                         room_names.append(keys)
+
                         if len(json_floor_plan['room_name_positions'][keys]) != 2:
                             error_log.append('Json object[floor_plan][room_name_positions]['+ keys+ '] contains invalid data: more than or less than 2 coordinates are provided for a point .')
+                        else: #Updating the room name positins coordinates
+                            json_floor_plan['room_name_positions'][keys][0] -= limit_coord[0][0] #updating x
+                            json_floor_plan['room_name_positions'][keys][1] -= limit_coord[0][1] #updating y
                 else:
                     error_log.append('Json object[floor_plan][room_name_positions] is empty') 
             else:
@@ -148,7 +152,7 @@ class floor_plan_validation(object):
 
 
     @staticmethod
-    def _outline(string_id, outline, error_log, warning_log, x0 = 0, y0 =0, PerformCheck = False):
+    def _outline(string_id, outline, error_log, warning_log, x0 = 0, y0 =0, PerformCheck = False, Shutter =False):
         x_min, y_min, x_max, y_max = np.inf, np.inf, -np.inf, -np.inf  #[[x1 y1][x2 y2]]
         x_list, y_list = [], []
         new_outline = []
@@ -176,11 +180,26 @@ class floor_plan_validation(object):
                 x_max = max(x_list)
                 y_min = min(y_list)
                 y_max = max(y_list)
-                new_outline_main_view = []
-                if PerformCheck:
+                if PerformCheck: #when its florr plam/ room top view stuff
+                    new_outline_main_view = []
                     for lines in new_outline:
                         new_outline_main_view.append([[lines[0][0]-x_min,lines[0][1]-y_min],[lines[1][0]-x_min,lines[1][1]-y_min]])
                     new_outline = new_outline_main_view
+                
+                if Shutter: #then shutter outline is arranged such that top right up and down comes okay.
+                    if len(new_outline) == 4:
+                        new_outline_shutter_view =[]
+                        print(new_outline)
+
+                        print('---')
+                        new_outline_shutter_view.append([[x_min-x0,y_min-y0],[x_min-x0,y_max-y0]])
+                        new_outline_shutter_view.append([[x_min-x0,y_max-y0],[x_max-x0,y_max-y0]])
+                        new_outline_shutter_view.append([[x_max-x0,y_max-y0],[x_max-x0,y_min-y0]])
+                        new_outline_shutter_view.append([[x_max-x0,y_min-y0],[x_min-x0,y_min-y0]])
+                        print(new_outline_shutter_view)
+
+                        print('-------')
+                        new_outline = new_outline_shutter_view
 
         else:
             warning_log.append(string_id +'contains no data')
@@ -229,23 +248,23 @@ class floor_plan_validation(object):
                             warning_log.append('The room ' + items + ' does not contain render_individual_comps.' ) #warning
 
 
-                        '''view_number = 1
+                        # view_number = 1
                         
-                        while view_number !=0 :
-                            view_number_name = 'view_' + str(view_number)
-                            if json_room.has_key(view_number_name) :
-                                if not json_room[view_number_name]:
-                                    warning_log.append('Json object[rooms]['+items+']['+view_number_name+'] is empty.') #error
-                                else:
-                                    self.room_view_names[items].append(view_number_name)
-                                    string_id_view_number ='Json object[rooms]['+items+']['+view_number_name+']'
-                                    error_log, warning_log = self._room_view_number(self,string_id_view_number,json_room[view_number_name],error_log, warning_log)
-                                view_number += 1
-                            else:
-                                if view_number == 1:
-                                    warning_log.append('The room ' + items + ' contains no views.' ) #error
-                                view_number =0'''
-                        
+                        # while view_number !=0 :
+                        #     view_number_name = 'view_' + str(view_number)
+                        #     if json_room.has_key(view_number_name) :
+                        #         if not json_room[view_number_name]:
+                        #             warning_log.append('Json object[rooms]['+items+']['+view_number_name+'] is empty.') #error
+                        #         else:
+                        #             self.room_view_names[items].append(view_number_name)
+                        #             string_id_view_number ='Json object[rooms]['+items+']['+view_number_name+']'
+                        #             error_log, warning_log = self._room_view_number(self,string_id_view_number,json_room[view_number_name],error_log, warning_log)
+                        #         view_number += 1
+                        #     else:
+                        #         if view_number == 1:
+                        #             warning_log.append('The room ' + items + ' contains no views.' ) #error
+                        #         view_number =0
+
                         for k in json_room.keys():
                             if (k != 'room_top_view' and k != 'render_individual_components'):
                                 string_id_view_number = 'Json object[rooms][' + \
@@ -276,6 +295,7 @@ class floor_plan_validation(object):
 
                     else: 
                         warning_log.append('Additional key name: '+items+' exists in the rooms.')
+                        del json_rooms[items]
 
             print(self.room_view_names)
                 
@@ -590,9 +610,12 @@ class floor_plan_validation(object):
             for items in list(json_room_view_name_library_external_points):
                 if items in external_points_names:
                     if items == 'shutter':
+                        
                         check_len = len(json_room_view_name_library_external_points[items])
                         if check_len > 0: #if anything in shutter
                             if json_room_view_name_library_external_points[items]:
+                                len_out = 0
+
                                 for item in list(json_room_view_name_library_external_points[items]):
                                     if json_room_view_name_library_external_points[items][item].has_key('handle'):
                                         if json_room_view_name_library_external_points[items][item]['handle'].has_key('outline'):
@@ -603,17 +626,21 @@ class floor_plan_validation(object):
                                             x_list_max.append(lines[1][0])
                                             y_list_min.append(lines[0][1])
                                             y_list_max.append(lines[1][1])
-                                    if json_room_view_name_library_external_points[items][item].has_key('outline'):
+                                    if 'outline' in list(json_room_view_name_library_external_points[items][item]):
+                                        len_out = len(json_room_view_name_library_external_points[items][item]['outline'])
                                         string_id_shutter_outline = string_id + '[' + items + '][' + item + '][outline]'
-                                        error_log,  warning_log, lines, new_outline = self._outline(string_id_shutter_outline, json_room_view_name_library_external_points[items][item]['outline'], error_log, warning_log,limit_coord[0][0],limit_coord[0][1] )
+                                        error_log,  warning_log, lines, new_outline = self._outline(string_id_shutter_outline, json_room_view_name_library_external_points[items][item]['outline'], error_log, warning_log,limit_coord[0][0],limit_coord[0][1],Shutter=True )
                                         json_room_view_name_library_external_points[items][item]['outline'] = new_outline
                                         x_list_min.append(lines[0][0])
                                         x_list_max.append(lines[1][0])
                                         y_list_min.append(lines[0][1])
                                         y_list_max.append(lines[1][1])
-
+                                    if len_out != 4:
+                                        del json_room_view_name_library_external_points[items][item]
+                                        
                         else:
                             del json_room_view_name_library_external_points[items]
+                    
                         
                     else: #Other than shutter
                         check_len = len(json_room_view_name_library_external_points[items])

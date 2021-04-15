@@ -248,22 +248,31 @@ class floor_plan_validation(object):
                             warning_log.append('The room ' + items + ' does not contain render_individual_comps.' ) #warning
 
 
-                        view_number = 1
+                        # view_number = 1
                         
-                        while view_number !=0 :
-                            view_number_name = 'view_' + str(view_number)
-                            if json_room.has_key(view_number_name) :
-                                if not json_room[view_number_name]:
-                                    warning_log.append('Json object[rooms]['+items+']['+view_number_name+'] is empty.') #error
-                                else:
-                                    self.room_view_names[items].append(view_number_name)
-                                    string_id_view_number ='Json object[rooms]['+items+']['+view_number_name+']'
-                                    error_log, warning_log = self._room_view_number(self,string_id_view_number,json_room[view_number_name],error_log, warning_log)
-                                view_number += 1
-                            else:
-                                if view_number == 1:
-                                    warning_log.append('The room ' + items + ' contains no views.' ) #error
-                                view_number =0
+                        # while view_number !=0 :
+                        #     view_number_name = 'view_' + str(view_number)
+                        #     if json_room.has_key(view_number_name) :
+                        #         if not json_room[view_number_name]:
+                        #             warning_log.append('Json object[rooms]['+items+']['+view_number_name+'] is empty.') #error
+                        #         else:
+                        #             self.room_view_names[items].append(view_number_name)
+                        #             string_id_view_number ='Json object[rooms]['+items+']['+view_number_name+']'
+                        #             error_log, warning_log = self._room_view_number(self,string_id_view_number,json_room[view_number_name],error_log, warning_log)
+                        #         view_number += 1
+                        #     else:
+                        #         if view_number == 1:
+                        #             warning_log.append('The room ' + items + ' contains no views.' ) #error
+                        #         view_number =0
+
+                        for k in json_room.keys():
+                            if (k != 'room_top_view' and k != 'render_individual_components'):
+                                string_id_view_number = 'Json object[rooms][' + \
+                                    items+']['+k+']'
+                                error_log, warning_log = self._room_view_number(
+                                    self, string_id_view_number, json_room[k], error_log, warning_log)
+                                self.room_view_names[items].append(
+                                    k)
                         
                         fake_room_name_list = self.room_view_names[items] #using it to delete additional items
                         fake_room_name_list.append('render_individual_comps')

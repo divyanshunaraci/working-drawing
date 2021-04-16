@@ -200,7 +200,7 @@ const renderFloorPlan = (floorPlanView, id) => {
         width: 60,
         fontSize: 15,
         textAlign: "center",
-        // originX: "center",
+        originX: "center",
         originY: "center",
         borderColor: "green",
         editingBorderColor: "orange",

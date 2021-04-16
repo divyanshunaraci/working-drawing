@@ -247,7 +247,7 @@ const renderView = (projectInfo, view, id) => {
   if (viewType.includes(viewName)) {
     // render view 'outline'
     const outline = view.getOutline();
-    renderOutline(outline, id, "view", [] ,viewName);
+    renderOutline(outline, id, "view", [], viewName);
 
     // render 'opening'('window', 'door') except for top_view
 
@@ -259,8 +259,8 @@ const renderView = (projectInfo, view, id) => {
     if (view.getComps() !== []) {
       renderComponents(view, id);
     }
-    
-    
+
+
 
     // render 'external' items
     renderExternalItems(view, id);
@@ -515,25 +515,25 @@ const renderExternalItem = (view, id) => {
   const viewName = view.getName();
   const extItems = view.getExternalItems();
   console.log(viewName, 'View names')
-  if(viewName === "room_top_view"){
+  if (viewName === "room_top_view") {
     let compsCoords = {};
-    extItems.forEach((item,id) => {
+    extItems.forEach((item, id) => {
       const outline = item.getOutline();
       renderOutline(outline, id, "externItem");
 
       const ID = item.id;
       compsCoords[ID] = outline;
 
-      
+
       const compID = item.id;
       const temp = {};
       temp[compID] = outline;
       renderTexts(temp, id);
     });
-    
-    
+
+
     const reducedDimens = removeRedun(compsCoords);
-    
+
   }
   // const extItems = view.getExternalItems();
   // console.log(extItems, 'lol')
@@ -541,8 +541,8 @@ const renderExternalItem = (view, id) => {
   //   const outline = item.getOutline();
   //   renderOutline(outline, id, "externItem");
   // });
-  
-  
+
+
 };
 
 const renderExternalItems = (view, id) => {
@@ -637,7 +637,7 @@ const renderShutter = (shutter, id) => {
 };
 
 // elementray function: render outline
-const renderOutline = (outline, id, type, dashPattern = [],view_name='') => {
+const renderOutline = (outline, id, type, dashPattern = [], view_name = '') => {
   const drawConfig = {
     view: { strokeStyle: "black", lineWidth: "8" },
     component: { strokeStyle: "red", lineWidth: "6" },
@@ -648,7 +648,6 @@ const renderOutline = (outline, id, type, dashPattern = [],view_name='') => {
   const cx = document.querySelector(`#wd-${id} canvas`).getContext("2d");
 
   const path = outline;
-  console.log(path,'outline')
   cx.beginPath();
   cx.setLineDash(dashPattern);
   cx.strokeStyle = drawConfig[type]["strokeStyle"];
@@ -661,24 +660,30 @@ const renderOutline = (outline, id, type, dashPattern = [],view_name='') => {
   cx.stroke();
   cx.closePath();
   if (view_name == 'room_top_view') {
-    for(let i in state.rooms){
-      for(let j in state.rooms[i]["room_top_view"]["views"]){
-        console.log(j);
-        cx.globalAlpha = 0.95;
-        cx.rect(0, 0, 5, 5);
-        cx.fillStyle = "#435A6B";
-        cx.fill();
-        cx.font = 'italic 120pt Calibri';
-        cx.fillStyle = "blue";
-        // cx.fillText(j,-1972,-1972)
-        console.log((state.rooms[i]["room_top_view"]["views"][j][0][0][0] + state.rooms[i]["room_top_view"]["views"][j][1][0][0] + state.rooms[i]["room_top_view"]["views"][j][2][0][0] + state.rooms[i]["room_top_view"]["views"][j][3][0][0])/4);
-        cx.fillText(j, (state.rooms[i]["room_top_view"]["views"][j][0][0][0] + state.rooms[i]["room_top_view"]["views"][j][1][0][0] + state.rooms[i]["room_top_view"]["views"][j][2][0][0] + state.rooms[i]["room_top_view"]["views"][j][3][0][0])/4, (state.rooms[i]["room_top_view"]["views"][j][0][0][1] + state.rooms[i]["room_top_view"]["views"][j][1][0][1] + state.rooms[i]["room_top_view"]["views"][j][2][0][1] + state.rooms[i]["room_top_view"]["views"][j][3][0][1])/4);
+    for (let j in state.rooms[currentRoom]["room_top_view"]["views"]) {
+      console.log(j,'jjjjjjjjj',state.rooms[currentRoom]["room_top_view"],'popopopoopo');
+      cx.globalAlpha = 0.95;
+      cx.rect(0, 0, 5, 5);
+      cx.fillStyle = "#435A6B";
+      cx.fill();
+      cx.font = 'italic 100pt Calibri';
+      cx.fillStyle = "black";
+      cx.textAlign = "center";
+      let cntForX = 0;
+      let cntForY = 0;
+      for(let i=0;i<state.rooms[currentRoom]["room_top_view"]["views"][j].length;i++){
+        for(let k =0;k<state.rooms[currentRoom]["room_top_view"]["views"][j][i].length;k++){
+          console.log(state.rooms[currentRoom]["room_top_view"]["views"][j][i][k][0],state.rooms[currentRoom]["room_top_view"]["views"][j][i][k][1]);
+          cntForX += state.rooms[currentRoom]["room_top_view"]["views"][j][i][k][0];
+          cntForY += state.rooms[currentRoom]["room_top_view"]["views"][j][i][k][1];
+        }
+        
       }
+      cx.fillText(j,cntForX/(2*state.rooms[currentRoom]["room_top_view"]["views"][j].length),-(cntForY/(2*state.rooms[currentRoom]["room_top_view"]["views"][j].length)));
     }
-    console.log(path,'path',state.rooms,'state.roomViews');
   }
 
-  
+
 };
 
 // elementary function: get center of rectangle

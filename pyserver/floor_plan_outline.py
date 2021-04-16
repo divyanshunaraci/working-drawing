@@ -3,7 +3,6 @@ import json, os, glob, shutil , requests
 import copy 
 import numpy as np   
 import threading
-import internal_fix
 
 
 #This class is used to develop the data for ground floors and room_top_view
@@ -605,19 +604,11 @@ class floor_plan_component1(object):
                                 drawing_2_list = []
                                 for internal_items in ['internal','carcass','skirting','loft_skirting','cover_panels','fillers']: #'fillers'
                                     if internal_items in j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]['external_points']:
-
-                                        test_int = internal_fix.testing(j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]['external_points'][internal_items])
-                                        if test_int == 0:
-                                            continue
                                         drawing_2_list+= j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]['external_points'][internal_items]
                                     
                                     if 'shutter' in j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]['external_points']:
                                         for item in j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]['external_points']['shutter']:
                                             if 'outline' in j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]['external_points']['shutter'][item]:
-
-                                                test_int = internal_fix.testing(j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]['external_points']['shutter'][item]['outline'])
-                                                if test_int == 0:
-                                                    continue
                                                 drawing_2_list+= j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]['external_points']['shutter'][item]['outline']
                                             if 'handle' in j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]['external_points']['shutter'][item]:
                                                 if 'outline' in j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]['external_points']['shutter'][item]['handle']:
@@ -727,10 +718,10 @@ class floor_plan_component1(object):
                 if not dim_dict[str1].has_key(ver_string):
                     x_opt = 100 + max(dict1[keys][f_str1][ls1[i]][0][0],dict1[keys][f_str1][ls1[i+1]][0][0])
                     dim_dict[str1][ver_string] = [x_opt,[ls1[i],ls1[i+1]]]
-                    # if str1 == 'ver':
-                    #     dimension_list.append([[x_opt,ls1[i]],[x_opt,ls1[i+1]]])  
-                    # else:
-                    #     dimension_list.append([[ls1[i],x_opt],[ls1[i+1],x_opt]]) 
+                    if str1 == 'ver':
+                        dimension_list.append([[x_opt,ls1[i]],[x_opt,ls1[i+1]]])  
+                    else:
+                        dimension_list.append([[ls1[i],x_opt],[ls1[i+1],x_opt]]) 
         return dim_dict, dimension_list
 
     @staticmethod
@@ -756,7 +747,7 @@ class floor_plan_component1(object):
                     y_opt = self.__update_hornver_dim(self,t_d2,the_array,outline_dim,outer_dim_dict,'y_opt')
                 
                 dim_dict['hor'][hor_string] = [y_opt, [x0c,xnc]]
-                #dimension_list.append([[x0c,y_opt],[xnc,y_opt]])
+                dimension_list.append([[x0c,y_opt],[xnc,y_opt]])
             
             elif dim_dict['hor'].has_key(hor_string) and not dim_dict['ver'].has_key(ver_string): #horizontal exists but vertical does not exists
                 if str1 == 'room_top_view':
@@ -765,7 +756,7 @@ class floor_plan_component1(object):
                     x_opt = self.__update_hornver_dim(self,t_d2,the_array,outline_dim,outer_dim_dict,'x_opt')
 
                 dim_dict['ver'][ver_string] = [x_opt, [y0c,ync]]
-                #dimension_list.append([[x_opt,y0c],[x_opt,ync]])
+                dimension_list.append([[x_opt,y0c],[x_opt,ync]])
 
             else: # both L and B of the component do not exist
                 if str1 == 'room_top_view':
@@ -775,10 +766,10 @@ class floor_plan_component1(object):
                 # the problem is y_opt does not take into acccount if x1-x2 has already been shown
                 
                 dim_dict['hor'][hor_string] = [y_opt, [x0c,xnc]]
-                #dimension_list.append([[x0c,y_opt],[xnc,y_opt]])
+                dimension_list.append([[x0c,y_opt],[xnc,y_opt]])
             
                 dim_dict['ver'][ver_string] = [x_opt, [y0c,ync]]
-                #dimension_list.append([[x_opt,y0c],[x_opt,ync]])
+                dimension_list.append([[x_opt,y0c],[x_opt,ync]])
 
         return dimension_list
 

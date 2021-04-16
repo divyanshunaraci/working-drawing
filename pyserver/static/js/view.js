@@ -1236,16 +1236,21 @@ const renderTableView = (tableView, id) => {
   // get handle of view container and clean the innerHTML of container
   const container = document.querySelector(`#wd-${id} .canvas-container`);
 
-  // container.style.overflow = "auto";
+  //container.style.overflow = "auto";
 
   // create table
   let table = document.createElement("table");
   table.style.width = "100%";
+  //table.style.height = "100%";
+  table.style.fontSize = '8px';
+  table.style.wordWrap = 'break-word';
+  //table.setAttribute('style', 'width:75px;height:75px;');
+  //document.body.setAttribute('style', 'display:block;overflow:scroll;');
   table.setAttribute("border", "1");
   table.classList.add("main-table");
 
   //canvas width and height- console.log
-  console.log(container.clientHeight, container.clientWidth);
+  /*console.log(container.clientHeight, container.clientWidth);
 
   //font size of the text
   var multiply = container.clientHeight * container.clientWidth;
@@ -1257,10 +1262,11 @@ const renderTableView = (tableView, id) => {
     table.style.fontSize = multiply / 4 + 'px';
   } else {
     table.style.fontSize = '8px';
-  }
+  }*/
 
-  console.log(compsInfo);
-  console.log(compsInfo.length);
+
+  //console.log(compsInfo);
+  //console.log(compsInfo.length);
 
 
   // generate table head

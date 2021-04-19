@@ -465,7 +465,11 @@ const renderComponents = (view, id) => {
     // render accessories & handles info from front view
     if (viewName === "Handles & Accessories") {
       const handlesInfo = getAccHandlesInfo(view);
-      // renderTexts(handlesInfo, id);
+      for (let i in handlesInfo) {
+        renderOutline(handlesInfo[i],id,"component")
+      }
+      
+      //renderTexts(handlesInfo, id);
     }
   }
 };

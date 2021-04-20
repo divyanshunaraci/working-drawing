@@ -661,7 +661,6 @@ const renderOutline = (outline, id, type, dashPattern = [], view_name = '') => {
   cx.closePath();
   if (view_name == 'room_top_view') {
     for (let j in state.rooms[currentRoom]["room_top_view"]["views"]) {
-      console.log(j,'jjjjjjjjj',state.rooms[currentRoom]["room_top_view"],'popopopoopo');
       cx.globalAlpha = 0.95;
       cx.rect(0, 0, 5, 5);
       cx.fillStyle = "#435A6B";
@@ -673,7 +672,6 @@ const renderOutline = (outline, id, type, dashPattern = [], view_name = '') => {
       let cntForY = 0;
       for(let i=0;i<state.rooms[currentRoom]["room_top_view"]["views"][j].length;i++){
         for(let k =0;k<state.rooms[currentRoom]["room_top_view"]["views"][j][i].length;k++){
-          console.log(state.rooms[currentRoom]["room_top_view"]["views"][j][i][k][0],state.rooms[currentRoom]["room_top_view"]["views"][j][i][k][1]);
           cntForX += state.rooms[currentRoom]["room_top_view"]["views"][j][i][k][0];
           cntForY += state.rooms[currentRoom]["room_top_view"]["views"][j][i][k][1];
         }

@@ -1,5 +1,6 @@
 // state variable to contain parsed JSON data
 var state = {};
+var currentRoom = '';
 
 // variables for overlaying comment canvas( '.overlay-canvas-container' )
 var overlayCanvasContainers = document.querySelectorAll(".overlay-canvas-container");
@@ -136,6 +137,19 @@ const readJSON = function (input) {
     }
 };
 
+const addExtraPageForTable = () => {
+    for(let i =0;i<state.roomViews.length;i++){
+        let k = 0;
+        if(state.roomViews[i].type == "TableView" && state.roomViews[i].compsInfo.length > 20){
+            for(let j=20;j<state.roomViews[i].compsInfo.length;j+=20){
+                let obj = new TableView(`${state.roomViews[i].id}+${k++}`, state.roomViews[i].name, state.roomViews[i].compsInfo.splice(j,j+20))
+                state.roomViews.splice(i+1,0,obj);
+            }
+        }
+    }
+    // console.log(JSON.stringify(state.roomViews));
+}
+
 const parseJSON = (parsedData) => {
     if (!parsedData) return;
     try {
@@ -156,9 +170,12 @@ const parseJSON = (parsedData) => {
         state.rooms = res.rooms;
 
         // parse 'state.rooms' to get room views
+        // addExtraPageForTable();
         let subViews = getRoomObjects(state.rooms);
         state.roomViews = [...state.roomViews, ...subViews[0]];
-
+        console.log(state.roomViews, 'One')
+        // addExtraPageForTable();
+        console.log(state.roomViews, 'Two')
         // get py dimens
         state.dimens = [];
         state.dimens.push(info[2]); // ground floror plan (0)
@@ -181,9 +198,11 @@ const renderAll = () => {
     document.querySelector(".main").innerHTML = ``;
 
     // render project and org info ( footer table )
+    // console.log(state.roomViews, 'First')
+    // console.log(state.viewBoxInfo, 'state.viewboxInfo')
     renderProjectInfo(state.projectInfo, state.roomViews.length);
-
     // calibrate canvas
+    // console.log()
     calibrateCanvases(state.viewBoxInfo);
 
     // reinitialize the variables
@@ -222,11 +241,17 @@ const renderAll = () => {
     // render views
     state.roomViews.forEach((view, id) => {
         // floorPlanView
+        // if(id === undefined){
+        //     id=x;
+        // }
         if (view.type === "FloorPlanView") {
             renderFloorPlan(view, id);
+
         }
         // other views like RoomSubView, RenderView ...
         else {
+            // console.log(view, id, 'SDGSDFSDFSDF')
+            currentRoom = view.id.split('+')[0]
             renderView(state.projectInfo, view, id);
             if (viewTypes.includes(view.getName())) {
             }
@@ -234,7 +259,9 @@ const renderAll = () => {
                 // render material thumbnails
                 renderMaterialThumbnails(state.matThumbnails, id);
             }
+            
         }
+        
     });
     if (openNewJSON) {
         // draw py dimens

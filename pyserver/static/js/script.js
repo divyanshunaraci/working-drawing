@@ -183,6 +183,8 @@ const parseJSON = (parsedData) => {
 
         // get py viewBoxInfo
         state.viewBoxInfo = [];
+        // viewbox info is required to be changed for expanding the table view
+        //It contains info[3] ->  & subViews[2] -> getRoomObjects , viewBoxInfo in model.js
         state.viewBoxInfo.push(info[3]);
         state.viewBoxInfo = [...state.viewBoxInfo, ...subViews[2]];
     } catch (err) {
@@ -202,8 +204,8 @@ const renderAll = () => {
     // console.log(state.viewBoxInfo, 'state.viewboxInfo')
     renderProjectInfo(state.projectInfo, state.roomViews.length);
     // calibrate canvas
-    // console.log()
     calibrateCanvases(state.viewBoxInfo);
+    
 
     // reinitialize the variables
 

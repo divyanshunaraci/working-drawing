@@ -120,7 +120,6 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
 
 // fix dpi of canvases and calibrate the origin point
 const calibrateCanvases = (viewBoxInfoes) => {
-  console.log(viewBoxInfoes);
   for (let i = 0; i < viewBoxInfoes.length; i++) {
     // fix canvas-dpi
     const canvas = document.querySelector(`#wd-${i} canvas`);
@@ -733,9 +732,9 @@ const renderTexts = (textObject, id) => {
 
   if (!openNewJSON) return;
   const canvas = overlayCanvases[id];
-  if(state.viewBoxInfo[id] === undefined){
-    state.viewBoxInfo[id] = state.viewBoxInfo[id-1]
-  }
+  // if(state.viewBoxInfo[id] === undefined){
+  //   state.viewBoxInfo[id] = state.viewBoxInfo[id-1]
+  // }
   console.log(id, 'll', state.viewBoxInfo, 'll', state.viewBoxInfo[id], 'ZAM')
   const scale = state.viewBoxInfo[id]["scale"];
   const origin = [

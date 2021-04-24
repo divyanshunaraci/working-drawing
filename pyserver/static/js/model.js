@@ -73,17 +73,39 @@ const getRoomObjects = (rooms) => {
 
   // loop through each room
   Object.keys(rooms).forEach((name) => {
-    if (!rooms[name]) return;
-
+    if (!rooms[name]){
+      return;
+    } 
     // loop through room views/individual comps
+    let i = 0;
     Object.keys(rooms[name]).forEach((compName) => {
       if (compName == "room_top_view") {
         //  handle 'room_top_view' data
         let temp = handleRoomTopViewDimens(rooms[name][compName], name);
         let views = handleRoomTopView(rooms[name][compName], name);
+        let flag = 0, count = 0;
+        for(let i =0;i<views.length;i++){
+          let k = 0;
+          if(views[i].type == "TableView" && views[i].compsInfo.length > 10){
+              flag = 1;
+              for(let j=10;j<views[i].compsInfo.length;j+=10){
+                  count ++;
+                  let obj = new TableView(`${views[i].id}+${k++}`, views[i].name, views[i].compsInfo.splice(j,j+10))
+                  views.splice(i+1,0,obj);
+              }
+          }
+        }
         resultViews = [...resultViews, ...views];
         dimens = [...dimens, ...temp[0]]; // py dimens
         viewBoxInfo = [...viewBoxInfo, ...temp[1]];
+        if(flag==1){
+          for(i=1;i<=count;i++){
+            viewBoxInfo = [...viewBoxInfo, temp[1]];  
+            dimens = [...dimens, temp[[0]]]
+          }
+          
+        }
+        
 
       } else if (compName == "render_individual_comps") {
         // handle 'render_individual_comps'
@@ -92,7 +114,6 @@ const getRoomObjects = (rooms) => {
         resultViews = [...resultViews, ...views];
         dimens = [...dimens, ...temp[0]]; // py dimens
         viewBoxInfo = [...viewBoxInfo, ...temp[1]];
-
       } else {
         //  handle 'view_1', 'view_2', ... 'view_n'
         let temp = handleViewDimens(rooms[name][compName], `${name}+${compName}`);
@@ -100,6 +121,7 @@ const getRoomObjects = (rooms) => {
         resultViews = [...resultViews, ...views];
         dimens = [...dimens, ...temp[0]]; // py dimens
         viewBoxInfo = [...viewBoxInfo, ...temp[1]];
+        
       }
     });
   });
@@ -114,6 +136,7 @@ const handleRoomTopView = (data, roomName) => {
     outlineEdges = [],
     compObjects = [],
     compObjectsTopView = [],
+    
     externObj = [];
   if (!data) return;
   Object.keys(data).forEach((key) => {
@@ -124,6 +147,19 @@ const handleRoomTopView = (data, roomName) => {
     // handle the 'library' and 'external' components
     else if (key.includes("floor_components")) {
       floor_components = data[key];
+      if (floor_components.hasOwnProperty("library")) {
+        Object.keys(floor_components["library"]).forEach((compName, id) => {
+          const compID = compIds[`${roomName}+room_top_view`][compName];
+          let temp = parseComp1(
+            compID,
+            compName,
+            floor_components["library"][compName]
+          );
+          compObjects.push(temp);
+          
+        });
+
+      }
 
       if (Object.keys(data["dimension"]["IDs"]).length !== 0) {
 
@@ -138,23 +174,12 @@ const handleRoomTopView = (data, roomName) => {
               floor_components["library"][compName]
             )
           );
+          
         });
 
       }
 
-      if (floor_components.hasOwnProperty("library")) {
-        Object.keys(floor_components["library"]).forEach((compName, id) => {
-
-          const compID = compIds[`${roomName}+room_top_view`][compName];
-          let temp = parseComp1(
-            compID,
-            compName,
-            floor_components["library"][compName]
-          );
-          compObjects.push(temp);
-        });
-
-      }
+      
 
     } else if (key.includes("external")) {
       external = data[key];
@@ -238,6 +263,7 @@ const handleRoomTopViewDimens = (data, roomName) => {
         dimens.push(new Dimension(...el, Math.hypot(el[0][0] - el[1][0], el[0][1] - el[1][1])));
       });
       viewBoxInfo = data["dimension"]["lengths"];
+      console.log(data["dimension"]["IDs"], 'kireeeeeee');
       compIds[`${roomName}+room_top_view`] = data["dimension"]["IDs"]; // 10.27
     }
   });
@@ -367,6 +393,7 @@ const handleViewDimens = (data, roomName) => {
 const handleSubView = (data, roomViewName, viewName) => {
   let floor_components = {},
     compObjects = [],
+    compObjects2 = [],
     extern = {},
     externObj = [],
     outlineEdges = [],
@@ -403,6 +430,25 @@ const handleSubView = (data, roomViewName, viewName) => {
         Object.keys(floor_components["library"]).forEach((compName, id) => {
           //  handle 'floor_components' component
           // get id from compIds
+          // if(id <= 20){
+          //   const compID = compIds[`${roomViewName}+${viewName}`][compName];
+          //   compObjects.push(
+          //     parseComp2(
+          //       compID,
+          //       compName,
+          //       floor_components["library"][compName]
+          //     )
+          //   );
+          // } else{
+          //   const compID2 = compIds[`${roomViewName}+${viewName}`][compName];
+          //   compObjects2.push(
+          //     parseComp2(
+          //       compID2,
+          //       compName,
+          //       floor_components["library"][compName]
+          //     )
+          //   );
+          // }
           const compID = compIds[`${roomViewName}+${viewName}`][compName];
           compObjects.push(
             parseComp2(
@@ -463,6 +509,11 @@ const handleSubView = (data, roomViewName, viewName) => {
       `${roomViewName}+${viewName}+table_view`,
       "table_view"
     );
+    // let tabularView2 = getTabularView(
+    //   compObjects2,
+    //   `${roomViewName}+${viewName}+table_view`,
+    //   "table_view"
+    // );
     return [roomSubView, tabularView];
 
   }

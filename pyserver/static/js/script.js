@@ -1,5 +1,6 @@
 // state variable to contain parsed JSON data
 var state = {};
+var currentRoom = '';
 
 // variables for overlaying comment canvas( '.overlay-canvas-container' )
 var overlayCanvasContainers = document.querySelectorAll(".overlay-canvas-container");
@@ -156,9 +157,9 @@ const parseJSON = (parsedData) => {
         state.rooms = res.rooms;
 
         // parse 'state.rooms' to get room views
+        // addExtraPageForTable();
         let subViews = getRoomObjects(state.rooms);
         state.roomViews = [...state.roomViews, ...subViews[0]];
-
         // get py dimens
         state.dimens = [];
         state.dimens.push(info[2]); // ground floror plan (0)
@@ -166,6 +167,8 @@ const parseJSON = (parsedData) => {
 
         // get py viewBoxInfo
         state.viewBoxInfo = [];
+        // viewbox info is required to be changed for expanding the table view
+        //It contains info[3] ->  & subViews[2] -> getRoomObjects , viewBoxInfo in model.js
         state.viewBoxInfo.push(info[3]);
         state.viewBoxInfo = [...state.viewBoxInfo, ...subViews[2]];
     } catch (err) {
@@ -181,10 +184,12 @@ const renderAll = () => {
     document.querySelector(".main").innerHTML = ``;
 
     // render project and org info ( footer table )
+    // console.log(state.roomViews, 'First')
+    // console.log(state.viewBoxInfo, 'state.viewboxInfo')
     renderProjectInfo(state.projectInfo, state.roomViews.length);
-
     // calibrate canvas
     calibrateCanvases(state.viewBoxInfo);
+    
 
     // reinitialize the variables
 
@@ -222,11 +227,17 @@ const renderAll = () => {
     // render views
     state.roomViews.forEach((view, id) => {
         // floorPlanView
+        // if(id === undefined){
+        //     id=x;
+        // }
         if (view.type === "FloorPlanView") {
             renderFloorPlan(view, id);
+
         }
         // other views like RoomSubView, RenderView ...
         else {
+            // console.log(view, id, 'SDGSDFSDFSDF')
+            currentRoom = view.id.split('+')[0]
             renderView(state.projectInfo, view, id);
             if (viewTypes.includes(view.getName())) {
             }
@@ -234,7 +245,9 @@ const renderAll = () => {
                 // render material thumbnails
                 renderMaterialThumbnails(state.matThumbnails, id);
             }
+            
         }
+        
     });
     if (openNewJSON) {
         // draw py dimens

@@ -308,10 +308,12 @@ const renderRenderView = (imgURL, id) => {
 
 // render view title(viewName)
 const renderTitle = (view, id) => {
+  console.log(view, id, 'Final Check')
   const ID = view.getID();
   const viewType = view.type;
   const viewName = view.getName();
   const temp = ID.split("+");
+  // console.log(temp, 'HHSADUHUHD ')
   const roomName = temp[0];
   $(`#wd-${id} #title`).text(viewName);
   switch (viewName) {
@@ -364,6 +366,7 @@ const renderComponents = (view, id) => {
   if (viewName === "room_top_view") {
     let compsCoords = {};
     // comp1
+    console.log(comps, 'Lets see what happens')
     comps.forEach((comp1) => {
       const coords = comp1.getOutline();
       renderOutline(coords, id, "component");
@@ -729,6 +732,10 @@ const renderTexts = (textObject, id) => {
 
   if (!openNewJSON) return;
   const canvas = overlayCanvases[id];
+  // if(state.viewBoxInfo[id] === undefined){
+  //   state.viewBoxInfo[id] = state.viewBoxInfo[id-1]
+  // }
+  console.log(id, 'll', state.viewBoxInfo, 'll', state.viewBoxInfo[id], 'ZAM')
   const scale = state.viewBoxInfo[id]["scale"];
   const origin = [
     state.viewBoxInfo[id]["newOriginX"],
@@ -1334,6 +1341,7 @@ const renderTableView = (tableView, id) => {
 
   // generate table head
   const headData = ["S.No", ...Object.keys(compsInfo[0])];
+  // console.log(headData, 'Head Data')
   generateTableHead(table, headData);
 
   // reorder compsInfo array

@@ -1363,11 +1363,16 @@ const renderTableView = (tableView, id) => {
     });
   });
 
+  for (data_temp in data){
+    let str = data[data_temp].name
+    data[data_temp].name = str.slice(0,str.lastIndexOf(str.match(/[a-z]/ig)[str.match(/[a-z]/ig).length-1])+1) 
+  }
+
   //change the text size 6 px 
   generateTable(table, data);
 
-
-
+  
+  
   // add table to container
   container.replaceChild(
     table,

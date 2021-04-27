@@ -332,8 +332,18 @@ class floor_plan_validation(object):
                             json_room_top_view['views'][views][i][0][1] = json_room_top_view['views'][views][i][0][1] - limit_coord[0][1]
                             json_room_top_view['views'][views][i][1][0] = json_room_top_view['views'][views][i][1][0] - limit_coord[0][0]
                             json_room_top_view['views'][views][i][1][1] = json_room_top_view['views'][views][i][1][1] - limit_coord[0][1]
+
+                            
                     #json_room_top_view['views'][views] = new_outline_views
-                    
+                if(json_room_top_view.has_key('openings')):
+                    json_room_top_view_views = json_room_top_view['openings']
+                    for views in json_room_top_view_views.keys():
+                        print(views, 'Views')
+                        for i in range(0,(len(json_room_top_view['openings'][views]))):
+                            json_room_top_view['openings'][views][i][0][0] = json_room_top_view['openings'][views][i][0][0] - limit_coord[0][0]
+                            json_room_top_view['openings'][views][i][0][1] = json_room_top_view['openings'][views][i][0][1] - limit_coord[0][1]
+                            json_room_top_view['openings'][views][i][1][0] = json_room_top_view['openings'][views][i][1][0] - limit_coord[0][0]
+                            json_room_top_view['openings'][views][i][1][1] = json_room_top_view['openings'][views][i][1][1] - limit_coord[0][1]    
                 
                 json_room_top_view["thickness"] = int(self._thickness(limit_coord,'room_top_view'))
                 

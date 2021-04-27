@@ -51,6 +51,34 @@ const readJSO = function (input) {
                         parsedData = data;
                         console.log(parsedData);
 
+                        // Logging warning messages if present in all cases 
+                        if (parsedData.warning_log) {
+
+
+                            console.warn("Warning Messages: ");
+                            for (let warning of parsedData.warning_log) {
+                                console.warn(warning);
+
+                            }
+                        }
+
+                        // Logging error messages if present and returning 
+                        if (parsedData.error_log) {
+                            console.error("Error Messages: ")
+                            for (let error of parsedData.error_log) {
+                                console.error(error)
+                            }
+                            alert('Data contains error! Correct the data and import again')
+                            $("#loader").toggle();
+                            $('.loader-msg').html("")
+                            $('.loader-msg').toggle()
+                            $(".main").css({ opacity: 1 });
+
+                            return
+                        }
+
+                        $(".main").empty();
+
                         /* PARSE JSON data */
                         parseJSO(parsedData);
 

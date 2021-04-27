@@ -788,6 +788,14 @@ const renderWindowDoor = (view, id) => {
   Object.keys(opening).forEach((item) => {
     renderOutline(opening[item], id, "opening");
   });
+  for (data_temp in opening){
+    let str = data_temp.toString()
+    opening[str.slice(0,str.lastIndexOf(str.match(/[a-z]/ig)[str.match(/[a-z]/ig).length-1])+1)] = opening[data_temp]
+    delete opening[data_temp]
+    console.log(opening,str, opening[data_temp],'Somak')
+
+  }
+  console.log(opening,'Somak')
   renderTexts(opening, id);
 };
 
@@ -1350,9 +1358,6 @@ const renderTableView = (tableView, id) => {
   compsInfo.sort(function (a, b) {
     return Number(a.id.replace(/\D/g, "")) - Number(b.id.replace(/\D/g, ""));
   });
-
-
-
 
   // generate main content of table
   const data = [];

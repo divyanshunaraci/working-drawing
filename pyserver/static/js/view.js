@@ -747,7 +747,9 @@ const renderTexts = (textObject, id) => {
     const outline = textObject[text];
     if (outline.length !== 0) {
       const center = getOutlineCenter(outline);
-      text = text.slice(0,text.lastIndexOf(text.match(/[a-z]/ig)[text.match(/[a-z]/ig).length-1])+1)
+      if (text[0]=='d' || text[0]=='w'){
+        text = text.slice(0,text.lastIndexOf(text.match(/[a-z]/ig)[text.match(/[a-z]/ig).length-1])+1)
+      }
       const textbox = new fabric.Textbox(text, {
         left: ((center[0] + origin[0]) * scale) / dpi,
         top: ((-1 * center[1] + origin[1]) * scale) / dpi,

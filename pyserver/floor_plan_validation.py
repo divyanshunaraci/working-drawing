@@ -332,8 +332,18 @@ class floor_plan_validation(object):
                             json_room_top_view['views'][views][i][0][1] = json_room_top_view['views'][views][i][0][1] - limit_coord[0][1]
                             json_room_top_view['views'][views][i][1][0] = json_room_top_view['views'][views][i][1][0] - limit_coord[0][0]
                             json_room_top_view['views'][views][i][1][1] = json_room_top_view['views'][views][i][1][1] - limit_coord[0][1]
+
+                            
                     #json_room_top_view['views'][views] = new_outline_views
-                    
+                if(json_room_top_view.has_key('openings')):
+                    json_room_top_view_views = json_room_top_view['openings']
+                    for views in json_room_top_view_views.keys():
+                        print(views, 'Views')
+                        for i in range(0,(len(json_room_top_view['openings'][views]))):
+                            json_room_top_view['openings'][views][i][0][0] = json_room_top_view['openings'][views][i][0][0] - limit_coord[0][0]
+                            json_room_top_view['openings'][views][i][0][1] = json_room_top_view['openings'][views][i][0][1] - limit_coord[0][1]
+                            json_room_top_view['openings'][views][i][1][0] = json_room_top_view['openings'][views][i][1][0] - limit_coord[0][0]
+                            json_room_top_view['openings'][views][i][1][1] = json_room_top_view['openings'][views][i][1][1] - limit_coord[0][1]    
                 
                 json_room_top_view["thickness"] = int(self._thickness(limit_coord,'room_top_view'))
                 
@@ -580,6 +590,26 @@ class floor_plan_validation(object):
                                         del json_room_view_number[view_items]['external']
 
                                 if 'openings' in list(json_room_view_name):
+                                    string_floor_external = string_id + '][' +view_items + '][openings]'
+
+                                    if len(json_room_view_name['openings']) != 0:
+                                        for openings_dw in list(json_room_view_name['openings']):
+                                            if json_room_view_name['openings'][openings_dw]:
+                                                json_room_view_name_external_item = json_room_view_name['openings'][openings_dw]
+                                                if 'outline' in json_room_view_name_external_item:
+                                                    string_outline = string_floor_external + '[' +openings_dw + ']'
+                                                    error_log, warning_log, lines, new_outline = self._outline(string_outline, json_room_view_name_external_item['outline'], error_log, warning_log,limit_coord[0][0],limit_coord[0][1])
+                                                    json_room_view_name_external_item['outline'] = new_outline
+                                                    x_list_min.append(lines[0][0])
+                                                    x_list_max.append(lines[1][0])
+                                                    y_list_min.append(lines[0][1])
+                                                    y_list_max.append(lines[1][1])
+                                                #check what to do with it
+                                    else:
+                                        warning_log.append(string_floor_external+ 'is empty.' )
+                                        del json_room_view_number[view_items]['openings']
+
+                                if 'openings' in list(json_room_view_name):
                                     string_floor_openings = string_id + '][' +view_items + '][openings]'
                                     check_len = len(json_room_view_name['openings'])
                                     if check_len == 0: #if length of opening is zero
@@ -587,7 +617,7 @@ class floor_plan_validation(object):
                                     #########
                                     #########
                                     # what to check here? - its not consistent
-
+                                    
 
                                 x_min, x_max, y_min, y_max  = min(x_list_min), max(x_list_max), min(y_list_min), max(y_list_max)
                                 final_error_len = len(error_log)

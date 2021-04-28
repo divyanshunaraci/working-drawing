@@ -649,7 +649,7 @@ const renderOutline = (outline, id, type, dashPattern = [], view_name = '') => {
     view: { strokeStyle: "black", lineWidth: "8" },
     component: { strokeStyle: "red", lineWidth: "6" },
     externItem: { strokeStyle: "gray", lineWidth: "8" },
-    opening: { strokeStyle: "lightblue", lineWidth: "8" },
+    opening: { strokeStyle: "purple", lineWidth: "8" },
   };
 
   const cx = document.querySelector(`#wd-${id} canvas`).getContext("2d");
@@ -676,6 +676,10 @@ const renderOutline = (outline, id, type, dashPattern = [], view_name = '') => {
       cx.font = 'italic 100pt Calibri';
       cx.fillStyle = "black";
       cx.textAlign = "center";
+      cx.lockMovementX = false;
+      cx.lockMovementY = false;
+      cx.lockScalingX = false;
+      cx.lockScalingY = false;
       let cntForX = 0;
       let cntForY = 0;
       for(let i=0;i<state.rooms[currentRoom]["room_top_view"]["views"][j].length;i++){
@@ -684,13 +688,12 @@ const renderOutline = (outline, id, type, dashPattern = [], view_name = '') => {
           cntForX += state.rooms[currentRoom]["room_top_view"]["views"][j][i][k][0];
           cntForY += state.rooms[currentRoom]["room_top_view"]["views"][j][i][k][1];
         }
-        
       }
       cx.fillText(j,cntForX/(2*state.rooms[currentRoom]["room_top_view"]["views"][j].length),-(cntForY/(2*state.rooms[currentRoom]["room_top_view"]["views"][j].length)));
+      // cx.lockMovementX = false
+      // cx.lockMovementY = false
     }
   }
-
-
 };
 
 // elementary function: get center of rectangle
@@ -735,7 +738,6 @@ const renderTexts = (textObject, id) => {
   // if(state.viewBoxInfo[id] === undefined){
   //   state.viewBoxInfo[id] = state.viewBoxInfo[id-1]
   // }
-  console.log(id, 'll', state.viewBoxInfo, 'll', state.viewBoxInfo[id], 'ZAM')
   const scale = state.viewBoxInfo[id]["scale"];
   const origin = [
     state.viewBoxInfo[id]["newOriginX"],
@@ -1361,11 +1363,16 @@ const renderTableView = (tableView, id) => {
     });
   });
 
+  for (data_temp in data){
+    let str = data[data_temp].name
+    data[data_temp].name = str.slice(0,str.lastIndexOf(str.match(/[a-z]/ig)[str.match(/[a-z]/ig).length-1])+1) 
+  }
+
   //change the text size 6 px 
   generateTable(table, data);
 
-
-
+  
+  
   // add table to container
   container.replaceChild(
     table,

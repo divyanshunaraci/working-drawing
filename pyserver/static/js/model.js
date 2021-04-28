@@ -95,9 +95,11 @@ const getRoomObjects = (rooms) => {
               }
           }
         }
+        
         resultViews = [...resultViews, ...views];
         dimens = [...dimens, ...temp[0]]; // py dimens
         viewBoxInfo = [...viewBoxInfo, ...temp[1]];
+        console.log(temp)
         if(flag==1){
           for(i=1;i<=count;i++){
             viewBoxInfo = [...viewBoxInfo, temp[1]];  
@@ -136,6 +138,7 @@ const handleRoomTopView = (data, roomName) => {
     outlineEdges = [],
     compObjects = [],
     compObjectsTopView = [],
+    openings = {}
     
     externObj = [];
   if (!data) return;
@@ -183,7 +186,16 @@ const handleRoomTopView = (data, roomName) => {
 
     } else if (key.includes("external")) {
       external = data[key];
+    } else if (key.includes("openings")){
+      Object.keys(data).forEach((key) => {
+        if (key.includes("openings")) {
+          Object.keys(data[key]).forEach((name) => {
+            openings[name] = coords2Edges(data[key][name]);
+          });
+        }
+      });
     }
+        
   });
 
 
@@ -198,6 +210,12 @@ const handleRoomTopView = (data, roomName) => {
     externObj.push(temp);
   });
 
+  // if (key.includes("openings")) {
+  //   Object.keys(data[key]).forEach((name) => {
+  //     openings[name] = coords2Edges(data[key][name]);
+  //   });
+  // }
+
   if (Object.keys(data["dimension"]["IDs"]).length !== 0) {
 
     let tabularView = getTabularView(
@@ -209,7 +227,7 @@ const handleRoomTopView = (data, roomName) => {
       `${roomName}+room_top_view`,
       `room_top_view`,
       outlineEdges,
-      {},
+      openings,
       compObjects,
       externObj,
       ""
@@ -222,7 +240,7 @@ const handleRoomTopView = (data, roomName) => {
         `${roomName}+room_top_view`,
         `room_top_view`,
         outlineEdges,
-        {},
+        openings,
         compObjects,
         externObj,
         ""

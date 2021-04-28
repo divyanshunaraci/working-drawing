@@ -747,6 +747,7 @@ const renderTexts = (textObject, id) => {
     const outline = textObject[text];
     if (outline.length !== 0) {
       const center = getOutlineCenter(outline);
+      text = text.slice(0,text.lastIndexOf(text.match(/[a-z]/ig)[text.match(/[a-z]/ig).length-1])+1)
       const textbox = new fabric.Textbox(text, {
         left: ((center[0] + origin[0]) * scale) / dpi,
         top: ((-1 * center[1] + origin[1]) * scale) / dpi,
@@ -788,14 +789,6 @@ const renderWindowDoor = (view, id) => {
   Object.keys(opening).forEach((item) => {
     renderOutline(opening[item], id, "opening");
   });
-  for (data_temp in opening){
-    let str = data_temp.toString()
-    opening[str.slice(0,str.lastIndexOf(str.match(/[a-z]/ig)[str.match(/[a-z]/ig).length-1])+1)] = opening[data_temp]
-    delete opening[data_temp]
-    console.log(opening,str, opening[data_temp],'Somak')
-
-  }
-  console.log(opening,'Somak')
   renderTexts(opening, id);
 };
 

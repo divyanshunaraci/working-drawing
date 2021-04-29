@@ -596,14 +596,13 @@ class floor_plan_validation(object):
                                         for openings_dw in list(json_room_view_name['openings']):
                                             if json_room_view_name['openings'][openings_dw]:
                                                 json_room_view_name_external_item = json_room_view_name['openings'][openings_dw]
-                                                if 'outline' in json_room_view_name_external_item:
-                                                    string_outline = string_floor_external + '[' +openings_dw + ']'
-                                                    error_log, warning_log, lines, new_outline = self._outline(string_outline, json_room_view_name_external_item['outline'], error_log, warning_log,limit_coord[0][0],limit_coord[0][1])
-                                                    json_room_view_name_external_item['outline'] = new_outline
-                                                    x_list_min.append(lines[0][0])
-                                                    x_list_max.append(lines[1][0])
-                                                    y_list_min.append(lines[0][1])
-                                                    y_list_max.append(lines[1][1])
+                                                string_outline = string_floor_external + '[' +openings_dw + ']'
+                                                error_log, warning_log, lines, new_outline = self._outline(string_outline, json_room_view_name_external_item, error_log, warning_log,limit_coord[0][0],limit_coord[0][1])
+                                                json_room_view_name['openings'][openings_dw] = new_outline
+                                                x_list_min.append(lines[0][0])
+                                                x_list_max.append(lines[1][0])
+                                                y_list_min.append(lines[0][1])
+                                                y_list_max.append(lines[1][1])
                                                 #check what to do with it
                                     else:
                                         warning_log.append(string_floor_external+ 'is empty.' )
@@ -617,7 +616,7 @@ class floor_plan_validation(object):
                                     #########
                                     #########
                                     # what to check here? - its not consistent
-                                    
+
 
                                 x_min, x_max, y_min, y_max  = min(x_list_min), max(x_list_max), min(y_list_min), max(y_list_max)
                                 final_error_len = len(error_log)

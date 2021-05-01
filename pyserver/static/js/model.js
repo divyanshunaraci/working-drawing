@@ -182,6 +182,25 @@ const handleRoomTopView = (data, roomName) => {
 
       }
 
+      if ("external" in data){
+        if (Object.keys(data["external"]).length !== 0){
+          let i=1
+          Object.keys(data["external"]).forEach((compName, id) => {
+            console.log(compName)
+            const compID = 'E-'.concat(i++)
+            compObjectsTopView.push(
+              parseComp3(
+                compID,
+                compName,
+                data["external"][compName]
+              )
+            );
+            
+          });
+        }
+      }
+      
+
       
 
     } else if (key.includes("external")) {
@@ -217,7 +236,7 @@ const handleRoomTopView = (data, roomName) => {
   // }
 
   if (Object.keys(data["dimension"]["IDs"]).length !== 0) {
-
+    compObjectsTopView.concat(externObj)
     let tabularView = getTabularView(
       compObjectsTopView,
       `${roomName}+room_top_view+table_view`,
@@ -281,7 +300,6 @@ const handleRoomTopViewDimens = (data, roomName) => {
         dimens.push(new Dimension(...el, Math.hypot(el[0][0] - el[1][0], el[0][1] - el[1][1])));
       });
       viewBoxInfo = data["dimension"]["lengths"];
-      console.log(data["dimension"]["IDs"], 'kireeeeeee');
       compIds[`${roomName}+room_top_view`] = data["dimension"]["IDs"]; // 10.27
     }
   });

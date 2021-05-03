@@ -548,6 +548,10 @@ class floor_plan_validation(object):
                                                             y_list_min.append(lines[0][1])
                                                             y_list_max.append(lines[1][1])
                                                             #component
+
+                                                            if(lines[0][0] < limit_coord[0][0] or lines[0][1] < limit_coord[0][1] or lines[1][0] > limit_coord[1][0] or lines[1][1] > limit_coord[1][1]):
+                                                                error_log.append(string_floor_library+'['+items+'] is outside the outline')
+                                                            
                                                         else:
                                                             warning_log.append(string_floor_library+'['+items+'][external_points] is empty.')
                                                             del_yes *=0

@@ -263,7 +263,9 @@ const renderView = (projectInfo, view, id) => {
 
 
     // render 'external' items
-    renderExternalItems(view, id);
+    if(viewName === 'room_top_view'){
+      renderExternalItems(view, id);
+    }
   }
   // else if view is 'AdditionalView'
   else if (viewName === "EXTRA_VIEW") {
@@ -308,7 +310,6 @@ const renderRenderView = (imgURL, id) => {
 
 // render view title(viewName)
 const renderTitle = (view, id) => {
-  console.log(view, id, 'Final Check')
   const ID = view.getID();
   const viewType = view.type;
   const viewName = view.getName();
@@ -366,7 +367,6 @@ const renderComponents = (view, id) => {
   if (viewName === "room_top_view") {
     let compsCoords = {};
     // comp1
-    console.log(comps, 'Lets see what happens')
     comps.forEach((comp1) => {
       const coords = comp1.getOutline();
       renderOutline(coords, id, "component");
@@ -527,7 +527,6 @@ const renderExternalItem = (view, id) => {
     extItems.forEach((item, id) => {
       const outline = item.getOutline();
       renderOutline(outline, id, "externItem");
-
       const ID = item.id;
       compsCoords[ID] = outline;
 
@@ -554,10 +553,32 @@ const renderExternalItem = (view, id) => {
 
 const renderExternalItems = (view, id) => {
   const extItems = view.getExternalItems();
+  let compsCoords = {};
+  // comp1
+  i = 1
   extItems.forEach((item) => {
-    const outline = item.getOutline();
-    renderOutline(outline, id, "externItem");
+    const coords = item.getOutline();
+    renderOutline(coords, id, "externItem");
+
+    // render component dimensions(1)
+    // const ID = item.getID();
+    const ID = 'E-'.concat(i++)
+    compsCoords[ID] = coords;
+
+    // render component id( comp-1, comp-2, ...)
+    // const compID = item.getID();
+    const compID = ID
+    const temp = {};
+    temp[compID] = coords;
+    renderTexts(temp, id);
   });
+  // extItems.forEach((item) => {
+  //   const outline = item.getOutline();
+  //   renderOutline(outline, id, "externItem");
+  //   let dict = {}
+  //   dict[item.name] = outline;
+  //   renderTexts(dict, id)
+  // });
 };
 
 // render 'shutter' items inside view
@@ -668,7 +689,6 @@ const renderOutline = (outline, id, type, dashPattern = [], view_name = '') => {
   cx.closePath();
   if (view_name == 'room_top_view') {
     for (let j in state.rooms[currentRoom]["room_top_view"]["views"]) {
-      console.log(j,'jjjjjjjjj',state.rooms[currentRoom]["room_top_view"],'popopopoopo');
       cx.globalAlpha = 0.95;
       cx.rect(0, 0, 5, 5);
       cx.fillStyle = "#435A6B";
@@ -1307,7 +1327,7 @@ const generateTable = (table, data) => {
 // render 'TableView'
 const renderTableView = (tableView, id) => {
   const compsInfo = tableView.getCompsInfo();
-
+  
   // get handle of view container and clean the innerHTML of container
   const container = document.querySelector(`#wd-${id} .canvas-container`);
 

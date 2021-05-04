@@ -1106,12 +1106,12 @@ const renderPyDimensions = (dimensions, id) => {
     });
     lineGroup.lockScalingX = true;
     lineGroup.lockScalingY = true;
-    lineGroup.lockMovementX = true;
-    lineGroup.lockMovementY = true;
+    lineGroup.lockMovementX = false;
+    lineGroup.lockMovementY = false;
 
     canvas.getObjects();
     canvas.add(lineGroup);
-    canvas.selection = false;
+    canvas.selection = true;
     canvas.renderAll();
     canvas.calcOffset();
 
@@ -1154,12 +1154,12 @@ const renderPyDimensions = (dimensions, id) => {
     });
     textbox.lockScalingX = true;
     textbox.lockScalingY = true;
-    textbox.lockMovementX = true;
-    textbox.lockMovementY = true;
+    textbox.lockMovementX = false;
+    textbox.lockMovementY = false;
 
     canvas.getObjects();
     canvas.add(textbox);
-    canvas.selection = false;
+    canvas.selection = true;
     canvas.renderAll();
     canvas.calcOffset();
   });
@@ -1407,8 +1407,14 @@ const getDimensionDrawPts = (dimension, fontStr) => {
   const charCnt = dimension.label.toString().length - 1;
   const charLength = fontSize * charCnt;
   const dimenLength = Number(dimension.label);
-  const offset1 = (dimenLength - charLength) / 2;
-  const offset2 = (dimenLength + charLength) / 2;
+  let offset1 = 0
+  let offset2 = 0
+  if(charLength<dimenLength){
+    offset1 = (dimenLength - charLength) / 2;
+    offset2 = (dimenLength + charLength) / 2;
+  }
+  // const offset1 = (dimenLength - charLength) / 2;
+  // const offset2 = (dimenLength + charLength) / 2;
   // if the dimension is for horizontal edge
   if (dimension.direction === "h") {
     return [

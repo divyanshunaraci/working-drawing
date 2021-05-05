@@ -973,7 +973,7 @@ class floor_plan_component1(object):
 
 
         #drwaing overall component dimensions
-        #dimension_list = self.__draw_overall_dimension_component(self,dict1,'top_front',dim_dict,the_array,outline_dim,outer_dim_dict,dimension_list) 
+        dimension_list = self.__draw_overall_dimension_component(self,dict1,'top_front',dim_dict,the_array,outline_dim,outer_dim_dict,dimension_list) 
 
         #drawing ineer dimension of hte componenets
         ###dim_dict, dimension_list = self.draw_inner_dimension_component(self,dim_dict,dimension_list,dict1)

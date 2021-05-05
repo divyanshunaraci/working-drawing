@@ -1106,12 +1106,12 @@ const renderPyDimensions = (dimensions, id) => {
     });
     lineGroup.lockScalingX = true;
     lineGroup.lockScalingY = true;
-    lineGroup.lockMovementX = false;
-    lineGroup.lockMovementY = false;
+    lineGroup.lockMovementX = true;
+    lineGroup.lockMovementY = true;
 
     canvas.getObjects();
     canvas.add(lineGroup);
-    canvas.selection = true;
+    canvas.selection = false;
     canvas.renderAll();
     canvas.calcOffset();
 

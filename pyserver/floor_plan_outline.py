@@ -789,7 +789,7 @@ class floor_plan_component1(object):
         dimension_list = []
 
         #Add distances for components
-        dimension_list = self.__distance_to_component(self, dict1, outer_dim_dict, dim_dict, dimension_list, 200)
+        dimension_list = self.__distance_to_component_room_top_view(self, dict1, outer_dim_dict, dim_dict, dimension_list, 200)
         
 
         #drwaing overall component dimensions
@@ -822,10 +822,8 @@ class floor_plan_component1(object):
         
         return {'dimension': dimension_list, 'lengths': lengths, 'IDs':com_ID}
 
-
-
     @staticmethod
-    def __distance_to_component(self,dict1, outer_dim_dict, dim_dict,dimension_list,thickness):
+    def __distance_to_component_room_top_view(self,dict1, outer_dim_dict, dim_dict,dimension_list,thickness):
         x0, y0 = dict1['outline']['dims']['x0'], dict1['outline']['dims']['y0']
         xn, yn = dict1['outline']['dims']['xn'], dict1['outline']['dims']['yn']
         xc0, yc0 = (x0 + xn)/2, (y0 +yn)/2
@@ -843,8 +841,7 @@ class floor_plan_component1(object):
             #Drawing the horizontal distance first
             quadrant_x = (x0c+xnc)/2 - xc0 #if negative then on the left side, otherwise right
             quadrant_y = (y0c+ync)/2 - yc0 #if negative then on the bottom side, otherwise top  
-
-
+            
             #total 4 cases
             if quadrant_x == 0 and quadrant_y == 0 or quadrant_x >= 0 and quadrant_y >= 0: #quadrant 1 - top right
                 #define x1, x2, y1 and y2 for each case
@@ -901,7 +898,163 @@ class floor_plan_component1(object):
 
         #####
         help_outer_dim_dis = {'hor':{1:1,2:1,3:-1,4:-1},'ver':{1:1,2:-1,3:-1,4:1}}
+        
+        # print(x0,y0,xn,yn,'Wall coordinates')
+        # print(quad_info,'QUAD INFO before splicing')
+        for q_value in list(quad_info['hor']):
+            all_coords_tmp = list(quad_info['hor'][q_value])
+            all_coords_tmp.sort()
+            # print(all_coords_tmp,'all coords tmp hor')
+            
+            if len(all_coords_tmp)>2:
+                if all_coords_tmp[0] == x0:
+                    all_coords_tmp = all_coords_tmp[0:3]
+                if all_coords_tmp[len(all_coords_tmp)-1] == xn:
+                    all_coords_tmp = all_coords_tmp[len(all_coords_tmp)-3:len(all_coords_tmp)]
+                quad_info['hor'][q_value] = all_coords_tmp
 
+        for q_value in list(quad_info['ver']):
+            all_coords_tmp = list(quad_info['ver'][q_value])
+            all_coords_tmp.sort()
+            # print(all_coords_tmp,'all coords tmp ver')
+            
+            if len(all_coords_tmp)>2:
+                if all_coords_tmp[0] == y0:
+                    all_coords_tmp = all_coords_tmp[0:3]
+                if all_coords_tmp[len(all_coords_tmp)-1] == yn:
+                    all_coords_tmp = all_coords_tmp[len(all_coords_tmp)-3:len(all_coords_tmp)]
+                quad_info['ver'][q_value] = all_coords_tmp
+
+        # print(quad_info,'QUAD INFO after splicing')
+            
+        for dirn in list(quad_info): #'hor 'ver'
+            if dirn == 'hor': #when horizonal
+                zz = [y0, yn]
+                ww = [x0, xn]
+            else: #when vertical
+                zz = [x0, xn]
+                ww = [y0, yn]
+            for quad in list(quad_info[dirn]): #1 2 3 4 
+                all_coords = list(quad_info[dirn][quad])
+                all_coords.sort()
+                quad_info[dirn][quad] = all_coords
+                pick = 1 if help_outer_dim_dis[dirn][quad] == 1 else 0 #this determines which end is chosen
+                start_pt = zz[pick] + help_outer_dim_dis[dirn][quad]*200
+                up_down = help_outer_dim_dis[dirn][quad]
+                if len(all_coords) < 2:
+                    continue
+
+                z_optimum = self.__checking_outer_existence(self, outer_dim_dict, dirn, start_pt, up_down, all_coords[0], all_coords[-1], ww[0], ww[1], thickness) 
+                # at the location of z_optimum all the dimension are drawn in all_coords
+                for it1 in range(0, len(all_coords)-1):
+                    if all_coords[it1+1] - all_coords[it1] < 30 :
+                        continue
+                    zer_string = dirn[0] + str(all_coords[it1]) +'&'+ str(all_coords[it1+1])
+                    if not dim_dict[dirn].has_key(zer_string): #then only we draw and add
+                        #no need ot calculate the new location cause it is already calculated
+                        dim_dict[dirn][zer_string] = [z_optimum, [all_coords[it1], all_coords[it1+1]]]
+                        if dirn == 'hor':
+                            dimension_list.append([[all_coords[it1],z_optimum],[all_coords[it1+1],z_optimum]])
+                        else: #then 'ver'
+                            dimension_list.append([[z_optimum,all_coords[it1]],[z_optimum,all_coords[it1+1]]])
+
+
+            """if hor_dim_check:
+                hor_string = 'h' + str(x1) + '&' + str(x2) 
+                if not dim_dict['hor'].has_key(hor_string): #then only draw later add it too
+                    y_new = self.__checking_outer_existence(self,outer_dim_dict, 'hor', hor_start_pt, hor_up_down, x1, x2, x0, xn, thickness)
+                    dim_dict['hor'][hor_string] = [y_new, [x1, x2]]
+                    dimension_list.append([[x1, y_new], [x2, y_new]])
+
+            
+            if ver_dim_check:
+                ver_string = 'v' + str(y1) + '&' + str(y2)
+                if not dim_dict['ver'].has_key(ver_string): #then only draw later add it too
+                    x_new = self.__checking_outer_existence(self,outer_dim_dict, 'ver', ver_start_pt, ver_up_down, y1, y2, y0, yn, thickness)
+                    dim_dict['ver'][ver_string] = [x_new, [y1, y2]]
+                    dimension_list.append([[x_new,y1],[x_new,y2]])"""
+
+        
+        return dimension_list
+                    
+
+    @staticmethod
+    def __distance_to_component(self,dict1, outer_dim_dict, dim_dict,dimension_list,thickness):
+        x0, y0 = dict1['outline']['dims']['x0'], dict1['outline']['dims']['y0']
+        xn, yn = dict1['outline']['dims']['xn'], dict1['outline']['dims']['yn']
+        xc0, yc0 = (x0 + xn)/2, (y0 +yn)/2
+
+        #quad_info = {'hor':{1:[],2:[],3:[],4:[]},'ver':{1:[],2:[],3:[],4:[]} }
+        quad_info = {'hor':{1:set(),2:set(),3:set(),4:set()},'ver':{1:set(),2:set(),3:set(),4:set()} }
+
+        for keys in dict1:
+            if keys == 'outline':
+                continue
+            t_d2 = dict1[keys]['dims']
+            x0c, y0c = t_d2['x0'], t_d2['y0']
+            xnc, ync = t_d2['xn'], t_d2['yn']
+
+            #Drawing the horizontal distance first
+            quadrant_x = (x0c+xnc)/2 - xc0 #if negative then on the left side, otherwise right
+            quadrant_y = (y0c+ync)/2 - yc0 #if negative then on the bottom side, otherwise top  
+            
+            #total 4 cases
+            if quadrant_x == 0 and quadrant_y == 0 or quadrant_x >= 0 and quadrant_y >= 0: #quadrant 1 - top right
+                #define x1, x2, y1 and y2 for each case
+                x1, x2, y1, y2 = xnc, xn, ync, yn
+                #hor_start_pt, ver_start_pt = yn + 200, xn + 200
+                hor_up_down, ver_up_down = 1, 1
+                hor_start_pt, ver_start_pt = yn + hor_up_down * 200, xn + ver_up_down * 200
+                quadrant = 1
+
+            elif quadrant_x <= 0 and quadrant_y <= 0: #quadrant 3 - bottom left
+                x1, x2, y1, y2 = x0, x0c, y0, y0c
+                #hor_start_pt, ver_start_pt = y0 - 200, x0 - 200
+                hor_up_down, ver_up_down = -1, -1
+                hor_start_pt, ver_start_pt = y0 + hor_up_down * 200, x0 + ver_up_down * 200
+                quadrant = 3
+            
+            elif quadrant_x <= 0 and quadrant_y >= 0: #quadrant 2 - top left
+                x1, x2, y1, y2 = x0, x0c, ync, yn
+                #hor_start_pt, ver_start_pt = yn + 200, x0 - 200
+                hor_up_down, ver_up_down = 1, -1
+                hor_start_pt, ver_start_pt = yn + hor_up_down * 200, x0 + ver_up_down * 200
+                quadrant = 2
+
+            elif quadrant_x >= 0 and quadrant_y <= 0: #quadrant 4 - bottom right
+                x1, x2, y1, y2 = xnc, xn, y0, ync
+                #hor_start_pt, ver_start_pt = y0 - 200, xn + 200
+                hor_up_down, ver_up_down = -1, 1
+                hor_start_pt, ver_start_pt = y0 + hor_up_down * 200, xn + ver_up_down * 200
+                quadrant = 4
+            
+            #check whether to draw horizontal or vertical dim
+            hor_dim_check = True
+            ver_dim_check = True
+
+            if x1 == x2: #check whether to draw horizontal or vertical dim
+                hor_dim_check = False
+            if y1 == y2:
+                ver_dim_check = False
+
+            if hor_dim_check:
+                quad_info['hor'][quadrant].add(x1) # storing the data earlier to squeeze it
+                quad_info['hor'][quadrant].add(x2) 
+
+            if ver_dim_check:
+                quad_info['ver'][quadrant].add(y1) # storing the data earlier to squeeze it
+                quad_info['ver'][quadrant].add(y2)
+
+        """ 
+            1: xn, yn, yn +1, xn +1
+            2: x0, yn, yn +1, x0 -1
+            3: x0, y0, y0 -1, x0 -1
+            4: xn, y0, y0 -1, xn +1 
+            """
+
+        #####
+        help_outer_dim_dis = {'hor':{1:1,2:1,3:-1,4:-1},'ver':{1:1,2:-1,3:-1,4:1}}
+            
         for dirn in list(quad_info): #'hor 'ver'
             if dirn == 'hor': #when horizonal
                 zz = [y0, yn]

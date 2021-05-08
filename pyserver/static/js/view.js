@@ -197,8 +197,8 @@ const renderFloorPlan = (floorPlanView, id) => {
       const textbox = new fabric.Textbox(roomName, {
         left: ((pos[0] + origin[0] - 30) * scale) / dpi,
         top: ((-1 * pos[1] + origin[1]) * scale) / dpi,
-        width: 60,
-        fontSize: 15,
+        width: 40,
+        fontSize: 12,
         textAlign: "center",
         originX: "center",
         originY: "center",
@@ -773,8 +773,8 @@ const renderTexts = (textObject, id) => {
       const textbox = new fabric.Textbox(text, {
         left: ((center[0] + origin[0]) * scale) / dpi,
         top: ((-1 * center[1] + origin[1]) * scale) / dpi,
-        width: 60,
-        fontSize: 16,
+        width: 40,
+        fontSize: 11,
         textAlign: "center",
         originX: "center",
         originY: "center",
@@ -1125,8 +1125,8 @@ const renderPyDimensions = (dimensions, id) => {
     const textbox = new fabric.Textbox(dimension.label.toString(), {
       left: ((position[0] + origin[0] - 20) * scale) / dpi,
       top: ((-1 * position[1] + origin[1]) * scale) / dpi,
-      width: 60,
-      fontSize: 15,
+      width: 40,
+      fontSize: 12,
       textAlign: "center",
       originX: "center",
       originY: textAligni,

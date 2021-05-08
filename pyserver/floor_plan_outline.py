@@ -557,7 +557,6 @@ class floor_plan_component1(object):
                 drawing_1_list  = self.__clean_drawing_list(drawing_1_list)
                 #converting the list to dictionary of  for outline
                 dict_for_view['outline'] = self.__create_dict(self,drawing_1_list,True)
-
                 if 'floor_components' in list(j_object['rooms'][room_name][view_name]):
                     if 'library' in list(j_object['rooms'][room_name][view_name]['floor_components']):
 
@@ -1656,6 +1655,7 @@ class floor_plan_component1(object):
             draw_ver_dict[item]=self.__truncate_list(draw_ver_dict[item])
         #x0, y0, xn, yn = 
         dims = self.__find_thickness(self,draw_hor_dict, draw_ver_dict, outline_bool)
+        print(dims, "Wall thickness checking")
         return {'horizontal':draw_hor_dict, 'vertical': draw_ver_dict, 'dims': dims}
 
 
@@ -1664,8 +1664,20 @@ class floor_plan_component1(object):
     def __find_thickness(self,draw_hor_dict, draw_ver_dict, outline_bool = False):
         ls1=self.__reveal_keys(draw_hor_dict) #all the keys in ascending order
         ls2=self.__reveal_keys(draw_ver_dict)
-        
         x0, y0, xn, yn = ls2[0], ls1[0],ls2[-1], ls1 [-1]
+        if(len(ls1)>2):
+            if(abs(ls1[0])-ls1[1]<=60):
+                y0=ls1[1]
+            
+            if(abs(ls1[-1])-ls1[len(ls1)-2]<=60):
+                yn=ls1[len(ls1)-2]
+        if(len(ls2)>2):    
+            if(abs(ls2[0])-ls2[1]<=60):
+                x0=ls2[1]
+            if(abs(ls2[-1])-ls2[len(ls2)-2]<=60):
+                xn=ls2[len(ls2)-2]
+            
+        
         
         #finding xi0 , yi0, xin, yin
         if outline_bool:

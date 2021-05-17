@@ -726,13 +726,42 @@ class floor_plan_component1(object):
     @staticmethod
     def __draw_overall_dimension_component(self,dict1,str1,dim_dict,the_array,outline_dim,outer_dim_dict,dimension_list):
         #this we are doing for overall dimension of the component
-
+        unique_dim_x = []
+        unique_dim_y = []
         for keys in dict1: 
             if keys == 'outline':
                 continue
             t_d2 = dict1[keys]['dims']
             x0c, y0c = t_d2['x0'], t_d2['y0']
             xnc, ync = t_d2['xn'], t_d2['yn']
+            
+            x_dim = abs(xnc-x0c)
+            y_dim = abs(ync-y0c)
+            xtmp = 'front_view'
+            if str1 == 'room_top_view':
+                ps = y0c -100
+                pe = ps + 100
+                x0, y0 = outline_dim['x0'], outline_dim['y0']
+                qw = sum(the_array[x0c-x0:xnc-x0,ps-y0:pe-y0])
+                if (x_dim in unique_dim_x or y_dim in unique_dim_y or isinstance(qw,int)):
+                    continue
+                unique_dim_x.append(x_dim)
+                unique_dim_y.append(y_dim)
+                def line_equation(a1,b1,a2,b2,c1,c2):
+                    x1 = abs(b1-c2)
+                    x2 = abs(c2-b2)
+                    y1 = abs(a1-c1)
+                    y2 = abs(c1-a2)
+                    print()
+                    if(min(x1,x2,y1,y2)==x1 or min(x1,x2,y1,y2)==x2):
+                        return 'hor'
+                    return 'ver'   
+                    # return abs(((a1-b1)*(a2-c2))-((a2-b2)*(a1-c1)))/np.sqrt(((a1-b1)*(a1-b1))+((a2-b2)*(a2-b2)))
+                midc_x = (x0c+xnc)/2
+                midc_y = (y0c+ync)/2
+                xtmp = line_equation(outline_dim['x0'],outline_dim['y0'],outline_dim['xn'],outline_dim['yn'],midc_x,midc_y)
+                # if xxx == 'hor'
+
             hor_string = 'h' + str(x0c) + '&' + str(xnc)
             ver_string = 'v' + str(y0c) + '&' + str(ync)
 
@@ -740,35 +769,50 @@ class floor_plan_component1(object):
                 then_chill = 1 #because both the dimensions are already displayed and listed in dim_dict
 
             elif not dim_dict['hor'].has_key(hor_string) and dim_dict['ver'].has_key(ver_string): #vertical exists but horizontal does not exist
-                if str1 == 'room_top_view':
+                if str1 == 'room_top_view' and xtmp == 'ver':
                     y_opt = self.__update_hornver_dim_room_top_view(self,t_d2,the_array,outline_dim,outer_dim_dict,'y_opt')
                 else:
                     y_opt = self.__update_hornver_dim(self,t_d2,the_array,outline_dim,outer_dim_dict,'y_opt')
-                
-                dim_dict['hor'][hor_string] = [y_opt, [x0c,xnc]]
-                dimension_list.append([[x0c,y_opt],[xnc,y_opt]])
-            
+                if(xtmp == 'ver'):
+                    dim_dict['hor'][hor_string] = [y_opt, [x0c,xnc]]
+                    dimension_list.append([[x0c,y_opt],[xnc,y_opt]])
+                else:
+                    dim_dict['hor'][hor_string] = [y_opt, [x0c,xnc]]
+                    dimension_list.append([[x0c,y_opt],[xnc,y_opt]])
             elif dim_dict['hor'].has_key(hor_string) and not dim_dict['ver'].has_key(ver_string): #horizontal exists but vertical does not exists
-                if str1 == 'room_top_view':
+                if str1 == 'room_top_view' and xtmp == 'hor':
                     x_opt = self.__update_hornver_dim_room_top_view(self,t_d2,the_array,outline_dim,outer_dim_dict,'x_opt')
                 else:
                     x_opt = self.__update_hornver_dim(self,t_d2,the_array,outline_dim,outer_dim_dict,'x_opt')
-
-                dim_dict['ver'][ver_string] = [x_opt, [y0c,ync]]
-                dimension_list.append([[x_opt,y0c],[x_opt,ync]])
+                if xtmp == 'hor':
+                    dim_dict['ver'][ver_string] = [x_opt, [y0c,ync]]
+                    dimension_list.append([[x_opt,y0c],[x_opt,ync]])
+                else:
+                    dim_dict['ver'][ver_string] = [x_opt, [y0c,ync]]
+                    dimension_list.append([[x_opt,y0c],[x_opt,ync]])
 
             else: # both L and B of the component do not exist
                 if str1 == 'room_top_view':
+                    randomNumber = 1 #this to be debugged later
                     x_opt, y_opt = self.__update_hornver_dim_room_top_view(self,t_d2,the_array,outline_dim,outer_dim_dict,'xy_opt')
+                    
                 else:
                     x_opt, y_opt = self.__update_hornver_dim(self,t_d2,the_array,outline_dim,outer_dim_dict,'xy_opt')
                 # the problem is y_opt does not take into acccount if x1-x2 has already been shown
                 
-                dim_dict['hor'][hor_string] = [y_opt, [x0c,xnc]]
-                dimension_list.append([[x0c,y_opt],[xnc,y_opt]])
-            
-                dim_dict['ver'][ver_string] = [x_opt, [y0c,ync]]
-                dimension_list.append([[x_opt,y0c],[x_opt,ync]])
+                if (xtmp == 'ver'):
+                    dim_dict['hor'][hor_string] = [y_opt, [x0c,xnc]]
+                    dimension_list.append([[x0c,y_opt],[xnc,y_opt]])
+                
+                elif (xtmp == 'hor'):
+                    dim_dict['ver'][ver_string] = [x_opt, [y0c,ync]]
+                    dimension_list.append([[x_opt,y0c],[x_opt,ync]])
+                
+                if xtmp == 'front_view':
+                    dim_dict['hor'][hor_string] = [y_opt, [x0c,xnc]]
+                    dimension_list.append([[x0c,y_opt],[xnc,y_opt]])
+                    dim_dict['ver'][ver_string] = [x_opt, [y0c,ync]]
+                    dimension_list.append([[x_opt,y0c],[x_opt,ync]])
 
         return dimension_list
 
@@ -792,7 +836,7 @@ class floor_plan_component1(object):
         
 
         #drwaing overall component dimensions
-        #dimension_list = self.__draw_overall_dimension_component(self,dict1,'room_top_view',dim_dict,the_array,outline_dim,outer_dim_dict,dimension_list)
+        dimension_list = self.__draw_overall_dimension_component(self,dict1,'room_top_view',dim_dict,the_array,outline_dim,outer_dim_dict,dimension_list)
         
                 
         #drawing inner dimension of the component
@@ -1655,7 +1699,6 @@ class floor_plan_component1(object):
             draw_ver_dict[item]=self.__truncate_list(draw_ver_dict[item])
         #x0, y0, xn, yn = 
         dims = self.__find_thickness(self,draw_hor_dict, draw_ver_dict, outline_bool)
-        print(dims, "Wall thickness checking")
         return {'horizontal':draw_hor_dict, 'vertical': draw_ver_dict, 'dims': dims}
 
 
@@ -1665,19 +1708,20 @@ class floor_plan_component1(object):
         ls1=self.__reveal_keys(draw_hor_dict) #all the keys in ascending order
         ls2=self.__reveal_keys(draw_ver_dict)
         x0, y0, xn, yn = ls2[0], ls1[0],ls2[-1], ls1 [-1]
-        if(len(ls1)>2):
-            if(abs(ls1[0])-ls1[1]<=60):
-                y0=ls1[1]
-            
-            if(abs(ls1[-1])-ls1[len(ls1)-2]<=60):
-                yn=ls1[len(ls1)-2]
-        if(len(ls2)>2):    
-            if(abs(ls2[0])-ls2[1]<=60):
-                x0=ls2[1]
-            if(abs(ls2[-1])-ls2[len(ls2)-2]<=60):
-                xn=ls2[len(ls2)-2]
-            
         
+        if outline_bool == True:
+            if(len(ls1)>2):
+                if(abs(ls1[0])-ls1[1]<=60):
+                    y0=ls1[1]
+                
+                if(abs(ls1[-1])-ls1[len(ls1)-2]<=60):
+                    yn=ls1[len(ls1)-2]
+            if(len(ls2)>2):    
+                if(abs(ls2[0])-ls2[1]<=60):
+                    x0=ls2[1]
+                if(abs(ls2[-1])-ls2[len(ls2)-2]<=60):
+                    xn=ls2[len(ls2)-2]
+                    
         
         #finding xi0 , yi0, xin, yin
         if outline_bool:

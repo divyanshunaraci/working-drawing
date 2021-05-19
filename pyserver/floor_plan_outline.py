@@ -1709,18 +1709,18 @@ class floor_plan_component1(object):
         ls2=self.__reveal_keys(draw_ver_dict)
         x0, y0, xn, yn = ls2[0], ls1[0],ls2[-1], ls1 [-1]
         
-        if outline_bool == True:
-            if(len(ls1)>2):
-                if(abs(ls1[0])-ls1[1]<=60):
-                    y0=ls1[1]
+        # if outline_bool == True:
+        #     if(len(ls1)>2):
+        #         if(abs(ls1[0])-ls1[1]<=60):
+        #             y0=ls1[1]
                 
-                if(abs(ls1[-1])-ls1[len(ls1)-2]<=60):
-                    yn=ls1[len(ls1)-2]
-            if(len(ls2)>2):    
-                if(abs(ls2[0])-ls2[1]<=60):
-                    x0=ls2[1]
-                if(abs(ls2[-1])-ls2[len(ls2)-2]<=60):
-                    xn=ls2[len(ls2)-2]
+        #         if(abs(ls1[-1])-ls1[len(ls1)-2]<=60):
+        #             yn=ls1[len(ls1)-2]
+        #     if(len(ls2)>2):    
+        #         if(abs(ls2[0])-ls2[1]<=60):
+        #             x0=ls2[1]
+        #         if(abs(ls2[-1])-ls2[len(ls2)-2]<=60):
+        #             xn=ls2[len(ls2)-2]
                     
         
         #finding xi0 , yi0, xin, yin

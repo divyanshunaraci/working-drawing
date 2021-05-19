@@ -266,7 +266,7 @@ class floor_plan_validation(object):
                         #         view_number =0
 
                         for k in json_room.keys():
-                            if (k != 'room_top_view' and k != 'render_individual_components'):
+                            if (k != 'room_top_view' and k != 'render_individual_comps'):
                                 string_id_view_number = 'Json object[rooms][' + \
                                     items+']['+k+']'
                                 error_log, warning_log = self._room_view_number(
@@ -297,7 +297,7 @@ class floor_plan_validation(object):
                         warning_log.append('Additional key name: '+items+' exists in the rooms.')
                         del json_rooms[items]
 
-            print(self.room_view_names)
+            print(self.room_view_names, 'Room view names in _rooms')
                 
 
                     
@@ -348,7 +348,7 @@ class floor_plan_validation(object):
                 json_room_top_view["thickness"] = int(self._thickness(limit_coord,'room_top_view'))
                 
                 check_len_outline = len(room_top_view_outline)
-                
+                # outline deleted if there is no values...json_room_top_view['outline']. 
                 if check_len_outline == 0:
                     
                     del json_room_top_view['outline']
@@ -452,6 +452,9 @@ class floor_plan_validation(object):
                     
                     if json_room_top_view_library[items].has_key('outline'):
                         error_log, warning_log, lines, new_outline = self._outline(string_id+'['+items+'][outline]',json_room_top_view_library[items]['outline'],error_log, warning_log,limit_coord[0][0],limit_coord[0][1])
+                        if(lines[0][0] < limit_coord[0][0] or lines[0][1] < limit_coord[0][1] or lines[1][0] > limit_coord[1][0] or lines[1][1] > limit_coord[1][1]):
+                            del json_room_top_view_library[items]
+                            continue
                         json_room_top_view_library[items]['outline'] = new_outline
                         x_list_min.append(lines[0][0])
                         x_list_max.append(lines[1][0])

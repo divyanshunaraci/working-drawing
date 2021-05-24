@@ -502,9 +502,9 @@ const getAccHandlesInfo = (haView) => {
     });
 
     // get Handles position & push to textObject
-    shutters.forEach((shutter) => {
+    shutters.forEach((shutter,id) => {
       const handle = shutter.getHandle();
-      const handleName = handle["name"];
+      const handleName = handle["name"]+id;
       const position = handle["outline"];
       textObject[handleName] = position;
     });
@@ -1335,15 +1335,17 @@ const renderTableView = (tableView, id) => {
 
   // create table
   let table = document.createElement("table");
+  
   table.style.width = "100%";
+  
   //table.style.height = "100%";
   table.style.fontSize = '8px';
   table.style.wordWrap = 'break-word';
   //table.setAttribute('style', 'width:75px;height:75px;');
-  //document.body.setAttribute('style', 'display:block;overflow:scroll;');
+  document.body.setAttribute('style', 'display:block;overflow:scroll;');
   table.setAttribute("border", "1");
   table.classList.add("main-table");
-
+  table.classList.add("table-responsive");
   //canvas width and height- console.log
   /*console.log(container.clientHeight, container.clientWidth);
 

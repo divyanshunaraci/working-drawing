@@ -266,7 +266,7 @@ class floor_plan_validation(object):
                         #         view_number =0
 
                         for k in json_room.keys():
-                            if (k != 'room_top_view' and k != 'render_individual_components'):
+                            if (k != 'room_top_view' and k != 'render_individual_comps'):
                                 string_id_view_number = 'Json object[rooms][' + \
                                     items+']['+k+']'
                                 error_log, warning_log = self._room_view_number(
@@ -297,7 +297,7 @@ class floor_plan_validation(object):
                         warning_log.append('Additional key name: '+items+' exists in the rooms.')
                         del json_rooms[items]
 
-            print(self.room_view_names)
+            print(self.room_view_names, 'Room view names in _rooms')
                 
 
                     
@@ -348,7 +348,7 @@ class floor_plan_validation(object):
                 json_room_top_view["thickness"] = int(self._thickness(limit_coord,'room_top_view'))
                 
                 check_len_outline = len(room_top_view_outline)
-                
+                # outline deleted if there is no values...json_room_top_view['outline']. 
                 if check_len_outline == 0:
                     
                     del json_room_top_view['outline']
@@ -452,6 +452,9 @@ class floor_plan_validation(object):
                     
                     if json_room_top_view_library[items].has_key('outline'):
                         error_log, warning_log, lines, new_outline = self._outline(string_id+'['+items+'][outline]',json_room_top_view_library[items]['outline'],error_log, warning_log,limit_coord[0][0],limit_coord[0][1])
+                        if(lines[0][0] < limit_coord[0][0] or lines[0][1] < limit_coord[0][1] or lines[1][0] > limit_coord[1][0] or lines[1][1] > limit_coord[1][1]):
+                            del json_room_top_view_library[items]
+                            continue
                         json_room_top_view_library[items]['outline'] = new_outline
                         x_list_min.append(lines[0][0])
                         x_list_max.append(lines[1][0])
@@ -542,15 +545,18 @@ class floor_plan_validation(object):
                                                     if 'external_points' in list(json_room_view_name_library[items]):
                                                         check_len_ext = len(json_room_view_name_library[items]['external_points'])
                                                         if check_len_ext != 0 :
-                                                            error_log, warning_log, lines = self._library_external_points(self, string_floor_library+'['+items+'][external_points]',json_room_view_name_library[items]['external_points'],error_log, warning_log,limit_coord)
-                                                            x_list_min.append(lines[0][0])
-                                                            x_list_max.append(lines[1][0])
-                                                            y_list_min.append(lines[0][1])
-                                                            y_list_max.append(lines[1][1])
+                                                            warning_log, lines = self._library_external_points(self, string_floor_library+'['+items+'][external_points]',json_room_view_name_library[items]['external_points'],error_log, warning_log,limit_coord)
+                                                            if not(lines[0][0] < limit_coord[0][0] or lines[0][1] < limit_coord[0][1] or lines[1][0] > limit_coord[1][0] or lines[1][1] > limit_coord[1][1]):
+                                                                
+                                                                x_list_min.append(lines[0][0])
+                                                                x_list_max.append(lines[1][0])
+                                                                y_list_min.append(lines[0][1])
+                                                                y_list_max.append(lines[1][1])
+                                                            else: 
+                                                                del json_room_view_name_library[items]
                                                             #component
 
-                                                            if(lines[0][0] < limit_coord[0][0] or lines[0][1] < limit_coord[0][1] or lines[1][0] > limit_coord[1][0] or lines[1][1] > limit_coord[1][1]):
-                                                                error_log.append(string_floor_library+'['+items+'] is outside the outline')
+                                                            
                                                             
                                                         else:
                                                             warning_log.append(string_floor_library+'['+items+'][external_points] is empty.')
@@ -584,10 +590,18 @@ class floor_plan_validation(object):
                                                     string_outline = string_floor_external + '[' +external_items + '][outline]'
                                                     error_log, warning_log, lines, new_outline = self._outline(string_outline, json_room_view_name_external_item['outline'], error_log, warning_log,limit_coord[0][0],limit_coord[0][1])
                                                     json_room_view_name_external_item['outline'] = new_outline
-                                                    x_list_min.append(lines[0][0])
-                                                    x_list_max.append(lines[1][0])
-                                                    y_list_min.append(lines[0][1])
-                                                    y_list_max.append(lines[1][1])
+                                                    if not(lines[0][0] < limit_coord[0][0] or lines[0][1] < limit_coord[0][1] or lines[1][0] > limit_coord[1][0] or lines[1][1] > limit_coord[1][1]):
+                                                                
+                                                        x_list_min.append(lines[0][0])
+                                                        x_list_max.append(lines[1][0])
+                                                        y_list_min.append(lines[0][1])
+                                                        y_list_max.append(lines[1][1])
+                                                    else: 
+                                                        del json_room_view_number[view_items]['external']
+                                                    # x_list_min.append(lines[0][0])
+                                                    # x_list_max.append(lines[1][0])
+                                                    # y_list_min.append(lines[0][1])
+                                                    # y_list_max.append(lines[1][1])
                                                 #check what to do with it
                                     else:
                                         warning_log.append(string_floor_external+ 'is empty.' )
@@ -603,10 +617,18 @@ class floor_plan_validation(object):
                                                 string_outline = string_floor_external + '[' +openings_dw + ']'
                                                 error_log, warning_log, lines, new_outline = self._outline(string_outline, json_room_view_name_external_item, error_log, warning_log,limit_coord[0][0],limit_coord[0][1])
                                                 json_room_view_name['openings'][openings_dw] = new_outline
-                                                x_list_min.append(lines[0][0])
-                                                x_list_max.append(lines[1][0])
-                                                y_list_min.append(lines[0][1])
-                                                y_list_max.append(lines[1][1])
+                                                if not(lines[0][0] < limit_coord[0][0] or lines[0][1] < limit_coord[0][1] or lines[1][0] > limit_coord[1][0] or lines[1][1] > limit_coord[1][1]):
+                                                                
+                                                    x_list_min.append(lines[0][0])
+                                                    x_list_max.append(lines[1][0])
+                                                    y_list_min.append(lines[0][1])
+                                                    y_list_max.append(lines[1][1])
+                                                else: 
+                                                    del json_room_view_number[view_items]['openings']
+                                                # x_list_min.append(lines[0][0])
+                                                # x_list_max.append(lines[1][0])
+                                                # y_list_min.append(lines[0][1])
+                                                # y_list_max.append(lines[1][1])
                                                 #check what to do with it
                                     else:
                                         warning_log.append(string_floor_external+ 'is empty.' )
@@ -704,7 +726,7 @@ class floor_plan_validation(object):
             y_min = min(y_list_min)
             y_max = max(y_list_max)
 
-        return error_log, warning_log, [[x_min,y_min],[x_max,y_max]]   
+        return warning_log, [[x_min,y_min],[x_max,y_max]]   
    
 
             

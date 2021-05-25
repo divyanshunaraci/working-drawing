@@ -263,7 +263,7 @@ const renderView = (projectInfo, view, id) => {
 
 
     // render 'external' items
-    if(viewName === 'room_top_view'){
+    if (viewName === 'room_top_view') {
       renderExternalItems(view, id);
     }
   }
@@ -469,9 +469,9 @@ const renderComponents = (view, id) => {
     if (viewName === "Handles & Accessories") {
       const handlesInfo = getAccHandlesInfo(view);
       for (let i in handlesInfo) {
-        renderOutline(handlesInfo[i],id,"component")
+        renderOutline(handlesInfo[i], id, "component")
       }
-      
+
       //renderTexts(handlesInfo, id);
     }
   }
@@ -502,9 +502,9 @@ const getAccHandlesInfo = (haView) => {
     });
 
     // get Handles position & push to textObject
-    shutters.forEach((shutter,id) => {
+    shutters.forEach((shutter, id) => {
       const handle = shutter.getHandle();
-      const handleName = handle["name"]+id;
+      const handleName = handle["name"] + id;
       const position = handle["outline"];
       textObject[handleName] = position;
     });
@@ -702,14 +702,14 @@ const renderOutline = (outline, id, type, dashPattern = [], view_name = '') => {
       cx.lockScalingY = false;
       let cntForX = 0;
       let cntForY = 0;
-      for(let i=0;i<state.rooms[currentRoom]["room_top_view"]["views"][j].length;i++){
-        for(let k =0;k<state.rooms[currentRoom]["room_top_view"]["views"][j][i].length;k++){
-          console.log(state.rooms[currentRoom]["room_top_view"]["views"][j][i][k][0],state.rooms[currentRoom]["room_top_view"]["views"][j][i][k][1]);
+      for (let i = 0; i < state.rooms[currentRoom]["room_top_view"]["views"][j].length; i++) {
+        for (let k = 0; k < state.rooms[currentRoom]["room_top_view"]["views"][j][i].length; k++) {
+          console.log(state.rooms[currentRoom]["room_top_view"]["views"][j][i][k][0], state.rooms[currentRoom]["room_top_view"]["views"][j][i][k][1]);
           cntForX += state.rooms[currentRoom]["room_top_view"]["views"][j][i][k][0];
           cntForY += state.rooms[currentRoom]["room_top_view"]["views"][j][i][k][1];
         }
       }
-      cx.fillText(j,cntForX/(2*state.rooms[currentRoom]["room_top_view"]["views"][j].length),-(cntForY/(2*state.rooms[currentRoom]["room_top_view"]["views"][j].length)));
+      cx.fillText(j, cntForX / (2 * state.rooms[currentRoom]["room_top_view"]["views"][j].length), -(cntForY / (2 * state.rooms[currentRoom]["room_top_view"]["views"][j].length)));
       // cx.lockMovementX = false
       // cx.lockMovementY = false
     }
@@ -767,8 +767,8 @@ const renderTexts = (textObject, id) => {
     const outline = textObject[text];
     if (outline.length !== 0) {
       const center = getOutlineCenter(outline);
-      if (text[0]=='d' || text[0]=='w'){
-        text = text.slice(0,text.lastIndexOf(text.match(/[a-z]/ig)[text.match(/[a-z]/ig).length-1])+1)
+      if (text[0] == 'd' || text[0] == 'w') {
+        text = text.slice(0, text.lastIndexOf(text.match(/[a-z]/ig)[text.match(/[a-z]/ig).length - 1]) + 1)
       }
       const textbox = new fabric.Textbox(text, {
         left: ((center[0] + origin[0]) * scale) / dpi,
@@ -1327,7 +1327,7 @@ const generateTable = (table, data) => {
 // render 'TableView'
 const renderTableView = (tableView, id) => {
   const compsInfo = tableView.getCompsInfo();
-  
+
   // get handle of view container and clean the innerHTML of container
   const container = document.querySelector(`#wd-${id} .canvas-container`);
 
@@ -1335,10 +1335,10 @@ const renderTableView = (tableView, id) => {
 
   // create table
   let table = document.createElement("table");
-  
+
   table.style.width = "100%";
-  
-  //table.style.height = "100%";
+
+  table.style.height = "100%";
   table.style.fontSize = '8px';
   table.style.wordWrap = 'break-word';
   //table.setAttribute('style', 'width:75px;height:75px;');
@@ -1385,16 +1385,16 @@ const renderTableView = (tableView, id) => {
     });
   });
 
-  for (data_temp in data){
+  for (data_temp in data) {
     let str = data[data_temp].name
-    data[data_temp].name = str.slice(0,str.lastIndexOf(str.match(/[a-z]/ig)[str.match(/[a-z]/ig).length-1])+1) 
+    data[data_temp].name = str.slice(0, str.lastIndexOf(str.match(/[a-z]/ig)[str.match(/[a-z]/ig).length - 1]) + 1)
   }
 
   //change the text size 6 px 
   generateTable(table, data);
 
-  
-  
+
+
   // add table to container
   container.replaceChild(
     table,
@@ -1411,7 +1411,7 @@ const getDimensionDrawPts = (dimension, fontStr) => {
   const dimenLength = Number(dimension.label);
   let offset1 = 0
   let offset2 = 0
-  if(charLength<dimenLength){
+  if (charLength < dimenLength) {
     offset1 = (dimenLength - charLength) / 2;
     offset2 = (dimenLength + charLength) / 2;
   }

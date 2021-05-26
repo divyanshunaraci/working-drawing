@@ -1106,8 +1106,8 @@ const renderPyDimensions = (dimensions, id) => {
     });
     lineGroup.lockScalingX = true;
     lineGroup.lockScalingY = true;
-    lineGroup.lockMovementX = true;
-    lineGroup.lockMovementY = true;
+    lineGroup.lockMovementX = false;
+    lineGroup.lockMovementY = false;
 
     canvas.getObjects();
     canvas.add(lineGroup);
@@ -1300,29 +1300,30 @@ const generateTableHead = (table, data) => {
   }
 };
 
-const generateTable = (table, data) => {
-  let tbody = document.createElement("tbody");
-  table.appendChild(tbody);
-  for (let element of data) {
-    let row = tbody.insertRow();
-    for (key in element) {
-      let cell = row.insertCell();
+const generateTable =
+  (table, data) => {
+    let tbody = document.createElement("tbody");
+    table.appendChild(tbody);
+    for (let element of data) {
+      let row = tbody.insertRow();
+      for (key in element) {
+        let cell = row.insertCell();
 
-      if (key === "imageURL") {
-        let img = document.createElement("img");
-        img.style.width = "20px";
-        img.style.height = "30px";
-        img.src = element[key];
-        img.setAttribute("crossorigin", "*")
-        cell.appendChild(img);
-      } else {
-        cell.contentEditable = true;
-        let text = document.createTextNode(element[key]);
-        cell.appendChild(text);
+        if (key === "imageURL") {
+          let img = document.createElement("img");
+          img.style.width = "20px";
+          img.style.height = "30px";
+          img.src = element[key];
+          img.setAttribute("crossorigin", "*")
+          cell.appendChild(img);
+        } else {
+          cell.contentEditable = true;
+          let text = document.createTextNode(element[key]);
+          cell.appendChild(text);
+        }
       }
     }
-  }
-};
+  };
 
 // render 'TableView'
 const renderTableView = (tableView, id) => {

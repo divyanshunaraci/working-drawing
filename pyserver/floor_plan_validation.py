@@ -447,6 +447,11 @@ class floor_plan_validation(object):
                             warning_log.append('Some items are missing from ' + string_id+'['+items+'][comp_details].')
                         elif len(json_room_top_view_library[items]['comp_details']) > 5:
                             warning_log.append('Some additional items exists in ' + string_id+'['+items+'][comp_details].')
+                        if json_room_top_view_library[items]['comp_details']['materials']:
+                            mat_tmp = json_room_top_view_library[items]['comp_details']['materials']
+                            mat_set = set(mat_tmp)
+                            json_room_top_view_library[items]['comp_details']['materials'] = list(mat_tmp)
+                            
                     else:
                         warning_log.append(string_id+'['+items+'] has no key comp_details.')
                     

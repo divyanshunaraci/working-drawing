@@ -368,6 +368,10 @@ const renderComponents = (view, id) => {
     let compsCoords = {};
     // comp1
     comps.forEach((comp1) => {
+
+      // if (comp1["id"] === undefined) {
+      //   return
+      // }
       const coords = comp1.getOutline();
       renderOutline(coords, id, "component");
 
@@ -1328,7 +1332,6 @@ const generateTable =
 // render 'TableView'
 const renderTableView = (tableView, id) => {
   const compsInfo = tableView.getCompsInfo();
-
   // get handle of view container and clean the innerHTML of container
   const container = document.querySelector(`#wd-${id} .canvas-container`);
 

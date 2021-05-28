@@ -73,9 +73,9 @@ const getRoomObjects = (rooms) => {
 
   // loop through each room
   Object.keys(rooms).forEach((name) => {
-    if (!rooms[name]){
+    if (!rooms[name]) {
       return;
-    } 
+    }
     // loop through room views/individual comps
     let i = 0;
     Object.keys(rooms[name]).forEach((compName) => {
@@ -84,30 +84,30 @@ const getRoomObjects = (rooms) => {
         let temp = handleRoomTopViewDimens(rooms[name][compName], name);
         let views = handleRoomTopView(rooms[name][compName], name);
         let flag = 0, count = 0;
-        for(let i =0;i<views.length;i++){
+        for (let i = 0; i < views.length; i++) {
           let k = 0;
-          if(views[i].type == "TableView" && views[i].compsInfo.length > 10){
-              flag = 1;
-              for(let j=10;j<views[i].compsInfo.length;j+=10){
-                  count ++;
-                  let obj = new TableView(`${views[i].id}+${k++}`, views[i].name, views[i].compsInfo.splice(j,j+10))
-                  views.splice(i+1,0,obj);
-              }
+          if (views[i].type == "TableView" && views[i].compsInfo.length > 10) {
+            flag = 1;
+            for (let j = 10; j < views[i].compsInfo.length; j += 10) {
+              count++;
+              let obj = new TableView(`${views[i].id}+${k++}`, views[i].name, views[i].compsInfo.splice(j, j + 10))
+              views.splice(i + 1, 0, obj);
+            }
           }
         }
-        
+
         resultViews = [...resultViews, ...views];
         dimens = [...dimens, ...temp[0]]; // py dimens
         viewBoxInfo = [...viewBoxInfo, ...temp[1]];
         console.log(temp)
-        if(flag==1){
-          for(i=1;i<=count;i++){
-            viewBoxInfo = [...viewBoxInfo, temp[1]];  
+        if (flag == 1) {
+          for (i = 1; i <= count; i++) {
+            viewBoxInfo = [...viewBoxInfo, temp[1]];
             dimens = [...dimens, temp[[0]]]
           }
-          
+
         }
-        
+
 
       } else if (compName == "render_individual_comps") {
         // handle 'render_individual_comps'
@@ -123,7 +123,7 @@ const getRoomObjects = (rooms) => {
         resultViews = [...resultViews, ...views];
         dimens = [...dimens, ...temp[0]]; // py dimens
         viewBoxInfo = [...viewBoxInfo, ...temp[1]];
-        
+
       }
     });
   });
@@ -139,8 +139,8 @@ const handleRoomTopView = (data, roomName) => {
     compObjects = [],
     compObjectsTopView = [],
     openings = {}
-    
-    externObj = [];
+
+  externObj = [];
   if (!data) return;
   Object.keys(data).forEach((key) => {
     // if the property is 'room_outline' or contains 'outline'
@@ -153,13 +153,16 @@ const handleRoomTopView = (data, roomName) => {
       if (floor_components.hasOwnProperty("library")) {
         Object.keys(floor_components["library"]).forEach((compName, id) => {
           const compID = compIds[`${roomName}+room_top_view`][compName];
+          if (compID === undefined) {
+            return;
+          }
           let temp = parseComp1(
             compID,
             compName,
             floor_components["library"][compName]
           );
           compObjects.push(temp);
-          
+
         });
 
       }
@@ -169,7 +172,11 @@ const handleRoomTopView = (data, roomName) => {
         Object.keys(floor_components["library"]).forEach((compName, id) => {
           //  handle 'floor_components' component
           // get id from compIds
+
           const compID = compIds[`${roomName}+room_top_view`][compName];
+          if (compID === undefined) {
+            return;
+          }
           compObjectsTopView.push(
             parseComp3(
               compID,
@@ -177,14 +184,14 @@ const handleRoomTopView = (data, roomName) => {
               floor_components["library"][compName]
             )
           );
-          
+
         });
 
       }
 
-      if ("external" in data){
-        if (Object.keys(data["external"]).length !== 0){
-          let i=1
+      if ("external" in data) {
+        if (Object.keys(data["external"]).length !== 0) {
+          let i = 1
           Object.keys(data["external"]).forEach((compName, id) => {
             console.log(compName)
             const compID = 'E-'.concat(i++)
@@ -195,17 +202,17 @@ const handleRoomTopView = (data, roomName) => {
                 data["external"][compName]
               )
             );
-            
+
           });
         }
       }
-      
 
-      
+
+
 
     } else if (key.includes("external")) {
       external = data[key];
-    } else if (key.includes("openings")){
+    } else if (key.includes("openings")) {
       Object.keys(data).forEach((key) => {
         if (key.includes("openings")) {
           Object.keys(data[key]).forEach((name) => {
@@ -214,7 +221,7 @@ const handleRoomTopView = (data, roomName) => {
         }
       });
     }
-        
+
   });
 
 

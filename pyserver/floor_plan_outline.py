@@ -563,15 +563,20 @@ class floor_plan_component1(object):
                         for items in j_object['rooms'][room_name][view_name]['floor_components']['library']:
                             drawing_2_list= j_object['rooms'][room_name][view_name]['floor_components']['library'][items]['outline']
                             drawing_2_list  = self.__clean_drawing_list(drawing_2_list)
+                            
+                            xx = str(items).lower()
+                            
                             #converting the list to dictionary for components
-                            dict_for_view[items] = self.__create_dict(self,drawing_2_list)
+                            # dict_for_view[items] = self.__create_dict(self,drawing_2_list)
                             drawing_1_list += drawing_2_list
-                            component_list += drawing_2_list
-                            ID_dict[items] =  dict_for_view[items]['dims']
+                            if 'filler' not in xx and 'cover_panel' not in xx and 'ledge' not in xx:
+                                dict_for_view[items] = self.__create_dict(self,drawing_2_list)
+                                component_list += drawing_2_list
+                                ID_dict[items] =  dict_for_view[items]['dims']
                         
                         #Getting the dimension list from dictionary and the list of demarkation of rooms
-                dimension_list = self.__creating_dimensions_room_top_view(self,dict_for_view,drawing_1_list)
                 
+                dimension_list = self.__creating_dimensions_room_top_view(self,dict_for_view,drawing_1_list)
                 """ t_d2 = dict1[keys]['dims']
             x0c, y0c = t_d2['x0'], t_d2['y0']
             xnc, ync = t_d2['xn'], t_d2['yn']"""
@@ -862,7 +867,6 @@ class floor_plan_component1(object):
         
         lengths = {'x0' :x0, 'y0' : y0 , 'xn' : xn, 'yn' :yn, 'length' : xn-x0, 'width' : yn- y0}
         com_ID= self.__component_ID_detail(dict1)
-        
         return {'dimension': dimension_list, 'lengths': lengths, 'IDs':com_ID}
 
     @staticmethod

@@ -412,7 +412,7 @@ window.onload = function () {
 
 function getProjects(projectNo, versionNo) {
     let userProject = [], version = [];;
-    fetch('http://13.233.101.175:8080/api/project/wdProject', {
+    fetch('http://15.206.209.192:8080/api/project/wdProject', {
         method: 'GET',
         headers: {
             'Content-type': 'application/json', // The type of data you're sending
@@ -566,7 +566,7 @@ btn.onclick = function () {
     const userId = localStorage.getItem("userId");
     let userProject = [];
     console.log(document.getElementById('modal'), localStorage.getItem("token"), userId);
-    fetch('http://13.233.101.175:8080/api/project/wdProject', {
+    fetch('http://15.206.209.192:8080/api/project/wdProject', {
         method: 'GET',
         headers: {
             'Content-type': 'application/json', // The type of data you're sending

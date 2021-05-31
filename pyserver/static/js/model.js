@@ -493,6 +493,9 @@ const handleSubView = (data, roomViewName, viewName) => {
           //   );
           // }
           const compID = compIds[`${roomViewName}+${viewName}`][compName];
+          if (compID === undefined) {
+            return;
+          }
           compObjects.push(
             parseComp2(
               compID,

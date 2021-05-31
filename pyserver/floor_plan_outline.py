@@ -604,6 +604,12 @@ class floor_plan_component1(object):
                 if 'floor_components' in j_object['rooms'][room_name][view_name][view_angle]:
                     if 'library' in j_object['rooms'][room_name][view_name][view_angle]['floor_components']:
                         for items in j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library']:
+                            
+                            #cover panels removed from front view
+                            c_panel = False
+                            xx = str(items).lower()
+                            if 'cover_panel' in xx:
+                                c_panel = True
                             if 'external_points' in j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]:
                                 drawing_2_list = []
                                 for internal_items in ['internal','carcass','skirting','loft_skirting','cover_panels','fillers']: #'fillers'
@@ -622,8 +628,9 @@ class floor_plan_component1(object):
                                  
                                 if len(drawing_2_list) != 0:
                                     drawing_1_list += drawing_2_list 
-                                    component_list += drawing_2_list
-                                    dict_for_view[items] = self.__create_dict(self,drawing_2_list)
+                                    if c_panel == False:
+                                        component_list += drawing_2_list
+                                        dict_for_view[items] = self.__create_dict(self,drawing_2_list)
 
 
                 if view_angle == 'internal_view':

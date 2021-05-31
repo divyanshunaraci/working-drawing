@@ -588,7 +588,9 @@ class floor_plan_validation(object):
                                                     del json_room_view_name_library[items]
                                                     
                                         else: #library is empty
-                                            del json_room_view_number[view_items]['floor_components']
+                                            #when library is empty we delete the front/internal view
+                                            del json_room_view_number[view_items]
+                                            continue;
                                             warning_log.append(string_id + '][' +view_items + '][floor_components][library] is empty.')
 
                                     else: #library does not exists

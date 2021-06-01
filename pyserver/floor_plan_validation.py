@@ -450,7 +450,11 @@ class floor_plan_validation(object):
                         if json_room_top_view_library[items]['comp_details']['materials']:
                             mat_tmp = json_room_top_view_library[items]['comp_details']['materials']
                             mat_set = set(mat_tmp)
-                            json_room_top_view_library[items]['comp_details']['materials'] = list(mat_tmp)
+                            json_room_top_view_library[items]['comp_details']['materials'] = list(mat_set)
+                        if json_room_top_view_library[items]['comp_details']['accessories']:
+                            mat_tmp = json_room_top_view_library[items]['comp_details']['accessories']
+                            mat_set = set(mat_tmp)
+                            json_room_top_view_library[items]['comp_details']['acceessories'] = list(mat_set)
                             
                     else:
                         warning_log.append(string_id+'['+items+'] has no key comp_details.')
@@ -544,6 +548,15 @@ class floor_plan_validation(object):
                                                             warning_log.append('Some items are missing from ' + string_floor_library+'['+items+'][comp_details].')
                                                         elif len(json_room_view_name_library[items]['comp_details']) > 5:
                                                             warning_log.append('Some additional items exists in ' + string_floor_library+'['+items+'][comp_details].')
+                                                        
+                                                        if json_room_view_name_library[items]['comp_details']['materials']:
+                                                            mat_tmp = json_room_view_name_library[items]['comp_details']['materials']
+                                                            mat_set = set(mat_tmp)
+                                                            json_room_view_name_library[items]['comp_details']['materials'] = list(mat_set)
+                                                        if json_room_view_name_library[items]['comp_details']['accessories']:
+                                                            mat_tmp = json_room_view_name_library[items]['comp_details']['accessories']
+                                                            mat_set = set(mat_tmp)
+                                                            json_room_view_name_library[items]['comp_details']['acceessories'] = list(mat_set)
                                                     else:
                                                         warning_log.append(string_floor_library+'['+items+'] has no key comp_details.')
                                                     
@@ -575,7 +588,9 @@ class floor_plan_validation(object):
                                                     del json_room_view_name_library[items]
                                                     
                                         else: #library is empty
-                                            del json_room_view_number[view_items]['floor_components']
+                                            #when library is empty we delete the front/internal view
+                                            del json_room_view_number[view_items]
+                                            continue;
                                             warning_log.append(string_id + '][' +view_items + '][floor_components][library] is empty.')
 
                                     else: #library does not exists

@@ -29,7 +29,9 @@ const getFloorPlan = (json) => {
       // py dimens
       else if (key.includes("dimension")) {
         json["floor_plan"]["dimension"]["dimension"].forEach((el) => {
-          dimens.push(new Dimension(...el, Math.hypot(el[0][0] - el[1][0], el[0][1] - el[1][1])));
+          if (el[0][0] != el[1][0] || el[0][1] != el[1][1]) {
+            dimens.push(new Dimension(...el, Math.hypot(el[0][0] - el[1][0], el[0][1] - el[1][1])));
+          }
         });
         viewBoxInfo = json["floor_plan"]["dimension"]["lengths"];
       }
@@ -304,7 +306,9 @@ const handleRoomTopViewDimens = (data, roomName) => {
     // if the property is 'room_outline' or contains 'outline'
     if (key.includes("dimension")) {
       data["dimension"]["dimension"].forEach((el) => {
-        dimens.push(new Dimension(...el, Math.hypot(el[0][0] - el[1][0], el[0][1] - el[1][1])));
+        if (el[0][0] != el[1][0] || el[0][1] != el[1][1]) {
+          dimens.push(new Dimension(...el, Math.hypot(el[0][0] - el[1][0], el[0][1] - el[1][1])));
+        }
       });
       viewBoxInfo = data["dimension"]["lengths"];
       compIds[`${roomName}+room_top_view`] = data["dimension"]["IDs"]; // 10.27
@@ -594,7 +598,9 @@ const handleSubViewDimens = (data, roomViewName, viewName) => {
     // if the property is 'room_outline' or contains 'outline'
     if (key.includes("dimension")) {
       data["dimension"]["dimension"].forEach((el) => {
-        dimens.push(new Dimension(...el, Math.hypot(el[0][0] - el[1][0], el[0][1] - el[1][1])));
+        if (el[0][0] != el[1][0] || el[0][1] != el[1][1]) {
+          dimens.push(new Dimension(...el, Math.hypot(el[0][0] - el[1][0], el[0][1] - el[1][1])));
+        }
       });
       viewBoxInfo = data["dimension"]["lengths"];
       compIds[`${roomViewName}+${viewName}`] = data["dimension"]["IDs"];

@@ -501,9 +501,9 @@ const getAccHandlesInfo = (haView) => {
     const accs = detail["accessories"];
     const accsPosition = [...extPts.getInternal(), ...extPts.getCarcass()];
 
-    accs.forEach((accessory) => {
-      textObject[accessory] = accsPosition;
-    });
+    // accs.forEach((accessory) => {
+    //   textObject[accessory] = accsPosition;
+    // });
 
     // get Handles position & push to textObject
     shutters.forEach((shutter, id) => {

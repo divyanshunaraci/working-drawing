@@ -920,7 +920,7 @@ class floor_plan_component1(object):
                 quadrant = 2
 
             elif quadrant_x >= 0 and quadrant_y <= 0: #quadrant 4 - bottom right
-                x1, x2, y1, y2 = xnc, xn, y0, ync
+                x1, x2, y1, y2 = xnc, xn, y0, y0c
                 #hor_start_pt, ver_start_pt = y0 - 200, xn + 200
                 hor_up_down, ver_up_down = -1, 1
                 hor_start_pt, ver_start_pt = y0 + hor_up_down * 200, xn + ver_up_down * 200

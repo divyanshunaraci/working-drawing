@@ -508,7 +508,7 @@ const getAccHandlesInfo = (haView) => {
     // get Handles position & push to textObject
     shutters.forEach((shutter, id) => {
       const handle = shutter.getHandle();
-      const handleName = handle["name"] + id;
+      const handleName = handle["name"].concat(comp2["id"]) + id;
       const position = handle["outline"];
       textObject[handleName] = position;
     });

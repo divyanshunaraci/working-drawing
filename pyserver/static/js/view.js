@@ -23,7 +23,7 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
     for (let i = 0; i < viewsCnt; i++) {
       const template = `<div class="working-drawing container-fluid" id = 'wd-${i}'>
 			<div class="row">
-				<div class="col-9">
+				<div id="legend-view" class="col-9">
 					<div class="row">
 						<div class="col-12" style="text-align: center">
 							<span id="title">Ground Floor Plan</span>
@@ -36,7 +36,7 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
 						</div>
 					</div>
 				</div>
-				<div class="col-3">
+				<div id=legend-view_1 class="col-3">
               <div class = 'row' style=" height: 2.5em">
 								<div class = 'col-12' style="text-align: center">
 									<span style="font-size: large">Legend</span>
@@ -167,6 +167,15 @@ const calcScaleOrigin = (viewBoxInfo, canvasWidth, canvasHeight) => {
 
 // render ground floor plan
 const renderFloorPlan = (floorPlanView, id) => {
+  // To hide the legneds view and dimension scaling
+  state.roomViews.forEach((elem, index) => {
+    if(elem.name == "Ground floor plan" || elem.name == "room_top_view" || elem.name == "top_view" || elem.name == "table_view" || elem.name == "render_wall_view" || elem.name == "internal_view" || elem.name == "Handles & Accessories") {
+      ele1 = document.querySelector("#wd-" + index);
+      ele1.querySelectorAll("[id='legend-view']").forEach(b => b.setAttribute("class", "col-12"));
+      ele1.querySelectorAll("[id='legend-view_1']").forEach(b => b.setAttribute("style", "display: none"));
+      calibrateCanvases(state.viewBoxInfo);
+    }
+  });
   /* draw lines */
   const cx = document.querySelector(`#wd-${id} canvas`).getContext("2d");
   const path = floorPlanView.getOutline();

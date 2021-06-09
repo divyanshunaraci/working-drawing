@@ -241,7 +241,7 @@ const renderAll = () => {
             renderView(state.projectInfo, view, id);
             if (viewTypes.includes(view.getName())) {
             }
-            if (view.type === "ImageView") {
+            if (view.name === "front_view") {
                 // render material thumbnails
                 renderMaterialThumbnails(state.matThumbnails, id);
             }

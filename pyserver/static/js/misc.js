@@ -224,18 +224,18 @@ $("#commentBox").on("click", function (e) {
 $(document).keydown(function (event) {
   let canvas = overlayCanvases[currentPageNumber - 1];
   // 'Delete' key pressed
-  if (event.which == 46 || event.which == 8) {
+  if (event.which == 46) {
     console.log(event.key)
-    for(let i=0;i<overlayCanvases.length;i++){
+    for (let i = 0; i < overlayCanvases.length; i++) {
       // if (canvas.getActiveObject()) {
       //   // remove fabric active object
       //   canvas.remove(canvas.getActiveObject());
       // }
       if (overlayCanvases[i].getActiveObject()) {
         // remove fabric active object
-        console.log(i,'i');
+        console.log(i, 'i');
         overlayCanvases[i].remove(overlayCanvases[i].getActiveObject());
-        
+
       }
     }
   }

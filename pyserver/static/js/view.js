@@ -274,6 +274,7 @@ const renderView = (projectInfo, view, id) => {
     // render 'external' items
     if (viewName === 'room_top_view') {
       renderExternalItems(view, id);
+      renderViewNames(view, id)
     }
   }
   // else if view is 'AdditionalView'
@@ -297,6 +298,57 @@ const renderView = (projectInfo, view, id) => {
 
   // render view details ( on footer table )
   renderViewDetail(projectInfo, view, id);
+};
+
+const renderViewNames = (view, id) => {
+  const viewnames = state.rooms[currentRoom]["room_top_view"]["views"]
+  renderViewTexts(viewnames, id);
+};
+
+const renderViewTexts = (textObject, id) => {
+  if (!textObject || Object.keys(textObject) === 0) return;
+
+  if (!openNewJSON) return;
+  const canvas = overlayCanvases[id];
+  const scale = state.viewBoxInfo[id]["scale"];
+  const origin = [
+    state.viewBoxInfo[id]["newOriginX"],
+    state.viewBoxInfo[id]["newOriginY"],
+  ];
+  for (let j in state.rooms[currentRoom]["room_top_view"]["views"]) {
+
+    let cntForX = 0;
+    let cntForY = 0;
+    for (let i = 0; i < state.rooms[currentRoom]["room_top_view"]["views"][j].length; i++) {
+      for (let k = 0; k < state.rooms[currentRoom]["room_top_view"]["views"][j][i].length; k++) {
+        console.log(state.rooms[currentRoom]["room_top_view"]["views"][j][i][k][0], state.rooms[currentRoom]["room_top_view"]["views"][j][i][k][1]);
+        cntForX += state.rooms[currentRoom]["room_top_view"]["views"][j][i][k][0];
+        cntForY += state.rooms[currentRoom]["room_top_view"]["views"][j][i][k][1];
+      }
+    }
+    let l = cntForX / (2 * state.rooms[currentRoom]["room_top_view"]["views"][j].length)
+    let t = (cntForY / (2 * state.rooms[currentRoom]["room_top_view"]["views"][j].length))
+    const textbox = new fabric.Textbox(j, {
+      left: ((l + origin[0]) * scale) / dpi,
+      top: ((-1 * t + origin[1]) * scale) / dpi,
+      width: 40,
+      fontSize: 11,
+      textAlign: "center",
+      originX: "center",
+      originY: "center",
+      borderColor: "green",
+      editingBorderColor: "orange",
+      showTextBoxBorder: true,
+      textboxBorderColor: "green",
+      backgroundColor: "transparent",
+      objectCaching: false,
+    });
+    canvas.getObjects();
+    canvas.add(textbox);
+    canvas.selection = false;
+    canvas.renderAll();
+    canvas.calcOffset();
+  }
 };
 
 // render 'render_wall_view'
@@ -510,14 +562,14 @@ const getAccHandlesInfo = (haView) => {
     const accs = detail["accessories"];
     const accsPosition = [...extPts.getInternal(), ...extPts.getCarcass()];
 
-    accs.forEach((accessory) => {
-      textObject[accessory] = accsPosition;
-    });
+    // accs.forEach((accessory) => {
+    //   textObject[accessory] = accsPosition;
+    // });
 
     // get Handles position & push to textObject
     shutters.forEach((shutter, id) => {
       const handle = shutter.getHandle();
-      const handleName = handle["name"] + id;
+      const handleName = handle["name"].concat(comp2["id"]) + id;
       const position = handle["outline"];
       textObject[handleName] = position;
     });
@@ -700,33 +752,6 @@ const renderOutline = (outline, id, type, dashPattern = [], view_name = '') => {
   });
   cx.stroke();
   cx.closePath();
-  if (view_name == 'room_top_view') {
-    for (let j in state.rooms[currentRoom]["room_top_view"]["views"]) {
-      cx.globalAlpha = 0.95;
-      cx.rect(0, 0, 5, 5);
-      cx.fillStyle = "#435A6B";
-      cx.fill();
-      cx.font = 'italic 100pt Calibri';
-      cx.fillStyle = "black";
-      cx.textAlign = "center";
-      cx.lockMovementX = false;
-      cx.lockMovementY = false;
-      cx.lockScalingX = false;
-      cx.lockScalingY = false;
-      let cntForX = 0;
-      let cntForY = 0;
-      for (let i = 0; i < state.rooms[currentRoom]["room_top_view"]["views"][j].length; i++) {
-        for (let k = 0; k < state.rooms[currentRoom]["room_top_view"]["views"][j][i].length; k++) {
-          console.log(state.rooms[currentRoom]["room_top_view"]["views"][j][i][k][0], state.rooms[currentRoom]["room_top_view"]["views"][j][i][k][1]);
-          cntForX += state.rooms[currentRoom]["room_top_view"]["views"][j][i][k][0];
-          cntForY += state.rooms[currentRoom]["room_top_view"]["views"][j][i][k][1];
-        }
-      }
-      cx.fillText(j, cntForX / (2 * state.rooms[currentRoom]["room_top_view"]["views"][j].length), -(cntForY / (2 * state.rooms[currentRoom]["room_top_view"]["views"][j].length)));
-      // cx.lockMovementX = false
-      // cx.lockMovementY = false
-    }
-  }
 };
 
 // elementary function: get center of rectangle

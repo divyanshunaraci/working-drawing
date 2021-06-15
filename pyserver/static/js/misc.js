@@ -264,23 +264,28 @@ $("#addImg").on("change", function (e) {
   const canvas = overlayCanvases[currentPageNumber - 1];
 
   const reader = new FileReader();
-
   reader.onload = function (event) {
     const data = event.target.result;
-    fabric.Image.fromURL(data, function (img) {
-      const oImg = img.set({
-        left: 50,
-        top: 50,
-        scaleX: 100 / img.width,
-        scaleY: 100 / img.height,
-      });
-      canvas.add(oImg).renderAll();
-      canvas.setActiveObject(oImg);
-      canvas.selection = false;
-      canvas.calcOffset();
-    });
+    renderRenderView(data, currentPageNumber - 1)
     $('#addImg').val(null);
-  };
+  }
+  // reader.onload = function (event) {
+  //   const data = event.target.result;
+  //   // renderRenderView(currentPageNumber - 1, img)
+  //   fabric.Image.fromURL(data, function (img) {
+  //     const oImg = img.set({
+  //       left: 50,
+  //       top: 50,
+  //       scaleX: 100 / img.width,
+  //       scaleY: 100 / img.height,
+  //     });
+  //     canvas.add(oImg).renderAll();
+  //     canvas.setActiveObject(oImg);
+  //     canvas.selection = false;
+  //     canvas.calcOffset();
+  //   });
+  //   $('#addImg').val(null);
+  // };
 
   const fileType = e.target.files[0]["type"];
   const validImageTypes = ["image/gif", "image/jpeg", "image/png"];

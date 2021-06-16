@@ -44,7 +44,7 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
                    <input type="file" class="legend-add-image" />
 								</div>
 							</div>
-					<div class = 'table-responsive fixed-table-body'>
+					<div class = 'fixed-table-body'>
 					<table class="table table-bordered side-table" >
 
 					
@@ -1374,16 +1374,17 @@ const renderTableView = (tableView, id) => {
   // create table
   let table = document.createElement("table");
 
-  table.style.width = "100%";
+  // table.style.width = "100%";
 
-  table.style.height = "100%";
-  table.style.fontSize = '8px';
-  table.style.wordWrap = 'break-word';
+  // table.style.height = "100%";
+  // table.style.fontSize = '8px';
+  // table.style.wordWrap = 'break-word';
+  // table.style.wordBreak = 'break-all';
   //table.setAttribute('style', 'width:75px;height:75px;');
-  document.body.setAttribute('style', 'display:block;overflow:scroll;');
+  // table.setAttribute('style', 'display:block;overflow:scroll;');
   table.setAttribute("border", "1");
   table.classList.add("main-table");
-  table.classList.add("table-responsive");
+  // table.classList.add("table-responsive");
   //canvas width and height- console.log
   /*console.log(container.clientHeight, container.clientWidth);
 
@@ -1416,6 +1417,7 @@ const renderTableView = (tableView, id) => {
 
   // generate main content of table
   const data = [];
+  compsInfo.sort((a,b) => a.id - b.id);
   compsInfo.forEach((item, id) => {
     data.push({
       no: id + 1,

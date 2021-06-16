@@ -114,9 +114,10 @@ div.row {
 }
 
 table {
-  font-size: small;
+  font-size: 10px;
   width: 100%;
   /* height: 100%; */
+  word-break: break-all;
 }
 
 /* remove button border when focus */
@@ -126,11 +127,20 @@ button:focus {
 }
 
 /* table cell center text */
+.main-table {
+  font-size: 10px;
+  display: block;
+  overflow: scroll;
+  width: 100%;
+  height: 100%;
+}
+
 .side-table td,
 .main-table td,
 th {
   text-align: center;
   vertical-align: middle;
+  padding: .3rem;
 }
 
 /* annotation canvas layer */

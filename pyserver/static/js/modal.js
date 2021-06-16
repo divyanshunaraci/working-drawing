@@ -227,76 +227,156 @@
 //     }
 // };
 
-// print statement
-$("#print").on("click", function (e) {
-    print();
-});
+function download(filename, text) {
+    fetch('http://localhost:5000/api/working-drawing/generate_pdf', { // http://13.233.101.175:8080/api/
+        method: "POST",
+        body: JSON.stringify({
+            file: JSON.stringify(text),
+            filename: filename
+        }),
+        headers: {
+            'authorization': localStorage.getItem("token"),
+            "Content-type": "application/json; charset=UTF-8"
+        },
+    })
+    .then((response) => response.json())
+    .then((out) => {
+        let link = document.createElement('a');
+        link.href = out.pdfLink;
+        link.download = out.pdfLink;
+        link.click();
+        $("#loader").toggle();
+        $(".main").css({ opacity: 1 });     
+    }).catch(err => console.error(err));
+}
 
-const print = async () => {
+$("#print").on("click", async function (e) {
     $("#loader").toggle();
     $(".main").css({ opacity: 0.5 });
-
-    let totalPagesNumber = state.roomViews ? state.roomViews.length : 1;
-    const ele = document.querySelector(`#wd-0`);
-    ele.scrollIntoView({ block: "start" });
-
+    var htmlhead = document.querySelector('head').innerHTML;
+    var mainDiv = document.createElement('div');
+    mainDiv.id = "maindiv";
+    var container = document.querySelectorAll('.whole-container');
+    for(var j = 0; j < container.length; j++) {
+        if(!state.roomViews) {
+            return container.innerHTML;
+        } else {
+            for(var i = 0; i < state.roomViews.length; i++) {
+                if(state.roomViews[i].name == "table_view") {
+                    var id = document.getElementById("wd-" + i);
+                    id.classList.remove("working-drawing");
+                    var subDiv = document.createElement("div");
+                    subDiv.id = "canvas"+ i;
+                    subDiv.appendChild(id);
+                    mainDiv.appendChild(subDiv);
+                    var pagebreak = document.createElement("div");
+                    pagebreak.setAttribute("style", "clear: both;page-break-after: always;");
+                    mainDiv.appendChild(pagebreak);
+                } else {
+                    var convertMeToImg = $('#wd-' + i)[0];
+                    const canvas = await html2canvas(convertMeToImg, { logging: true, letterRendering: 1, useCORS: true })
+                    // Full Quality= 1.0  // Medium Quality = 0.5   // Low Quality = 0.1
+                    var img = canvas.toDataURL('image/webp', 1.0);
+                    subDiv = document.createElement("div");
+                    subDiv.id = "canvas"+ i;
+                    var containerDiv = document.createElement("div");
+                    containerDiv.id = "wd-"+ i;
+                    containerDiv.classList.add("container-fluid");
+                    var imgTag = document.createElement('img');
+                    imgTag.src = img;
+                    imgTag.id = "imgId"+ i;
+                    containerDiv.appendChild(imgTag)
+                    subDiv.appendChild(containerDiv);
+                    mainDiv.appendChild(subDiv);
+                    var pagebreak = document.createElement("div");
+                    pagebreak.setAttribute("style", "clear: both;page-break-after: always;");
+                    mainDiv.appendChild(pagebreak);
+                }
+            }
+        }
+    }
+    elementHTML = mainDiv.innerHTML;
+    var elementScript = [].map.call(document.getElementsByTagName('script'), function(el) {
+        return el.outerHTML;
+    }).join();
     let date = new Date();
     let datestr = date.toISOString();
     datestr = datestr.replace(/[^0-9]/g, "");
-    const filename = `Drawings_${datestr}.pdf`;
+    var fileName = `Drawings_${datestr}`;
+    var finalHTML = '<html><head>' + htmlhead + '</head><body>'+ elementHTML + elementScript + '</body></html>';
+    download(fileName, finalHTML)
+});
 
-    let doc = new jsPDF("l", "px", [ele.clientWidth, ele.clientHeight]);
-    if (totalPagesNumber === 1) {
-        const ele = document.getElementById(`wd-0`);
-        console.log(ele.clientWidth, ele.clientHeight);
-        const opt = {
-            // margin: 30,
-            filename: filename,
-            image: { type: "jpeg", quality: 1 },
-            html2canvas: { scale: 3 },
-            jsPDF: { unit: "px", format: [ele.clientWidth, ele.clientHeight], orientation: "l" },
-        };
-        html2pdf().set(opt).from(ele).save();
+// print statement
+// $("#print").on("click", function (e) {
+//     print();
+// });
 
-        $("#loader").toggle();
-        $(".main").css({ opacity: 1 });
-    } else {
-        // Todo: create multiple pages
-        const opt = {
-            image: { type: "jpeg", quality: 3 },
-            html2canvas: {
-                scale: 3,
-                dpi: 200,
-                letterRendering: true,
-                width: ele.clientWidth, // 1145
-                height: ele.clientHeight, // 815
-                useCORS: true
-            },
-        };
-        await createPDF(doc, opt, totalPagesNumber);
-        doc.save(filename);
-        alert("Downloading PDF completed!!!");
-        $("#loader").toggle();
-        $(".main").css({ opacity: 1 });
-    }
-}
+// const print = async () => {
+//     $("#loader").toggle();
+//     $(".main").css({ opacity: 0.5 });
 
-const createPDF = async (pdfDoc, options, totalPagesNumber) => {
-    for (var pageIndex = 0; pageIndex < totalPagesNumber; pageIndex++) {
-        const ele = document.querySelector(`#wd-${pageIndex}`);
-        await html2pdf().set(options).from(ele).outputImg("dataurlstring").then((result) => {
-            if (pageIndex != 0) pdfDoc.addPage();
-            pdfDoc.addImage(
-                result,
-                "jpeg",
-                0,
-                0,
-                pdfDoc.internal.pageSize.width,
-                pdfDoc.internal.pageSize.height
-            );
-        });
-    }
-}
+//     let totalPagesNumber = state.roomViews ? state.roomViews.length : 1;
+//     const ele = document.querySelector(`#wd-0`);
+//     ele.scrollIntoView({ block: "start" });
+
+//     let date = new Date();
+//     let datestr = date.toISOString();
+//     datestr = datestr.replace(/[^0-9]/g, "");
+//     const filename = `Drawings_${datestr}.pdf`;
+
+//     let doc = new jsPDF("l", "px", [ele.clientWidth, ele.clientHeight]);
+//     if (totalPagesNumber === 1) {
+//         const ele = document.getElementById(`wd-0`);
+//         console.log(ele.clientWidth, ele.clientHeight);
+//         const opt = {
+//             // margin: 30,
+//             filename: filename,
+//             image: { type: "jpeg", quality: 1 },
+//             html2canvas: { scale: 3 },
+//             jsPDF: { unit: "px", format: [ele.clientWidth, ele.clientHeight], orientation: "l" },
+//         };
+//         html2pdf().set(opt).from(ele).save();
+
+//         $("#loader").toggle();
+//         $(".main").css({ opacity: 1 });
+//     } else {
+//         // Todo: create multiple pages
+//         const opt = {
+//             image: { type: "jpeg", quality: 3 },
+//             html2canvas: {
+//                 scale: 3,
+//                 dpi: 200,
+//                 letterRendering: true,
+//                 width: ele.clientWidth, // 1145
+//                 height: ele.clientHeight, // 815
+//                 useCORS: true
+//             },
+//         };
+//         await createPDF(doc, opt, totalPagesNumber);
+//         doc.save(filename);
+//         alert("Downloading PDF completed!!!");
+//         $("#loader").toggle();
+//         $(".main").css({ opacity: 1 });
+//     }
+// }
+
+// const createPDF = async (pdfDoc, options, totalPagesNumber) => {
+//     for (var pageIndex = 0; pageIndex < totalPagesNumber; pageIndex++) {
+//         const ele = document.querySelector(`#wd-${pageIndex}`);
+//         await html2pdf().set(options).from(ele).outputImg("dataurlstring").then((result) => {
+//             if (pageIndex != 0) pdfDoc.addPage();
+//             pdfDoc.addImage(
+//                 result,
+//                 "jpeg",
+//                 0,
+//                 0,
+//                 pdfDoc.internal.pageSize.width,
+//                 pdfDoc.internal.pageSize.height
+//             );
+//         });
+//     }
+// }
 
 // $(window).resize(resizeCanvas);
 var beforeWidth = $(window).width();

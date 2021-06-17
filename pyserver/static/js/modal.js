@@ -228,7 +228,7 @@
 // };
 
 function download(filename, text) {
-    fetch('http://localhost:5000/api/working-drawing/generate_pdf', { // http://13.233.101.175:8080/api/
+    fetch(window.APIAddress.generatePDF, {
         method: "POST",
         body: JSON.stringify({
             file: JSON.stringify(text),
@@ -296,14 +296,14 @@ $("#print").on("click", async function (e) {
         }
     }
     elementHTML = mainDiv.innerHTML;
-    var elementScript = [].map.call(document.getElementsByTagName('script'), function(el) {
-        return el.outerHTML;
-    }).join();
+    // var elementScript = [].map.call(document.getElementsByTagName('script'), function(el) {
+    //     return el.outerHTML;
+    // }).join();
     let date = new Date();
     let datestr = date.toISOString();
     datestr = datestr.replace(/[^0-9]/g, "");
     var fileName = `Drawings_${datestr}`;
-    var finalHTML = '<html><head>' + htmlhead + '</head><body>'+ elementHTML + elementScript + '</body></html>';
+    var finalHTML = '<html><head>' + htmlhead + '</head><body>'+ elementHTML + '</body></html>'; //elementScript
     download(fileName, finalHTML)
 });
 

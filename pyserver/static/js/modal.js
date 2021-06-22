@@ -1,231 +1,231 @@
 // state variable to contain parsed JSON data
-// var state = {};
-// var currentRoom = '';
-// // variables for overlaying comment canvas( '.overlay-canvas-container' )
-// var overlayCanvasContainers = document.querySelectorAll(".overlay-canvas-container");
-// var w = document.querySelector(`#wd-0 canvas`).width;
-// var h = document.querySelector(`#wd-0 canvas`).height;
-// var overlayCanvases = [];
-// overlayCanvasContainers.forEach((canvas, id) => {
-//     let canv = new fabric.Canvas(`c#${id}`, {
-//         backgroundColor: "rgba(0, 0, 0, 0)",
-//         width: w,
-//         height: h,
-//     });
-//     overlayCanvases.push(canv);
-// });
+var state = {};
+var currentRoom = '';
+// variables for overlaying comment canvas( '.overlay-canvas-container' )
+var overlayCanvasContainers = document.querySelectorAll(".overlay-canvas-container");
+var w = document.querySelector(`#wd-0 canvas`).width;
+var h = document.querySelector(`#wd-0 canvas`).height;
+var overlayCanvases = [];
+overlayCanvasContainers.forEach((canvas, id) => {
+    let canv = new fabric.Canvas(`c#${id}`, {
+        backgroundColor: "rgba(0, 0, 0, 0)",
+        width: w,
+        height: h,
+    });
+    overlayCanvases.push(canv);
+});
 
-// var canvasJSONs = [];
+var canvasJSONs = [];
 
-// var currentPageNumber = 1;
-// const viewType = ["room_top_view", "top_view", "front_view", "internal_view"];
+var currentPageNumber = 1;
+const viewType = ["room_top_view", "top_view", "front_view", "internal_view"];
 
-// var openNewJSON = false;
-
-
-// const readJSO = function (input) {
-//     try {
-
-//         $("#loader").toggle();
-//         $(".main").css({ opacity: 0.5 });
-//         if (input) {
-//             fetch(input).then(response => response.json()).then(res => {
-//                 openNewJSON = true;
-
-//                 let parsedData;
-//                 console.log(JSON.stringify(res));
-//                 // python server
-//                 const url = "http://13.235.82.47:4000/json";
-//                 const othePram = {
-//                     headers: {
-//                         "content-type": "application/json; charset=UTF-8",
-//                     },
-
-//                     body: JSON.stringify(JSON.stringify(res)),
-//                     method: "POST",
-//                 };
-
-//                 fetch(url, othePram)
-//                     .then((response) => response.json())
-//                     .then((data) => {
-//                         parsedData = data;
-//                         console.log(JSON.stringify(parsedData));
-
-//                         // Logging warning messages if present in all cases 
-//                         if (parsedData.warning_log) {
+var openNewJSON = false;
 
 
-//                             console.warn("Warning Messages: ");
-//                             for (let warning of parsedData.warning_log) {
-//                                 console.warn(warning);
+const readJSO = function (input) {
+    try {
 
-//                             }
-//                         }
+        $("#loader").toggle();
+        $(".main").css({ opacity: 0.5 });
+        if (input) {
+            fetch(input).then(response => response.json()).then(res => {
+                openNewJSON = true;
 
-//                         // Logging error messages if present and returning 
-//                         if (parsedData.error_log) {
-//                             console.error("Error Messages: ")
-//                             for (let error of parsedData.error_log) {
-//                                 console.error(error)
-//                             }
-//                             alert('Data contains error! Correct the data and import again')
-//                             $("#loader").toggle();
-//                             $('.loader-msg').html("")
-//                             $('.loader-msg').toggle()
-//                             $(".main").css({ opacity: 1 });
+                let parsedData;
+                console.log(JSON.stringify(res));
+                // python server
+                const url = "http://13.235.82.47:4000/json";
+                const othePram = {
+                    headers: {
+                        "content-type": "application/json; charset=UTF-8",
+                    },
 
-//                             return
-//                         }
+                    body: JSON.stringify(JSON.stringify(res)),
+                    method: "POST",
+                };
 
-//                         $(".main").empty();
+                fetch(url, othePram)
+                    .then((response) => response.json())
+                    .then((data) => {
+                        parsedData = data;
+                        console.log(JSON.stringify(parsedData));
 
-//                         /* PARSE JSON data */
-//                         parseJSO(parsedData);
+                        // Logging warning messages if present in all cases 
+                        if (parsedData.warning_log) {
 
-//                         /*     RENDER PART     */
-//                         renderAl();
 
-//                         // remove loading bar & restore the background
-//                         $("#loader").toggle();
-//                         $(".main").css({ opacity: 1 });
-//                     })
-//                     .catch((error) => {
-//                         // remove loading bar & restore the background
-//                         $("#loader").toggle();
-//                         $(".main").css({ opacity: 1 });
-//                         console.log(error);
-//                         alert("There's problem with data. Please try again.");
-//                     });
-//                 //
-//                 //};
-//                 //   reader.readAsText(input.files[0]);
-//             })
-//         } else {
-//             // remove loading bar & restore the background
-//             $("#loader").toggle();
-//             $(".main").css({ opacity: 1 });
-//             // alert user
-//             alert("Please import json file, not other file.");
-//         }
-//     } catch (e) {
-//         // remove loading bar & restore the background
-//         $("#loader").toggle();
-//         $(".main").css({ opacity: 1 });
-//         console.log(e);
-//     }
-// };
+                            console.warn("Warning Messages: ");
+                            for (let warning of parsedData.warning_log) {
+                                console.warn(warning);
 
-// const parseJSO = (parsedData) => {
-//     if (!parsedData) return;
-//     try {
-//         // reinitialize state variable
-//         state = {};
+                            }
+                        }
 
-//         // get project_ & org_details
-//         state.projectInfo = getProjectInfo(parsedData);
+                        // Logging error messages if present and returning 
+                        if (parsedData.error_log) {
+                            console.error("Error Messages: ")
+                            for (let error of parsedData.error_log) {
+                                console.error(error)
+                            }
+                            alert('Data contains error! Correct the data and import again')
+                            $("#loader").toggle();
+                            $('.loader-msg').html("")
+                            $('.loader-msg').toggle()
+                            $(".main").css({ opacity: 1 });
 
-//         // get floor plan & names of rooms
-//         const info = getFloorPlan(parsedData);
-//         state.roomViews = [info[0]]; // push floorPlanView
-//         state.roomNames = info[1];
+                            return
+                        }
 
-//         // get material thumbnails & rooms part(JSON)
-//         let res = getRoomDetails(parsedData, state.roomNames);
-//         state.matThumbnails = res.matThumbnails;
-//         state.rooms = res.rooms;
+                        $(".main").empty();
 
-//         // parse 'state.rooms' to get room views
-//         let subViews = getRoomObjects(state.rooms);
-//         state.roomViews = [...state.roomViews, ...subViews[0]];
+                        /* PARSE JSON data */
+                        parseJSO(parsedData);
 
-//         // get py dimens
-//         state.dimens = [];
-//         state.dimens.push(info[2]); // ground floror plan (0)
-//         state.dimens = [...state.dimens, ...subViews[1]];
+                        /*     RENDER PART     */
+                        renderAl();
 
-//         // get py viewBoxInfo
-//         state.viewBoxInfo = [];
-//         state.viewBoxInfo.push(info[3]);
-//         state.viewBoxInfo = [...state.viewBoxInfo, ...subViews[2]];
-//     } catch (err) {
-//         console.log(err);
-//     }
-// };
+                        // remove loading bar & restore the background
+                        $("#loader").toggle();
+                        $(".main").css({ opacity: 1 });
+                    })
+                    .catch((error) => {
+                        // remove loading bar & restore the background
+                        $("#loader").toggle();
+                        $(".main").css({ opacity: 1 });
+                        console.log(error);
+                        alert("There's problem with data. Please try again.");
+                    });
+                //
+                //};
+                //   reader.readAsText(input.files[0]);
+            })
+        } else {
+            // remove loading bar & restore the background
+            $("#loader").toggle();
+            $(".main").css({ opacity: 1 });
+            // alert user
+            alert("Please import json file, not other file.");
+        }
+    } catch (e) {
+        // remove loading bar & restore the background
+        $("#loader").toggle();
+        $(".main").css({ opacity: 1 });
+        console.log(e);
+    }
+};
 
-// const renderAl = () => {
-//     // if no data on state variable
-//     if (Object.keys(state).length === 0) return;
+const parseJSO = (parsedData) => {
+    if (!parsedData) return;
+    try {
+        // reinitialize state variable
+        state = {};
 
-//     // empty existing WDs || reinitialize
-//     document.querySelector(".main").innerHTML = ``;
+        // get project_ & org_details
+        state.projectInfo = getProjectInfo(parsedData);
 
-//     // render project and org info ( footer table )
-//     renderProjectInfo(state.projectInfo, state.roomViews.length);
+        // get floor plan & names of rooms
+        const info = getFloorPlan(parsedData);
+        state.roomViews = [info[0]]; // push floorPlanView
+        state.roomNames = info[1];
 
-//     // calibrate canvas
-//     calibrateCanvases(state.viewBoxInfo);
+        // get material thumbnails & rooms part(JSON)
+        let res = getRoomDetails(parsedData, state.roomNames);
+        state.matThumbnails = res.matThumbnails;
+        state.rooms = res.rooms;
 
-//     // reinitialize the variables
+        // parse 'state.rooms' to get room views
+        let subViews = getRoomObjects(state.rooms);
+        state.roomViews = [...state.roomViews, ...subViews[0]];
 
-//     // also for overlayCanvases
-//     overlayCanvasContainers = document.querySelectorAll(".overlay-canvas-container");
-//     w = document.querySelector(`#wd-0 canvas`).width;
-//     h = document.querySelector(`#wd-0 canvas`).height;
-//     overlayCanvases = [];
-//     overlayCanvasContainers.forEach((canvas, id) => {
-//         let canv = new fabric.Canvas(`c#${id}`, {
-//             backgroundColor: "rgba(0, 0, 0, 0)",
-//             width: w,
-//             height: h,
-//         });
+        // get py dimens
+        state.dimens = [];
+        state.dimens.push(info[2]); // ground floror plan (0)
+        state.dimens = [...state.dimens, ...subViews[1]];
 
-//         if (canvasJSONs.length !== 0) {
-//             // restore canvas objects state
-//             if (Object.keys(canvasJSONs[id]) !== 0) {
-//                 let json = canvasJSONs[id];
-//                 //
-//                 function CallBack() {
-//                     canv.renderAl();
-//                     canv.calcOffset();
-//                 }
-//                 canv.loadFromJSON(json, CallBack, function (o, object) {
-//                     canv.setActiveObject(object);
-//                 });
-//             }
-//         }
+        // get py viewBoxInfo
+        state.viewBoxInfo = [];
+        state.viewBoxInfo.push(info[3]);
+        state.viewBoxInfo = [...state.viewBoxInfo, ...subViews[2]];
+    } catch (err) {
+        console.log(err);
+    }
+};
 
-//         overlayCanvases.push(canv);
-//     });
+const renderAl = () => {
+    // if no data on state variable
+    if (Object.keys(state).length === 0) return;
 
-//     // render views
-//     state.roomViews.forEach((view, id) => {
-//         console.log(view.id,'state.roomViews'); 
-//         // floorPlanView
-//         if (view.type === "FloorPlanView") {
-//             renderFloorPlan(view, id);
-//         }
-//         // other views like RoomSubView, RenderView ...
-//         else {
-//             currentRoom = view.id.split('+')[0]
-//             renderView(state.projectInfo, view, id);
-//             if (viewType.includes(view.getName())) {
-//             }
-//             if (view.type === "ImageView") {
-//                 // render material thumbnails
-//                 renderMaterialThumbnails(state.matThumbnails, id);
-//             }
-//         }
-//     });
-//     if (openNewJSON) {
-//         // draw py dimens
-//         state.dimens.forEach((dimensions, id) => {
-//             const viewName = state.roomViews[id].getName();
-//             if (viewName != "table_view") {
-//                 renderPyDimensions(dimensions, id);
-//             }
-//         });
-//     }
-// };
+    // empty existing WDs || reinitialize
+    document.querySelector(".main").innerHTML = ``;
+
+    // render project and org info ( footer table )
+    renderProjectInfo(state.projectInfo, state.roomViews.length);
+
+    // calibrate canvas
+    calibrateCanvases(state.viewBoxInfo);
+
+    // reinitialize the variables
+
+    // also for overlayCanvases
+    overlayCanvasContainers = document.querySelectorAll(".overlay-canvas-container");
+    w = document.querySelector(`#wd-0 canvas`).width;
+    h = document.querySelector(`#wd-0 canvas`).height;
+    overlayCanvases = [];
+    overlayCanvasContainers.forEach((canvas, id) => {
+        let canv = new fabric.Canvas(`c#${id}`, {
+            backgroundColor: "rgba(0, 0, 0, 0)",
+            width: w,
+            height: h,
+        });
+
+        if (canvasJSONs.length !== 0) {
+            // restore canvas objects state
+            if (Object.keys(canvasJSONs[id]) !== 0) {
+                let json = canvasJSONs[id];
+                //
+                function CallBack() {
+                    canv.renderAl();
+                    canv.calcOffset();
+                }
+                canv.loadFromJSON(json, CallBack, function (o, object) {
+                    canv.setActiveObject(object);
+                });
+            }
+        }
+
+        overlayCanvases.push(canv);
+    });
+
+    // render views
+    state.roomViews.forEach((view, id) => {
+        console.log(view.id,'state.roomViews'); 
+        // floorPlanView
+        if (view.type === "FloorPlanView") {
+            renderFloorPlan(view, id);
+        }
+        // other views like RoomSubView, RenderView ...
+        else {
+            currentRoom = view.id.split('+')[0]
+            renderView(state.projectInfo, view, id);
+            if (viewType.includes(view.getName())) {
+            }
+            if (view.type === "ImageView") {
+                // render material thumbnails
+                renderMaterialThumbnails(state.matThumbnails, id);
+            }
+        }
+    });
+    if (openNewJSON) {
+        // draw py dimens
+        state.dimens.forEach((dimensions, id) => {
+            const viewName = state.roomViews[id].getName();
+            if (viewName != "table_view") {
+                renderPyDimensions(dimensions, id);
+            }
+        });
+    }
+};
 
 function download(filename, text) {
     fetch(window.APIAddress.generatePDF, {

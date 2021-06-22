@@ -261,6 +261,39 @@ const renderAll = () => {
     }
 };
 
+// Import the Save JSON
+$("#importSaveJSON").click(function() {
+    $("#loader").toggle();
+    $('.loader-msg').html("Validating JSON")
+    $('.loader-msg').toggle();
+    $(".main").css({ opacity: 0 });
+    fetch(window.APIAddress.importSaveJSON, {
+        method: 'GET',
+        headers: {
+            'Content-type': 'application/json', 
+            'authorization': localStorage.getItem("token")
+        }
+    }).then(function (response) {
+        if (response.ok) {
+            return response.json();
+        }
+        return Promise.reject(response);
+    }).then(function (data) {
+        openNewJSON = true;
+        parsedData = data;
+        console.log(parsedData, "data");
+        $(".main").empty();
+        parseJSON(parsedData);
+        renderAll();
+        $("#loader").toggle();
+        $('.loader-msg').html("")
+        $('.loader-msg').toggle();
+        $(".main").css({ opacity: 1 });
+    }).catch(function (error) {
+        console.warn('Something went wrong.', error);
+    });
+});
+
 // print statement
 /*$("#print").on("click", function (e) {
     print();

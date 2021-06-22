@@ -88,11 +88,11 @@ const getRoomObjects = (rooms) => {
         let flag = 0, count = 0;
         for (let i = 0; i < views.length; i++) {
           let k = 0;
-          if (views[i].type == "TableView" && views[i].compsInfo.length > 10) {
+          if (views[i].type == "TableView" && views[i].compsInfo.length > 15) {
             flag = 1;
-            for (let j = 10; j < views[i].compsInfo.length; j += 10) {
+            for (let j = 15; j < views[i].compsInfo.length; j += 15) {
               count++;
-              let obj = new TableView(`${views[i].id}+${k++}`, views[i].name, views[i].compsInfo.splice(j, j + 10))
+              let obj = new TableView(`${views[i].id}+${k++}`, views[i].name, views[i].compsInfo.splice(j, j + 15))
               views.splice(i + 1, 0, obj);
             }
           }

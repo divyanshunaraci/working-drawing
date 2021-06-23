@@ -391,11 +391,11 @@ const handleView = (data, roomName) => {
     else {
       let views = handleSubView(data[viewName], roomName, viewName);
       roomSubViews = [...roomSubViews, ...views];
-      if (viewName === "internal_view") {
-        // internal view
-        let temp = handleSubView(data[viewName], roomName, "Handles & Accessories");
-        roomSubViews = [...roomSubViews, ...temp];
-      }
+      // if (viewName === "internal_view") {
+      //   // internal view
+      //   let temp = handleSubView(data[viewName], roomName, "Handles & Accessories");
+      //   roomSubViews = [...roomSubViews, ...temp];
+      // }
     }
   });
 
@@ -426,10 +426,10 @@ const handleViewDimens = (data, roomName) => {
         dimens.push(temp[0]);
         viewBoxInfo.push(temp[1]);
       }
-      if (viewName === "internal_view") {
-        dimens.push([]);
-        viewBoxInfo.push(handleSubViewDimens(data[viewName], roomName, viewName)[1]);
-      }
+      // if (viewName === "internal_view") {
+      //   dimens.push([]);
+      //   viewBoxInfo.push(handleSubViewDimens(data[viewName], roomName, viewName)[1]);
+      // }
     }
   });
 
@@ -604,9 +604,9 @@ const handleSubViewDimens = (data, roomViewName, viewName) => {
       });
       viewBoxInfo = data["dimension"]["lengths"];
       compIds[`${roomViewName}+${viewName}`] = data["dimension"]["IDs"];
-      if (viewName == "internal_view") {
-        compIds[`${roomViewName}+Handles & Accessories`] = data["dimension"]["IDs"];
-      }
+      // if (viewName == "internal_view") {
+      //   compIds[`${roomViewName}+Handles & Accessories`] = data["dimension"]["IDs"];
+      // }
     }
   });
 

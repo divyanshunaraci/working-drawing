@@ -375,6 +375,7 @@ class floor_plan_validation(object):
                     else:
                         warning_log.append(string_id + 'does not contain the key name floor_components') #error
                     
+                    del json_room_top_view['external']
                     check_con = json_room_top_view.has_key('external')
                     if check_con:
                         

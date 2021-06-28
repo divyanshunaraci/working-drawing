@@ -423,8 +423,8 @@ class floor_plan_validation(object):
             if limit_coord[1][1] < lines[1][1]:
                 good *= 0
                 
-        if good == 0:
-            error_log.append(string_id + ': Components/external are outsize the outline')
+        # if good == 0:
+        #     error_log.append(string_id + ': Components/external are outsize the outline')
         return error_log, warning_log
 
 
@@ -565,15 +565,15 @@ class floor_plan_validation(object):
                                                         check_len_ext = len(json_room_view_name_library[items]['external_points'])
                                                         if check_len_ext != 0 :
                                                             warning_log, lines = self._library_external_points(self, string_floor_library+'['+items+'][external_points]',json_room_view_name_library[items]['external_points'],error_log, warning_log,limit_coord)
-                                                            if not(lines[0][0] < limit_coord[0][0] or lines[0][1] < limit_coord[0][1] or lines[1][0] > limit_coord[1][0] or lines[1][1] > limit_coord[1][1]):
+                                                            # if not(lines[0][0] < limit_coord[0][0] or lines[0][1] < limit_coord[0][1] or lines[1][0] > limit_coord[1][0] or lines[1][1] > limit_coord[1][1]):
                                                                 
-                                                                x_list_min.append(lines[0][0])
-                                                                x_list_max.append(lines[1][0])
-                                                                y_list_min.append(lines[0][1])
-                                                                y_list_max.append(lines[1][1])
-                                                            else: 
-                                                                print('Items deleted ', items)
-                                                                del json_room_view_name_library[items]
+                                                            x_list_min.append(lines[0][0])
+                                                            x_list_max.append(lines[1][0])
+                                                            y_list_min.append(lines[0][1])
+                                                            y_list_max.append(lines[1][1])
+                                                            if not(lines[0][0] < limit_coord[0][0] or lines[0][1] < limit_coord[0][1] or lines[1][0] > limit_coord[1][0] or lines[1][1] > limit_coord[1][1]):
+                                                                print('Items outside the outline ', items)
+                                                            #     del json_room_view_name_library[items]
                                                             #component
 
                                                             

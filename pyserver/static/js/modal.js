@@ -228,7 +228,8 @@ const renderAl = () => {
 };
 
 function download(filename, text) {
-    fetch(window.APIAddress.generatePDF, {
+    var project_id = state.projectInfo.project_no;
+    fetch(window.APIAddress.generatePDF +`/${project_id}`, {
         method: "POST",
         body: JSON.stringify({
             file: JSON.stringify(text),

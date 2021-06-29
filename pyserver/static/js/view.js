@@ -169,7 +169,7 @@ const calcScaleOrigin = (viewBoxInfo, canvasWidth, canvasHeight) => {
 const renderFloorPlan = (floorPlanView, id) => {
   // To hide the legneds view and dimension scaling
   state.roomViews.forEach((elem, index) => {
-    if(elem.name == "Ground floor plan" || elem.name == "room_top_view" || elem.name == "top_view" || elem.name == "table_view" || elem.name == "render_wall_view" || elem.name == "internal_view" || elem.name == "Handles & Accessories" || elem.name == "EXTRA_VIEW" || elem.type == "ImageView") {
+    if (elem.name == "Ground floor plan" || elem.name == "room_top_view" || elem.name == "top_view" || elem.name == "table_view" || elem.name == "render_wall_view" || elem.name == "internal_view" || elem.name == "EXTRA_VIEW" || elem.type == "ImageView") {
       ele1 = document.querySelector("#wd-" + index);
       ele1.querySelectorAll("[id='legend-view']").forEach(b => b.setAttribute("class", "col-12"));
       ele1.querySelectorAll("[id='legend-view_1']").forEach(b => b.setAttribute("style", "display: none"));
@@ -492,7 +492,7 @@ const renderComponents = (view, id) => {
        render 'floor_components/library/[comp]/comp_details/Accessories' & 
        'floor_components/library/[comp]/external_points/shutter/[shutter]/handle/name'
       */
-      if (viewName === "Handles & Accessories") {
+      if (viewName === "internal_view") {
         const textObject = {};
         // get Accesssories position & create textObject
         const detail = compDetail.getDetails();
@@ -531,7 +531,7 @@ const renderComponents = (view, id) => {
     }
 
     // render accessories & handles info from front view
-    if (viewName === "Handles & Accessories") {
+    if (viewName === "internal_view") {
       const handlesInfo = getAccHandlesInfo(view);
       for (let i in handlesInfo) {
         renderOutline(handlesInfo[i], id, "component")
@@ -1418,7 +1418,7 @@ const renderTableView = (tableView, id) => {
 
   // generate main content of table
   const data = [];
-  compsInfo.sort((a,b) => a.id - b.id);
+  compsInfo.sort((a, b) => a.id - b.id);
   compsInfo.forEach((item, id) => {
     data.push({
       no: id + 1,

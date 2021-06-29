@@ -552,8 +552,10 @@ class floor_plan_component1(object):
 
         if 'outline' in j_object['rooms'][room_name][view_name]:
             component_list = []
+            '''Room top view outline is stored in drawing_1_list'''
             drawing_1_list = j_object['rooms'][room_name][view_name]['outline']
             if len(drawing_1_list) != 0:
+                '''Any edges which are missing any coordinates are deleted in this function'''
                 drawing_1_list  = self.__clean_drawing_list(drawing_1_list)
                 #converting the list to dictionary of  for outline
                 dict_for_view['outline'] = self.__create_dict(self,drawing_1_list,True)
@@ -1691,9 +1693,12 @@ class floor_plan_component1(object):
 
     @staticmethod
     def __create_dict(self,drawing, outline_bool = False):
+        '''the horizontal and the vertical lines are seperated here'''
         draw_hor_list, draw_ver_list = self.__separate_hor_ver(drawing)
         draw_hor_dict = {item[0]: [] for item in draw_hor_list}
         draw_ver_dict = {item[0]: [] for item in draw_ver_list}
+        '''The hor & ver dict are created into a structure like X-{a,b}
+        where x denotes the point in X-axis or Y-axis '''
         for item in draw_hor_list:
             draw_hor_dict[item[0]].append(item[1])
         for item in draw_ver_list:
@@ -1716,8 +1721,12 @@ class floor_plan_component1(object):
 
     @staticmethod
     def __find_thickness(self,draw_hor_dict, draw_ver_dict, outline_bool = False):
+        '''ls1 is the horizontal list thus its keys have y-coordinates
+        ls2 is the vertical list thus its keys have x-coordinates'''
         ls1=self.__reveal_keys(draw_hor_dict) #all the keys in ascending order
         ls2=self.__reveal_keys(draw_ver_dict)
+        '''x0 xn is the min & max in ls2 which is vertical list
+        y0 yn is the min & max in ls1 which is the horizontal list'''
         x0, y0, xn, yn = ls2[0], ls1[0],ls2[-1], ls1 [-1]
         
         # if outline_bool == True:

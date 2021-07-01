@@ -115,9 +115,9 @@ div.row {
 
 table {
   font-size: 10px;
-  width: 100%;
+  /* width: 100%; */
   /* height: 100%; */
-  word-break: break-all;
+  /* word-break: break-all; */
 }
 
 /* remove button border when focus */
@@ -133,6 +133,12 @@ button:focus {
   overflow: scroll;
   width: 100%;
   height: 100%;
+}
+.main-table thead tr {
+  background: #225ee5;
+  color: #fff;
+  letter-spacing: 1px;
+  text-transform: capitalize;
 }
 
 .side-table td,

@@ -1330,6 +1330,7 @@ const renderMaterialThumbnails = (matThumbnails, id) => {
 const generateTableHead = (table, data) => {
   let thead = table.createTHead();
   let row = thead.insertRow();
+  row.setAttribute('style', 'background: #225ee5;color: #fff;letter-spacing: 1px;text-transform: capitalize;');
   for (let key of data) {
     let th = document.createElement("th");
     let text = document.createTextNode(key);
@@ -1380,11 +1381,11 @@ const renderTableView = (tableView, id) => {
   // table.style.fontSize = '8px';
   // table.style.wordWrap = 'break-word';
   // table.style.wordBreak = 'break-all';
-  //table.setAttribute('style', 'width:75px;height:75px;');
-  // table.setAttribute('style', 'display:block;overflow:scroll;');
+  // table.setAttribute('style', 'width:75px;height:75px;');
+  table.setAttribute('style', 'display:block;overflow:scroll;font-size:10px;width:100%;height:100%;');
   table.setAttribute("border", "1");
-  table.classList.add("main-table");
-  // table.classList.add("table-responsive");
+  // table.classList.add("main-table");
+  table.classList.add("table-responsive");
   //canvas width and height- console.log
   /*console.log(container.clientHeight, container.clientWidth);
 

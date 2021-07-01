@@ -175,6 +175,83 @@ document.querySelector("#removePage").addEventListener("click", function (e) {
   $("#loader").toggle();
 });
 
+$("#saveProgress").click(function() {
+  var project_details = state.projectInfo;
+  var floor_plan = state.roomViews[0];
+  
+  var flrOutline = [];
+  floor_plan.outline.forEach(ele => {
+    flrOutline.push([
+      ele.pt1,
+      ele.pt2,
+    ])
+    return
+  })
+  var room = state.rooms;
+  var material_thumbnails = state.matThumbnails;
+  let rooms = {
+    ...room, 
+    "material_thumbnails": material_thumbnails
+  };
+  var roomNames = state.roomNames;
+  var dimension = [];
+  state.dimens[0].forEach(ele => {
+     dimension.push([
+      ele ? ele.pt1 : "",
+      ele ? ele.pt2 : "",
+    ])
+    return
+  })
+  
+  var flrlength = state.viewBoxInfo[0];
+  var saveJSON = {
+    "project_details": {
+      "apartment_name": project_details.apartment_name,
+      "client_id": project_details.client_id,
+      "client_name": project_details.client_name,
+      "contract_date": project_details.contract_date,
+      "designer_name": project_details.designer_name,
+      "flat_number": project_details.flat_number,
+      "name_title": project_details.name_title,
+      "project_name": project_details.project_name,
+      "project_no": project_details.project_no,
+      "target_date": project_details.target_date,
+    },
+    "org_details": {
+      "org_name": project_details.org_name,
+      "org_logo_url": project_details.org_logo_url,
+      "org_address": project_details.org_address
+    },
+    "floor_plan": {
+      "outline": flrOutline,
+      "room_name_positions": floor_plan.roomPositions,
+      "dimension": {
+        "lengths": {
+          "xn": flrlength.xn,
+          "yn": flrlength.yn,
+          "x0": flrlength.x0,
+          "y0": flrlength.y0,
+          "length": flrlength.length,
+          "width": flrlength.width,
+        },
+        "dimension": dimension
+      }
+    },
+    "rooms": rooms,
+    "room_names": roomNames,
+    "warning_log": ""
+  }
+  var json = JSON.stringify(saveJSON);
+
+  var a = document.createElement("a");
+  var file = new Blob([json], {
+    type: 'application/json'
+  });
+  a.href = URL.createObjectURL(file);
+  a.download = 'json.json';
+  a.click();
+});
+
 // create & handle comment box
 $("#commentBox").on("click", function (e) {
   if (currentPageNumber == 1 && !state.roomViews) {

@@ -498,7 +498,6 @@ class floor_plan_component1(object):
     def __init__(self,room_name, view_name, view_angle,j_object):
         self.j_object = j_object
 
-                    
         self.room_name, self.view_name = room_name,view_name
         if self.view_name != 'room_top_view':
             self.view_angle = view_angle
@@ -549,7 +548,6 @@ class floor_plan_component1(object):
         dict_for_view={}
         ID_dict = {}
         room_name, view_name, j_object = self.room_name,self.view_name, self.j_object
-
         if 'outline' in j_object['rooms'][room_name][view_name]:
             component_list = []
             '''Room top view outline is stored in drawing_1_list'''
@@ -559,6 +557,13 @@ class floor_plan_component1(object):
                 drawing_1_list  = self.__clean_drawing_list(drawing_1_list)
                 #converting the list to dictionary of  for outline
                 dict_for_view['outline'] = self.__create_dict(self,drawing_1_list,True)
+                if 'openings' in list(j_object['rooms'][room_name][view_name]):
+                    for items in j_object['rooms'][room_name][view_name]['openings']:
+                        if len(j_object['rooms'][room_name][view_name]['openings'][items]) >0:
+                            drawing_2_list= j_object['rooms'][room_name][view_name]['openings'][items]
+                            drawing_2_list = self.__clean_drawing_list(drawing_2_list)
+                            drawing_1_list += drawing_2_list
+                            dict_for_view['openings'+items] = self.__create_dict(self,drawing_2_list)
                 if 'floor_components' in list(j_object['rooms'][room_name][view_name]):
                     if 'library' in list(j_object['rooms'][room_name][view_name]['floor_components']):
 
@@ -602,7 +607,6 @@ class floor_plan_component1(object):
 
             if len(drawing_1_list) != 0 :
                 dict_for_view['outline'] = self.__create_dict(self,drawing_1_list,True)
-                
                 if 'floor_components' in j_object['rooms'][room_name][view_name][view_angle]:
                     if 'library' in j_object['rooms'][room_name][view_name][view_angle]['floor_components']:
                         for items in j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library']:
@@ -663,7 +667,7 @@ class floor_plan_component1(object):
             return rank
 
         for keys in dict1:
-            if keys == 'outline':
+            if keys == 'outline' or 'openings' in keys:
                 continue
             t_d2 = dict1[keys]['dims']
             
@@ -766,7 +770,6 @@ class floor_plan_component1(object):
                     x2 = abs(c2-b2)
                     y1 = abs(a1-c1)
                     y2 = abs(c1-a2)
-                    print()
                     if(min(x1,x2,y1,y2)==x1 or min(x1,x2,y1,y2)==x2):
                         return 'hor'
                     return 'ver'   
@@ -836,7 +839,6 @@ class floor_plan_component1(object):
     @staticmethod
     def __creating_dimensions_room_top_view(self,dict1,drawing_list):
         """return dimension list from dictionary and drawing list"""
-
         #creates the array shade that determines where to place dimension and where not to place it
         the_array = self.__creating_drawing_shade_room_top_view(self,dict1)
         
@@ -1167,7 +1169,6 @@ class floor_plan_component1(object):
 
     @staticmethod
     def __creating_dimensions_top_front(self,dict1,drawing_list):
-        
         the_array = self.__creating_drawing_shade(dict1) 
         
         outline_dim = dict1['outline']['dims']
@@ -1178,9 +1179,7 @@ class floor_plan_component1(object):
 
         #distance to component
         dimension_list = self.__distance_to_component(self, dict1, outer_dim_dict, dim_dict, dimension_list, 100)
-        
-
-
+                
         #drwaing overall component dimensions
         dimension_list = self.__draw_overall_dimension_component(self,dict1,'top_front',dim_dict,the_array,outline_dim,outer_dim_dict,dimension_list) 
 
@@ -1423,11 +1422,17 @@ class floor_plan_component1(object):
         xi0, yi0 = outline_dim['xi0'], outline_dim['yi0']
         xin, yin = outline_dim['xin'], outline_dim['yin']
         
-
         x0c, y0c = t_d2['x0'], t_d2['y0']
         xnc, ync = t_d2['xn'], t_d2['yn']
         
-
+        if x0c<x0:
+            x0,xi0 = x0c,x0c
+        if xnc > xn:
+            xn,xin = xnc,xnc
+        if y0c<y0:
+            y0,yi0 = y0c,y0c
+        if ync > yn:
+            yn,yin = ync,ync
         # start with horizontal line
         def spit_out_opt_y(self,x0c,xnc,y0c,ync,x0,y0,xi0,yi0,xin,yin,xn,yn,the_array,outer_dim_dict):
             if y0c - 100 < y0:
@@ -1476,10 +1481,8 @@ class floor_plan_component1(object):
             ycc = (y0c+ync)/2
             
             if abs(y1-ycc) < abs(y2-ycc):
-                
                 if outer_dim_dict['hor'].has_key(y2):
-                    
-                    outer_dim_dict['hor'][y2][x0c-x0:xnc-x0] = np.zeros(xnc-x0c)
+                    outer_dim_dict['hor'][y2][abs(x0c-x0):abs(xnc-x0)] = np.zeros(abs(xnc-x0c))
                 return y1
             else:
                 
@@ -1557,6 +1560,7 @@ class floor_plan_component1(object):
             y_opt = spit_out_opt_y(self,x0c,xnc,y0c,ync,x0,y0,xi0,yi0,xin,yin,xn,yn,the_array,outer_dim_dict)
             return y_opt
         else:
+
             y_opt = spit_out_opt_y(self,x0c,xnc,y0c,ync,x0,y0,xi0,yi0,xin,yin,xn,yn,the_array,outer_dim_dict)
             x_opt = spit_out_opt_x(self,y0c,ync,x0c,xnc,x0,y0,xi0,yi0,xin,yin,xn,yn,the_array,outer_dim_dict)
             return x_opt, y_opt
@@ -1666,8 +1670,21 @@ class floor_plan_component1(object):
     @staticmethod
     def __creating_drawing_shade(dict_for_view):
         dict1 = dict_for_view
-        x00 , y00 = dict1['outline']['dims']['x0'],dict1['outline']['dims']['y0']
-        s = (dict1['outline']['dims']['xn']-x00,dict1['outline']['dims']['yn']-y00) # xn-x0,yn-y0
+        x0,y0,xn,yn= np.inf, np.inf, -np.inf, -np.inf
+        for items in dict1:
+            a1,b1,a2,b2 = dict1[items]['dims']['x0'],dict1[items]['dims']['y0'],dict1[items]['dims']['xn'],dict1[items]['dims']['yn']
+            if a1<x0:
+                x0 = a1
+            if b1<y0:
+                y0 = b1
+            if a2>xn:
+                xn = a2
+            if b2>yn:
+                yn = b2
+        x00, y00 = x0, y0
+        s = (xn-x00, yn - y00)
+        # x00 , y00 = dict1['outline']['dims']['x0'],dict1['outline']['dims']['y0']
+        # s = (dict1['outline']['dims']['xn']-x00,dict1['outline']['dims']['yn']-y00) # xn-x0,yn-y0
         the_array = np.zeros(s)
         def updating_array(the_array,x0,xn,y0,yn,x00, y00 ):
             

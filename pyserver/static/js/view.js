@@ -1074,7 +1074,9 @@ const renderPyDimensions = (dimensions, id) => {
       }
     );
     // if the dimension is < 200, just draw line
-    if (Number(dimension.label) <= 50) { //
+    /*Here we have enable that even if the dimension is > 5 we will draw
+    the blue lines */
+    if (Number(dimension.label) <= 5) { //
       let line3 = new fabric.Line([pt1[0], pt1[1], pt2[0], pt1[2]], {
         left: pt1[0],
         top: pt1[1],
@@ -1158,8 +1160,9 @@ const renderPyDimensions = (dimensions, id) => {
       (dimension.pt1[0] + dimension.pt2[0]) / 2,
       (dimension.pt1[1] + dimension.pt2[1]) / 2,
     ];
-
-    const textAligni = Number(dimension.label) > 50 ? "center" : "bottom"; //200
+    /*The value determines that if the dimension is greater than 80 it will be 
+    displayed at the bottom of the dimension else in the center*/
+    const textAligni = Number(dimension.label) > 80 ? "center" : "bottom"; //200
     const textbox = new fabric.Textbox(dimension.label.toString(), {
       left: ((position[0] + origin[0] - 20) * scale) / dpi,
       top: ((-1 * position[1] + origin[1]) * scale) / dpi,

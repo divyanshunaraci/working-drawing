@@ -531,14 +531,14 @@ const renderComponents = (view, id) => {
     }
 
     // render accessories & handles info from front view
-    if (viewName === "internal_view") {
-      const handlesInfo = getAccHandlesInfo(view);
-      for (let i in handlesInfo) {
-        renderOutline(handlesInfo[i], id, "component")
-      }
+    // if (viewName === "internal_view") {
+    //   const handlesInfo = getAccHandlesInfo(view);
+    //   for (let i in handlesInfo) {
+    //     renderOutline(handlesInfo[i], id, "component")
+    //   }
 
-      //renderTexts(handlesInfo, id);
-    }
+    //   //renderTexts(handlesInfo, id);
+    // }
   }
 };
 
@@ -655,7 +655,7 @@ const renderShutter = (shutter, id) => {
   // handle
   const handle = shutter.getHandle();
   const handleOutline = handle["outline"];
-  renderOutline(handleOutline, id, "component");
+  renderOutline(handleOutline, id, "handle");
 
   // opening
   if (outline.length === 0) return; // exception handling( no data )
@@ -665,25 +665,25 @@ const renderShutter = (shutter, id) => {
       midPt = outline[2].getMidPt();
       temp = outline[0].getCoords();
       lines = [new Edge(temp[0], midPt), new Edge(midPt, temp[1])];
-      renderOutline(lines, id, "component", [50, 50]);
+      renderOutline(lines, id, "opening", [50, 50]);
       break;
     case "left":
       midPt = outline[0].getMidPt();
       temp = outline[2].getCoords();
       lines = [new Edge(temp[0], midPt), new Edge(midPt, temp[1])];
-      renderOutline(lines, id, "component", [50, 50]);
+      renderOutline(lines, id, "opening", [50, 50]);
       break;
     case "down":
       midPt = outline[3].getMidPt();
       temp = outline[1].getCoords();
       lines = [new Edge(temp[0], midPt), new Edge(midPt, temp[1])];
-      renderOutline(lines, id, "component", [50, 50]);
+      renderOutline(lines, id, "opening", [50, 50]);
       break;
     case "up":
       midPt = outline[1].getMidPt();
       temp = outline[3].getCoords();
       lines = [new Edge(temp[0], midPt), new Edge(midPt, temp[1])];
-      renderOutline(lines, id, "component", [50, 50]);
+      renderOutline(lines, id, "opening", [50, 50]);
       break;
     case "sliding":
       // Todo: outline(8 edges)
@@ -709,7 +709,7 @@ const renderShutter = (shutter, id) => {
       lines.push(
         new Edge([mid[0] + 140, mid[1] + 100], [mid[0] + 200, mid[1] + 40])
       );
-      renderOutline(lines, id, "component", [30, 30]);
+      renderOutline(lines, id, "opening", [30, 30]);
       break;
     case "pullout":
       lines = [
@@ -718,7 +718,7 @@ const renderShutter = (shutter, id) => {
         new Edge(outline[2].getMidPt(), outline[3].getMidPt()),
         new Edge(outline[3].getMidPt(), outline[0].getMidPt()),
       ];
-      renderOutline(lines, id, "component", [50, 50]);
+      renderOutline(lines, id, "opening", [50, 50]);
       break;
     case "drawer":
       // Todo
@@ -734,8 +734,9 @@ const renderOutline = (outline, id, type, dashPattern = [], view_name = '') => {
   const drawConfig = {
     view: { strokeStyle: "black", lineWidth: "8" },
     component: { strokeStyle: "red", lineWidth: "6" },
+    handle: { strokeStyle: "DarkGreen", lineWidth: "6" },
     externItem: { strokeStyle: "gray", lineWidth: "8" },
-    opening: { strokeStyle: "purple", lineWidth: "8" },
+    opening: { strokeStyle: "DarkGreen", lineWidth: "8" },
   };
 
   const cx = document.querySelector(`#wd-${id} canvas`).getContext("2d");

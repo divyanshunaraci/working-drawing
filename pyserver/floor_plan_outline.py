@@ -617,7 +617,11 @@ class floor_plan_component1(object):
                                 c_panel = True
                             if 'external_points' in j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]:
                                 drawing_2_list = []
-                                for internal_items in ['internal','carcass','skirting','loft_skirting','cover_panels','fillers']: #'fillers'
+                                # if view_angle == 'internal_view':
+                                #     item_ext = ['internal','carcass']
+                                # else:
+                                item_ext = ['internal','carcass','skirting','loft_skirting','cover_panels','fillers']
+                                for internal_items in item_ext: #'fillers'
                                     if internal_items in j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]['external_points']:
                                         drawing_2_list+= j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]['external_points'][internal_items]
                                     

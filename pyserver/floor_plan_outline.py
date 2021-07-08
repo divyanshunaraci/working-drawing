@@ -617,10 +617,10 @@ class floor_plan_component1(object):
                                 c_panel = True
                             if 'external_points' in j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]:
                                 drawing_2_list = []
-                                # if view_angle == 'internal_view':
-                                #     item_ext = ['internal','carcass']
-                                # else:
-                                item_ext = ['internal','carcass','skirting','loft_skirting','cover_panels','fillers']
+                                if view_angle == 'internal_view':
+                                    item_ext = ['internal','carcass']
+                                else:
+                                    item_ext = ['internal','carcass','skirting','loft_skirting','cover_panels','fillers']
                                 for internal_items in item_ext: #'fillers'
                                     if internal_items in j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]['external_points']:
                                         drawing_2_list+= j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]['external_points'][internal_items]
@@ -1497,12 +1497,12 @@ class floor_plan_component1(object):
             ycc = (y0c+ync)/2
             
             if abs(y1-ycc) < abs(y2-ycc):
-                if outer_dim_dict['hor'].has_key(y2):
-                    outer_dim_dict['hor'][y2][abs(x0c-x0):abs(xnc-x0)] = np.zeros(abs(xnc-x0c))
+                if outer_dim_dict['hor'].has_key(y2) and len(outer_dim_dict['hor'][y2])>=(xnc-x0c):
+                    outer_dim_dict['hor'][y2][x0c-x0:xnc-x0] = np.zeros(xnc-x0c)
                 return y1
             else:
                 
-                if outer_dim_dict['hor'].has_key(y1):
+                if outer_dim_dict['hor'].has_key(y1) and len(outer_dim_dict['hor'][y1])>=(xnc-x0c):
                     
                     outer_dim_dict['hor'][y1][x0c-x0:xnc-x0] = np.zeros(xnc-x0c)
                 
@@ -1555,14 +1555,14 @@ class floor_plan_component1(object):
             
             if abs(y1-ycc) < abs(y2-ycc):
                 #
-                if outer_dim_dict['ver'].has_key(y2) and len(outer_dim_dict['ver'][y2])>=(xnc-y0):
+                if outer_dim_dict['ver'].has_key(y2) and len(outer_dim_dict['ver'][y2])>=(xnc-x0c):
                
                     outer_dim_dict['ver'][y2][x0c-y0:xnc-y0] = np.zeros(xnc-x0c)
                 return y1
                 
             else:
                 #
-                if outer_dim_dict['ver'].has_key(y1):
+                if outer_dim_dict['ver'].has_key(y1) and len(outer_dim_dict['ver'][y1])>=(xnc-x0c):
                     #
                     outer_dim_dict['ver'][y1][x0c-y0:xnc-y0] = np.zeros(xnc-x0c)
                 #

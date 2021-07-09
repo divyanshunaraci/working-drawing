@@ -263,17 +263,17 @@ $("#print").on("click", async function (e) {
             return container.innerHTML;
         } else {
             for(var i = 0; i < state.roomViews.length; i++) {
-                if(state.roomViews[i].name == "table_view") {
-                    var id = document.getElementById("wd-" + i);
-                    id.classList.remove("working-drawing");
-                    var subDiv = document.createElement("div");
-                    subDiv.id = "canvas"+ i;
-                    subDiv.appendChild(id);
-                    mainDiv.appendChild(subDiv);
-                    var pagebreak = document.createElement("div");
-                    pagebreak.setAttribute("style", "clear: both;page-break-after: always;");
-                    mainDiv.appendChild(pagebreak);
-                } else {
+                // if(state.roomViews[i].name == "table_view") {
+                //     var id = document.getElementById("wd-" + i);
+                //     id.classList.remove("working-drawing");
+                //     var subDiv = document.createElement("div");
+                //     subDiv.id = "canvas"+ i;
+                //     subDiv.appendChild(id);
+                //     mainDiv.appendChild(subDiv);
+                //     var pagebreak = document.createElement("div");
+                //     pagebreak.setAttribute("style", "clear: both;page-break-after: always;");
+                //     mainDiv.appendChild(pagebreak);
+                // } else {
                     var convertMeToImg = $('#wd-' + i)[0];
                     const canvas = await html2canvas(convertMeToImg, { logging: true, letterRendering: 1, useCORS: true })
                     // Full Quality= 1.0  // Medium Quality = 0.5   // Low Quality = 0.1
@@ -292,7 +292,7 @@ $("#print").on("click", async function (e) {
                     var pagebreak = document.createElement("div");
                     pagebreak.setAttribute("style", "clear: both;page-break-after: always;");
                     mainDiv.appendChild(pagebreak);
-                }
+                // }
             }
         }
     }
@@ -763,3 +763,15 @@ document.getElementById("versionNumber").onclick = function (e) {
 
     console.log(document.getElementById(e.target.id).parentNode)
 }
+
+// To get the X and Y co-ordinate on click evenet on canvas container
+// document.addEventListener('click', function(event) {
+//     if (!event.target.matches('.overlay-canvas-container')) return;
+//     console.time('bubbling');
+//     event.preventDefault();
+//     console.log(event, "Event");
+//     var xlen = event.x;
+//     var ylen = event.y;
+//     console.log(xlen, "X", ylen, "Y");
+//     console.timeEnd('bubbling');
+//   });

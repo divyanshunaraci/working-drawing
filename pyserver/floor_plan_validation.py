@@ -473,7 +473,7 @@ class floor_plan_validation(object):
                             del json_room_top_view_library[items]
                             continue
 
-                        if 'filler' in str(items) or 'cover_panel' in str(items) or 'skirting' in str(items):
+                        if 'filler' in str(items).lower() or 'cover_panel' in str(items).lower() or 'skirting' in str(items).lower() or 'ledge' in str(items).lower():
                             del json_room_top_view_library[items]
                             continue
                         json_room_top_view_library[items]['outline'] = new_outline
@@ -502,21 +502,23 @@ class floor_plan_validation(object):
         #                 x[]
             
         # print(unique_x, 'Unique')
-        for x in r_outline:
-            for y in c_outline:
-                if x[0][0]==x[1][0] and y[0][0]==y[1][0]:
-                    if x[1][1]<x[0][1]:
-                        x[1][1],x[0][1] = x[0][1],x[1][1]
-                    if y[1][1]<y[0][1]:
-                        y[1][1], y[0][1] = y[0][1], y[1][1]
-                    if y[0][1]>x[0][1] and y[1][1]<x[1][1]:
+        for x in c_outline:
+            for y in r_outline:
+                if x[0][0]==x[1][0] and y[0][0]==y[1][0] and x[0][0]==y[0][0]:
+                    # if x[1][1]<x[0][1]:
+                    #     x[1][1],x[0][1] = x[0][1],x[1][1]
+                    # if y[1][1]<y[0][1]:
+                    #     y[1][1], y[0][1] = y[0][1], y[1][1]
+                    # if y[0][1]<=x[0][1] and y[1][1]>=x[1][1]:
                         return True
-                if x[0][1]==x[1][1] and y[0][1]==y[1][1]:
-                    if x[0][0]>x[1][0]:
-                        x[0][0], x[1][0] = x[1][0], x[0][0]
-                    if y[0][0]>y[1][0]:
-                        y[0][0], y[1][0] = y[1][0], y[0][0]
-                    if y[0][0]>x[0][0] and y[1][0] < x[1][0]:
+                    # else:
+                    #     y[]
+                if x[0][1]==x[1][1] and y[0][1]==y[1][1] and x[0][1]==y[0][1]:
+                    # if x[0][0]>x[1][0]:
+                    #     x[0][0], x[1][0] = x[1][0], x[0][0]
+                    # if y[0][0]>y[1][0]:
+                    #     y[0][0], y[1][0] = y[1][0], y[0][0]
+                    # if y[0][0]>x[0][0] and y[1][0] < x[1][0]:
                         return True
         return False
 

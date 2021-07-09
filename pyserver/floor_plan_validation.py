@@ -472,6 +472,10 @@ class floor_plan_validation(object):
                             # print(items)
                             del json_room_top_view_library[items]
                             continue
+
+                        if 'filler' in str(items) or 'cover_panel' in str(items) or 'skirting' in str(items):
+                            del json_room_top_view_library[items]
+                            continue
                         json_room_top_view_library[items]['outline'] = new_outline
                         x_list_min.append(lines[0][0])
                         x_list_max.append(lines[1][0])

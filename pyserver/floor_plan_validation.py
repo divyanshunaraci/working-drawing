@@ -441,6 +441,7 @@ class floor_plan_validation(object):
         if not json_room_top_view_library:
             warning_log.append(string_id+' is empty.')
         else:
+            print(string_id, 'String ID')
             for items in list(json_room_top_view_library):
                 if not json_room_top_view_library[items]:
                     warning_log.append(string_id+'['+items+'] is empty.')
@@ -469,7 +470,7 @@ class floor_plan_validation(object):
                         #     continue
 
                         if self._check_on_outline(room_outline, new_outline) == True:
-                            # print(items)
+                            print('Items not shown', items)
                             del json_room_top_view_library[items]
                             continue
 
@@ -489,9 +490,12 @@ class floor_plan_validation(object):
             y_max = max(y_list_max)
         return error_log, warning_log, [[x_min,y_min],[x_max,y_max]] 
     
+    
+    
     @staticmethod
     def _check_on_outline(r_outline, c_outline):
         flag = 0
+
         # print(r_outline, 'All')
         # for x in r_outline:
         #     for y in r_outline:
@@ -504,13 +508,15 @@ class floor_plan_validation(object):
         # print(unique_x, 'Unique')
         for x in c_outline:
             for y in r_outline:
+                # return False
+                # print get_intersect((x[0][0], x[0][1]), (x[1][0], x[1][1]), (y[0][0], y[0][1]), (y[1][0], y[1][1]))
                 if x[0][0]==x[1][0] and y[0][0]==y[1][0] and x[0][0]==y[0][0]:
                     # if x[1][1]<x[0][1]:
                     #     x[1][1],x[0][1] = x[0][1],x[1][1]
                     # if y[1][1]<y[0][1]:
                     #     y[1][1], y[0][1] = y[0][1], y[1][1]
                     # if y[0][1]<=x[0][1] and y[1][1]>=x[1][1]:
-                        return True
+                    return True
                     # else:
                     #     y[]
                 if x[0][1]==x[1][1] and y[0][1]==y[1][1] and x[0][1]==y[0][1]:
@@ -519,8 +525,33 @@ class floor_plan_validation(object):
                     # if y[0][0]>y[1][0]:
                     #     y[0][0], y[1][0] = y[1][0], y[0][0]
                     # if y[0][0]>x[0][0] and y[1][0] < x[1][0]:
-                        return True
+                    return True
+                if x[0][0]==x[1][0] and y[0][1]==y[1][1] and x[0][0]>=y[0][0] and x[0][0]<=y[1][0] and y[0][1]>=x[0][1] and y[0][1]<=x[1][1]:
+                    return True
+                if x[0][1]==x[1][1] and y[0][0]==y[0][1] and x[0][1]>=y[0][1] and x[0][1]<=y[1][1] and y[0][0]>=x[0][1] and y[0][0]<=x[1][1]:
+                    return True
+                # print (m/o, n/o)
+                # return False
+
         return False
+
+    @staticmethod
+    def _get_intersect(a1, a2, b1, b2):
+        """ 
+        Returns the point of intersection of the lines passing through a2,a1 and b2,b1.
+        a1: [x, y] a point on the first line
+        a2: [x, y] another point on the first line
+        b1: [x, y] a point on the second line
+        b2: [x, y] another point on the second line
+        """
+        s = np.vstack([a1,a2,b1,b2])        # s for stacked
+        h = np.hstack((s, np.ones((4, 1)))) # h for homogeneous
+        l1 = np.cross(h[0], h[1])           # get first line
+        l2 = np.cross(h[2], h[3])           # get second line
+        x, y, z = np.cross(l1, l2)          # point of intersection
+        if z == 0:                          # lines are parallel
+            return (float('inf'), float('inf'))
+        return (x/z, y/z)
 
     @staticmethod
     def _room_view_number(self,string_id,json_room_view_number,error_log, warning_log):

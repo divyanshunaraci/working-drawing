@@ -35,7 +35,7 @@ const readJSO = function (input) {
                 let parsedData;
                 console.log(JSON.stringify(res));
                 // python server
-                const url = "http://13.235.82.47:4000/json";
+                const url = "http://localhost:4000/json";
                 const othePram = {
                     headers: {
                         "content-type": "application/json; charset=UTF-8",
@@ -199,7 +199,7 @@ const renderAl = () => {
 
     // render views
     state.roomViews.forEach((view, id) => {
-        console.log(view.id,'state.roomViews'); 
+        console.log(view.id, 'state.roomViews');
         // floorPlanView
         if (view.type === "FloorPlanView") {
             renderFloorPlan(view, id);
@@ -229,7 +229,7 @@ const renderAl = () => {
 
 function download(filename, text) {
     var project_id = state.projectInfo.project_no;
-    fetch(window.APIAddress.generatePDF +`/${project_id}`, {
+    fetch(window.APIAddress.generatePDF + `/${project_id}`, {
         method: "POST",
         body: JSON.stringify({
             file: JSON.stringify(text),
@@ -240,15 +240,15 @@ function download(filename, text) {
             "Content-type": "application/json; charset=UTF-8"
         },
     })
-    .then((response) => response.json())
-    .then((out) => {
-        let link = document.createElement('a');
-        link.href = out.pdfLink;
-        link.download = out.pdfLink;
-        link.click();
-        $("#loader").toggle();
-        $(".main").css({ opacity: 1 });     
-    }).catch(err => console.error(err));
+        .then((response) => response.json())
+        .then((out) => {
+            let link = document.createElement('a');
+            link.href = out.pdfLink;
+            link.download = out.pdfLink;
+            link.click();
+            $("#loader").toggle();
+            $(".main").css({ opacity: 1 });
+        }).catch(err => console.error(err));
 }
 
 $("#print").on("click", async function (e) {
@@ -258,11 +258,11 @@ $("#print").on("click", async function (e) {
     var mainDiv = document.createElement('div');
     mainDiv.id = "maindiv";
     var container = document.querySelectorAll('.whole-container');
-    for(var j = 0; j < container.length; j++) {
-        if(!state.roomViews) {
+    for (var j = 0; j < container.length; j++) {
+        if (!state.roomViews) {
             return container.innerHTML;
         } else {
-            for(var i = 0; i < state.roomViews.length; i++) {
+            for (var i = 0; i < state.roomViews.length; i++) {
                 // if(state.roomViews[i].name == "table_view") {
                 //     var id = document.getElementById("wd-" + i);
                 //     id.classList.remove("working-drawing");
@@ -274,24 +274,24 @@ $("#print").on("click", async function (e) {
                 //     pagebreak.setAttribute("style", "clear: both;page-break-after: always;");
                 //     mainDiv.appendChild(pagebreak);
                 // } else {
-                    var convertMeToImg = $('#wd-' + i)[0];
-                    const canvas = await html2canvas(convertMeToImg, { logging: true, letterRendering: 1, useCORS: true })
-                    // Full Quality= 1.0  // Medium Quality = 0.5   // Low Quality = 0.1
-                    var img = canvas.toDataURL('image/webp', 1.0);
-                    subDiv = document.createElement("div");
-                    subDiv.id = "canvas"+ i;
-                    var containerDiv = document.createElement("div");
-                    containerDiv.id = "wd-"+ i;
-                    containerDiv.classList.add("container-fluid");
-                    var imgTag = document.createElement('img');
-                    imgTag.src = img;
-                    imgTag.id = "imgId"+ i;
-                    containerDiv.appendChild(imgTag)
-                    subDiv.appendChild(containerDiv);
-                    mainDiv.appendChild(subDiv);
-                    var pagebreak = document.createElement("div");
-                    pagebreak.setAttribute("style", "clear: both;page-break-after: always;");
-                    mainDiv.appendChild(pagebreak);
+                var convertMeToImg = $('#wd-' + i)[0];
+                const canvas = await html2canvas(convertMeToImg, { logging: true, letterRendering: 1, useCORS: true })
+                // Full Quality= 1.0  // Medium Quality = 0.5   // Low Quality = 0.1
+                var img = canvas.toDataURL('image/webp', 1.0);
+                subDiv = document.createElement("div");
+                subDiv.id = "canvas" + i;
+                var containerDiv = document.createElement("div");
+                containerDiv.id = "wd-" + i;
+                containerDiv.classList.add("container-fluid");
+                var imgTag = document.createElement('img');
+                imgTag.src = img;
+                imgTag.id = "imgId" + i;
+                containerDiv.appendChild(imgTag)
+                subDiv.appendChild(containerDiv);
+                mainDiv.appendChild(subDiv);
+                var pagebreak = document.createElement("div");
+                pagebreak.setAttribute("style", "clear: both;page-break-after: always;");
+                mainDiv.appendChild(pagebreak);
                 // }
             }
         }
@@ -304,7 +304,7 @@ $("#print").on("click", async function (e) {
     let datestr = date.toISOString();
     datestr = datestr.replace(/[^0-9]/g, "");
     var fileName = `Drawings_${datestr}`;
-    var finalHTML = '<html><head>' + htmlhead + '</head><body>'+ elementHTML + '</body></html>'; //elementScript
+    var finalHTML = '<html><head>' + htmlhead + '</head><body>' + elementHTML + '</body></html>'; //elementScript
     download(fileName, finalHTML)
 });
 

@@ -336,7 +336,7 @@ class floor_plan_outline1(object):
         r12=ls1[-2:] # last two y coordinates of the drawing
         r21=ls2[0:2] #first two x coordinates of the drawing
         r22=ls2[-2:] #last two x coordinates of the drawing
-        thickness= max(abs(r11[0]-r11[1]),abs(r12[0]-r12[1]),abs(r21[0]-r21[1]),abs(r22[0]-r22[1]))
+        thickness= max((r11[0]-r11[1]),(r12[0]-r12[1]),(r21[0]-r21[1]),(r22[0]-r22[1]))
         x0 = ls2[0]
         y0 = ls1[0]
         xn = ls2[-1]
@@ -462,7 +462,6 @@ class floor_plan_additional(object):
                             del j_object['rooms'][key1][key2]['thickness']
                         else:
                             for key3 in view_angle:
-                                #print(key3)
                                 if j_object['rooms'][key1][key2].has_key(key3):
                                     fp3 = floor_plan_component1(key1, key2, key3, j_object)
                                     j_object['rooms'][key1][key2][key3]['dimension'] = fp3.data 
@@ -618,7 +617,11 @@ class floor_plan_component1(object):
                                 c_panel = True
                             if 'external_points' in j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]:
                                 drawing_2_list = []
-                                for internal_items in ['internal','carcass','skirting','loft_skirting','cover_panels','fillers']: #'fillers'
+                                if view_angle == 'internal_view':
+                                    item_ext = ['internal','carcass']
+                                else:
+                                    item_ext = ['internal','carcass','skirting','loft_skirting','cover_panels','fillers']
+                                for internal_items in item_ext: #'fillers'
                                     if internal_items in j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]['external_points']:
                                         drawing_2_list+= j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]['external_points'][internal_items]
                                     
@@ -744,6 +747,7 @@ class floor_plan_component1(object):
     @staticmethod
     def __draw_overall_dimension_component(self,dict1,str1,dim_dict,the_array,outline_dim,outer_dim_dict,dimension_list):
         #this we are doing for overall dimension of the component
+        # print(dim_dict,'Check 1')
         unique_dim_x = []
         unique_dim_y = []
         for keys in dict1: 
@@ -1045,6 +1049,7 @@ class floor_plan_component1(object):
         #quad_info = {'hor':{1:[],2:[],3:[],4:[]},'ver':{1:[],2:[],3:[],4:[]} }
         quad_info = {'hor':{1:set(),2:set(),3:set(),4:set()},'ver':{1:set(),2:set(),3:set(),4:set()} }
 
+        #Outline is skipped in calculation of the distance to the component
         for keys in dict1:
             if keys == 'outline':
                 continue
@@ -1056,6 +1061,11 @@ class floor_plan_component1(object):
             quadrant_x = (x0c+xnc)/2 - xc0 #if negative then on the left side, otherwise right
             quadrant_y = (y0c+ync)/2 - yc0 #if negative then on the bottom side, otherwise top  
             
+            '''
+            if quadrant_x>=0 then right else left
+            if quadrant_y>=0 then top else bottom
+            '''
+
             #total 4 cases
             if quadrant_x == 0 and quadrant_y == 0 or quadrant_x >= 0 and quadrant_y >= 0: #quadrant 1 - top right
                 #define x1, x2, y1 and y2 for each case
@@ -1090,6 +1100,9 @@ class floor_plan_component1(object):
             hor_dim_check = True
             ver_dim_check = True
 
+            '''
+            
+            '''
             if x1 == x2: #check whether to draw horizontal or vertical dim
                 hor_dim_check = False
             if y1 == y2:
@@ -1112,7 +1125,11 @@ class floor_plan_component1(object):
 
         #####
         help_outer_dim_dis = {'hor':{1:1,2:1,3:-1,4:-1},'ver':{1:1,2:-1,3:-1,4:1}}
-            
+        
+        '''
+        All the dimensions x and y coordinates are seperately stored in quad info
+        and it is being traversed
+        '''
         for dirn in list(quad_info): #'hor 'ver'
             if dirn == 'hor': #when horizonal
                 zz = [y0, yn]
@@ -1169,6 +1186,7 @@ class floor_plan_component1(object):
 
     @staticmethod
     def __creating_dimensions_top_front(self,dict1,drawing_list):
+        #It is used to create the_array which is the complete matrix of 0's and 1's for canvas drawing
         the_array = self.__creating_drawing_shade(dict1) 
         
         outline_dim = dict1['outline']['dims']
@@ -1421,10 +1439,8 @@ class floor_plan_component1(object):
         xn, yn = outline_dim['xn'], outline_dim['yn']
         xi0, yi0 = outline_dim['xi0'], outline_dim['yi0']
         xin, yin = outline_dim['xin'], outline_dim['yin']
-        
         x0c, y0c = t_d2['x0'], t_d2['y0']
         xnc, ync = t_d2['xn'], t_d2['yn']
-        
         if x0c<x0:
             x0,xi0 = x0c,x0c
         if xnc > xn:
@@ -1433,7 +1449,7 @@ class floor_plan_component1(object):
             y0,yi0 = y0c,y0c
         if ync > yn:
             yn,yin = ync,ync
-        # start with horizontal line
+            # start with horizontal line
         def spit_out_opt_y(self,x0c,xnc,y0c,ync,x0,y0,xi0,yi0,xin,yin,xn,yn,the_array,outer_dim_dict):
             if y0c - 100 < y0:
                 y1 = self.__checking_outer_existence(self,outer_dim_dict,'hor', y0-100,-1, x0c,xnc, x0,xn)
@@ -1481,12 +1497,12 @@ class floor_plan_component1(object):
             ycc = (y0c+ync)/2
             
             if abs(y1-ycc) < abs(y2-ycc):
-                if outer_dim_dict['hor'].has_key(y2):
-                    outer_dim_dict['hor'][y2][abs(x0c-x0):abs(xnc-x0)] = np.zeros(abs(xnc-x0c))
+                if outer_dim_dict['hor'].has_key(y2) and len(outer_dim_dict['hor'][y2])>=(xnc-x0c):
+                    outer_dim_dict['hor'][y2][x0c-x0:xnc-x0] = np.zeros(xnc-x0c)
                 return y1
             else:
                 
-                if outer_dim_dict['hor'].has_key(y1):
+                if outer_dim_dict['hor'].has_key(y1) and len(outer_dim_dict['hor'][y1])>=(xnc-x0c):
                     
                     outer_dim_dict['hor'][y1][x0c-x0:xnc-x0] = np.zeros(xnc-x0c)
                 
@@ -1539,14 +1555,14 @@ class floor_plan_component1(object):
             
             if abs(y1-ycc) < abs(y2-ycc):
                 #
-                if outer_dim_dict['ver'].has_key(y2):
-                    #
+                if outer_dim_dict['ver'].has_key(y2) and len(outer_dim_dict['ver'][y2])>=(xnc-x0c):
+               
                     outer_dim_dict['ver'][y2][x0c-y0:xnc-y0] = np.zeros(xnc-x0c)
                 return y1
                 
             else:
                 #
-                if outer_dim_dict['ver'].has_key(y1):
+                if outer_dim_dict['ver'].has_key(y1) and len(outer_dim_dict['ver'][y1])>=(xnc-x0c):
                     #
                     outer_dim_dict['ver'][y1][x0c-y0:xnc-y0] = np.zeros(xnc-x0c)
                 #
@@ -1671,6 +1687,9 @@ class floor_plan_component1(object):
     def __creating_drawing_shade(dict_for_view):
         dict1 = dict_for_view
         x0,y0,xn,yn= np.inf, np.inf, -np.inf, -np.inf
+        '''
+        Items and outline traversed and the min and max x,y coordinates are stored in x0,xn,y0,yn
+        '''
         for items in dict1:
             a1,b1,a2,b2 = dict1[items]['dims']['x0'],dict1[items]['dims']['y0'],dict1[items]['dims']['xn'],dict1[items]['dims']['yn']
             if a1<x0:
@@ -1685,6 +1704,7 @@ class floor_plan_component1(object):
         s = (xn-x00, yn - y00)
         # x00 , y00 = dict1['outline']['dims']['x0'],dict1['outline']['dims']['y0']
         # s = (dict1['outline']['dims']['xn']-x00,dict1['outline']['dims']['yn']-y00) # xn-x0,yn-y0
+        # numpy array is created with dimensions x0, xn, y0, yn
         the_array = np.zeros(s)
         def updating_array(the_array,x0,xn,y0,yn,x00, y00 ):
             
@@ -1763,6 +1783,12 @@ class floor_plan_component1(object):
         #finding xi0 , yi0, xin, yin
         if outline_bool:
             def find_inner_ends(x0,xn,ls1):
+                '''
+                Min & max outline keys are taken here and the thickness is calculated .... .i.e
+                the coordinate of the inner wall based on the outer wall to ignore the wall
+                thickness... But this piece of code requires restructuring, if there are more than four
+                wall for some cases it returns xi0 & yi0 which are not on the extreme sides
+                '''
                 xc = (x0+xn)/2
                 list1 = np.asarray(ls1)
                 list_keys_start, list_keys_end = list(list1[list1 < xc]), list(list1[list1 > xc])
@@ -1778,8 +1804,7 @@ class floor_plan_component1(object):
                     j+=1
                     xin = list_keys_end[j]
                     
-
-
+                
                 return xi0, xin
             xi0, xin = find_inner_ends(x0,xn,ls2)
             yi0, yin = find_inner_ends(y0,yn,ls1)

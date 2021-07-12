@@ -353,7 +353,7 @@ class floor_plan_validation(object):
                     del json_room_top_view['outline']
                 
                 else:
-                    del json_room_top_view['floor_components']
+                    # del json_room_top_view['floor_components']
                     check_con = json_room_top_view.has_key('floor_components')
                     if check_con:
                         check_con1 = json_room_top_view['floor_components'].has_key('library')
@@ -364,7 +364,7 @@ class floor_plan_validation(object):
                                 warning_log.append(string_id+'[floor_components][library] is empty.')
                             else:
                                 json_room_top_view_library = json_room_top_view['floor_components']['library']
-                                error_log, warning_log, lines = self._room_top_view_library_or_external(self,string_id+'[floor_components][library]',json_room_top_view_library,error_log, warning_log,limit_coord)
+                                error_log, warning_log, lines = self._room_top_view_library_or_external(self,string_id+'[floor_components][library]',json_room_top_view_library,error_log, warning_log,limit_coord,new_outline)
                                 x_list_min.append(lines[0][0])
                                 y_list_min.append(lines[0][1])
                                 x_list_max.append(lines[1][0])
@@ -384,7 +384,7 @@ class floor_plan_validation(object):
                             del json_room_top_view['external']
                         else:
                             json_room_top_view_external = json_room_top_view['external']
-                            error_log, warning_log, lines = self._room_top_view_library_or_external(self,string_id+'[external]',json_room_top_view_external,error_log, warning_log,limit_coord)
+                            error_log, warning_log, lines = self._room_top_view_library_or_external(self,string_id+'[external]',json_room_top_view_external,error_log, warning_log,limit_coord,new_outline)
                             x_list_min.append(lines[0][0])
                             y_list_min.append(lines[0][1])
                             x_list_max.append(lines[1][0])
@@ -427,9 +427,11 @@ class floor_plan_validation(object):
         #     error_log.append(string_id + ': Components/external are outsize the outline')
         return error_log, warning_log
 
+    
+    
 
     @staticmethod 
-    def _room_top_view_library_or_external(self,string_id,json_room_top_view_library,error_log, warning_log, limit_coord):
+    def _room_top_view_library_or_external(self,string_id,json_room_top_view_library,error_log, warning_log, limit_coord, room_outline):
         x_list_min, x_list_max, y_list_min, y_list_max = [], [], [], []
         x_min, x_max, y_min, y_max = np.inf, -np.inf, np.inf, -np.inf
         x_list_min.append(np.inf)
@@ -462,7 +464,16 @@ class floor_plan_validation(object):
                     
                     if json_room_top_view_library[items].has_key('outline'):
                         error_log, warning_log, lines, new_outline = self._outline(string_id+'['+items+'][outline]',json_room_top_view_library[items]['outline'],error_log, warning_log,limit_coord[0][0],limit_coord[0][1])
-                        if(lines[0][0] < limit_coord[0][0] or lines[0][1] < limit_coord[0][1] or lines[1][0] > limit_coord[1][0] or lines[1][1] > limit_coord[1][1]):
+                        # if(lines[0][0] < limit_coord[0][0] or lines[0][1] < limit_coord[0][1] or lines[1][0] > limit_coord[1][0] or lines[1][1] > limit_coord[1][1]):
+                        #     del json_room_top_view_library[items]
+                        #     continue
+
+                        if self._check_on_outline(room_outline, new_outline) == True:
+                            # print(items)
+                            del json_room_top_view_library[items]
+                            continue
+
+                        if 'filler' in str(items).lower() or 'cover_panel' in str(items).lower() or 'skirting' in str(items).lower() or 'ledge' in str(items).lower():
                             del json_room_top_view_library[items]
                             continue
                         json_room_top_view_library[items]['outline'] = new_outline
@@ -477,6 +488,39 @@ class floor_plan_validation(object):
             y_min = min(y_list_min)
             y_max = max(y_list_max)
         return error_log, warning_log, [[x_min,y_min],[x_max,y_max]] 
+    
+    @staticmethod
+    def _check_on_outline(r_outline, c_outline):
+        flag = 0
+        # print(r_outline, 'All')
+        # for x in r_outline:
+        #     for y in r_outline:
+        #         if x[0][0]==x[1][0]==y[0][0]==y[1][0]:
+        #             if abs(x[0][1]-y[1][1])==1: 
+        #                 r_outline[x][0]
+        #             if abs(x[1][1]-y[0][1])==1:
+        #                 x[]
+            
+        # print(unique_x, 'Unique')
+        for x in c_outline:
+            for y in r_outline:
+                if x[0][0]==x[1][0] and y[0][0]==y[1][0] and x[0][0]==y[0][0]:
+                    # if x[1][1]<x[0][1]:
+                    #     x[1][1],x[0][1] = x[0][1],x[1][1]
+                    # if y[1][1]<y[0][1]:
+                    #     y[1][1], y[0][1] = y[0][1], y[1][1]
+                    # if y[0][1]<=x[0][1] and y[1][1]>=x[1][1]:
+                        return True
+                    # else:
+                    #     y[]
+                if x[0][1]==x[1][1] and y[0][1]==y[1][1] and x[0][1]==y[0][1]:
+                    # if x[0][0]>x[1][0]:
+                    #     x[0][0], x[1][0] = x[1][0], x[0][0]
+                    # if y[0][0]>y[1][0]:
+                    #     y[0][0], y[1][0] = y[1][0], y[0][0]
+                    # if y[0][0]>x[0][0] and y[1][0] < x[1][0]:
+                        return True
+        return False
 
     @staticmethod
     def _room_view_number(self,string_id,json_room_view_number,error_log, warning_log):

@@ -856,7 +856,7 @@ class floor_plan_component1(object):
         
 
         #drwaing overall component dimensions
-        dimension_list = self.__draw_overall_dimension_component(self,dict1,'room_top_view',dim_dict,the_array,outline_dim,outer_dim_dict,dimension_list)
+        # dimension_list = self.__draw_overall_dimension_component(self,dict1,'room_top_view',dim_dict,the_array,outline_dim,outer_dim_dict,dimension_list)
         
                 
         #drawing inner dimension of the component
@@ -1497,12 +1497,12 @@ class floor_plan_component1(object):
             ycc = (y0c+ync)/2
             
             if abs(y1-ycc) < abs(y2-ycc):
-                if outer_dim_dict['hor'].has_key(y2) and len(outer_dim_dict['hor'][y2])>=(xnc-x0c):
+                if outer_dim_dict['hor'].has_key(y2) and len(outer_dim_dict['hor'][y2])>=xnc:
                     outer_dim_dict['hor'][y2][x0c-x0:xnc-x0] = np.zeros(xnc-x0c)
                 return y1
             else:
                 
-                if outer_dim_dict['hor'].has_key(y1) and len(outer_dim_dict['hor'][y1])>=(xnc-x0c):
+                if outer_dim_dict['hor'].has_key(y1) and len(outer_dim_dict['hor'][y1])>=xnc:
                     
                     outer_dim_dict['hor'][y1][x0c-x0:xnc-x0] = np.zeros(xnc-x0c)
                 
@@ -1555,14 +1555,14 @@ class floor_plan_component1(object):
             
             if abs(y1-ycc) < abs(y2-ycc):
                 #
-                if outer_dim_dict['ver'].has_key(y2) and len(outer_dim_dict['ver'][y2])>=(xnc-x0c):
+                if outer_dim_dict['ver'].has_key(y2) and len(outer_dim_dict['ver'][y2])>=xnc:
                
                     outer_dim_dict['ver'][y2][x0c-y0:xnc-y0] = np.zeros(xnc-x0c)
                 return y1
                 
             else:
                 #
-                if outer_dim_dict['ver'].has_key(y1) and len(outer_dim_dict['ver'][y1])>=(xnc-x0c):
+                if outer_dim_dict['ver'].has_key(y1) and len(outer_dim_dict['ver'][y1])>=xnc:
                     #
                     outer_dim_dict['ver'][y1][x0c-y0:xnc-y0] = np.zeros(xnc-x0c)
                 #

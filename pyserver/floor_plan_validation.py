@@ -442,7 +442,6 @@ class floor_plan_validation(object):
         if not json_room_top_view_library:
             warning_log.append(string_id+' is empty.')
         else:
-            print(string_id, 'String ID')
             for items in list(json_room_top_view_library):
                 if not json_room_top_view_library[items]:
                     warning_log.append(string_id+'['+items+'] is empty.')
@@ -471,7 +470,6 @@ class floor_plan_validation(object):
                         #     continue
 
                         if self._check_on_outline(room_outline, new_outline) == True:
-                            print('Items not shown', items)
                             del json_room_top_view_library[items]
                             continue
 

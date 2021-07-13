@@ -504,6 +504,11 @@ function getProjects(projectNo, versionNo) {
         if (response.ok) {
             return response.json();
         }
+        if (response.status == 401) {
+            alert("You are not authorized for this task.");
+            $("#loader").toggle();
+            $(".modal").css({ opacity: 1 });
+        }
         return Promise.reject(response);
     }).then(function (data) {
         console.log(data);

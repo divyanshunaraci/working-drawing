@@ -33,7 +33,7 @@ const readJSO = function (input) {
                 openNewJSON = true;
 
                 let parsedData;
-                console.log(JSON.stringify(res));
+                // console.log(JSON.stringify(res));
                 // python server
                 const url = "http://localhost:4000/json";
                 const othePram = {
@@ -210,7 +210,7 @@ const renderAl = () => {
             renderView(state.projectInfo, view, id);
             if (viewType.includes(view.getName())) {
             }
-            if (view.type === "ImageView") {
+            if (view.name === "front_view") {
                 // render material thumbnails
                 renderMaterialThumbnails(state.matThumbnails, id);
             }
@@ -511,7 +511,7 @@ function getProjects(projectNo, versionNo) {
         $(".modal").css({ opacity: 1 });
         let project = [];
         data.forEach(el => {
-            console.log(data, 'data');
+            // console.log(data, 'data');
             if (el.workingDrawing) {
                 let obj = {
                     "project_no": el.project_no,
@@ -523,12 +523,12 @@ function getProjects(projectNo, versionNo) {
             }
         })
         userPrj = [...userProject]
-        console.log(version, 'wdFile');
+        // console.log(version, 'wdFile');
         version.forEach(function (el) {
             if (el.project_no === projectNo) {
-                console.log(el);
+                // console.log(el);
                 el.version.forEach(function (ele) {
-                    console.log(projectNo, versionNo);
+                    // console.log(projectNo, versionNo);
                     if (ele.version == versionNo) {
                         readJSO(ele.wdFile)
                     }

@@ -327,11 +327,12 @@ class floor_plan_validation(object):
                 if(json_room_top_view.has_key('views')):
                     json_room_top_view_views = json_room_top_view['views']
                     for views in json_room_top_view_views.keys():
-                        for i in range(0,(len(json_room_top_view['views'][views]))):
-                            json_room_top_view['views'][views][i][0][0] = json_room_top_view['views'][views][i][0][0] - limit_coord[0][0]
-                            json_room_top_view['views'][views][i][0][1] = json_room_top_view['views'][views][i][0][1] - limit_coord[0][1]
-                            json_room_top_view['views'][views][i][1][0] = json_room_top_view['views'][views][i][1][0] - limit_coord[0][0]
-                            json_room_top_view['views'][views][i][1][1] = json_room_top_view['views'][views][i][1][1] - limit_coord[0][1]
+                        for j in range(0,len(json_room_top_view['views'][views])):
+                            for i in range(0,(len(json_room_top_view['views'][views][j]))):
+                                json_room_top_view['views'][views][j][i][0][0] = json_room_top_view['views'][views][j][i][0][0] - limit_coord[0][0]
+                                json_room_top_view['views'][views][j][i][0][1] = json_room_top_view['views'][views][j][i][0][1] - limit_coord[0][1]
+                                json_room_top_view['views'][views][j][i][1][0] = json_room_top_view['views'][views][j][i][1][0] - limit_coord[0][0]
+                                json_room_top_view['views'][views][j][i][1][1] = json_room_top_view['views'][views][j][i][1][1] - limit_coord[0][1]
 
                             
                     #json_room_top_view['views'][views] = new_outline_views
@@ -469,7 +470,6 @@ class floor_plan_validation(object):
                         #     continue
 
                         if self._check_on_outline(room_outline, new_outline) == True:
-                            # print(items)
                             del json_room_top_view_library[items]
                             continue
 
@@ -489,38 +489,75 @@ class floor_plan_validation(object):
             y_max = max(y_list_max)
         return error_log, warning_log, [[x_min,y_min],[x_max,y_max]] 
     
+    
+    
     @staticmethod
     def _check_on_outline(r_outline, c_outline):
-        flag = 0
-        # print(r_outline, 'All')
-        # for x in r_outline:
-        #     for y in r_outline:
-        #         if x[0][0]==x[1][0]==y[0][0]==y[1][0]:
-        #             if abs(x[0][1]-y[1][1])==1: 
-        #                 r_outline[x][0]
-        #             if abs(x[1][1]-y[0][1])==1:
-        #                 x[]
-            
-        # print(unique_x, 'Unique')
+        
         for x in c_outline:
+            #Vertical line
+            x_ver, x_hor = np.inf, np.inf
+            
+            if x[0][0]==x[1][0]:
+                x_ver = abs(x[1][1]-x[0][1])
+            #Horizonal Line
+            if x[0][1] == x[1][1]:
+                x_hor = abs(x[0][0]-x[1][0])
             for y in r_outline:
                 if x[0][0]==x[1][0] and y[0][0]==y[1][0] and x[0][0]==y[0][0]:
-                    # if x[1][1]<x[0][1]:
-                    #     x[1][1],x[0][1] = x[0][1],x[1][1]
-                    # if y[1][1]<y[0][1]:
-                    #     y[1][1], y[0][1] = y[0][1], y[1][1]
-                    # if y[0][1]<=x[0][1] and y[1][1]>=x[1][1]:
+                    if x[1][1]<x[0][1]:
+                        x[1][1],x[0][1] = x[0][1],x[1][1]
+                    if y[1][1]<y[0][1]:
+                        y[1][1], y[0][1] = y[0][1], y[1][1]
+                    if y[0][1]<=x[0][1] and y[1][1]>=x[1][1]:
                         return True
-                    # else:
-                    #     y[]
+                    if y[0][1]>x[0][1] and y[0][1]<x[1][1]:
+                        x_ver = x_ver - (x[1][1]-y[0][1])
+                        if x_ver == 0:
+                            return True
+                    if y[1][1]>x[0][1] and y[1][1]<x[1][1]:
+                        x_ver = x_ver - (y[1][1]-x[0][1])
+                        if x_ver == 0:
+                            return True
+                    
                 if x[0][1]==x[1][1] and y[0][1]==y[1][1] and x[0][1]==y[0][1]:
-                    # if x[0][0]>x[1][0]:
-                    #     x[0][0], x[1][0] = x[1][0], x[0][0]
-                    # if y[0][0]>y[1][0]:
-                    #     y[0][0], y[1][0] = y[1][0], y[0][0]
-                    # if y[0][0]>x[0][0] and y[1][0] < x[1][0]:
+                    if x[0][0]>x[1][0]:
+                        x[0][0], x[1][0] = x[1][0], x[0][0]
+                    if y[0][0]>y[1][0]:
+                        y[0][0], y[1][0] = y[1][0], y[0][0]
+                    if y[0][0]<=x[0][0] and y[1][0] >= x[1][0]:
                         return True
+                    if y[0][0] >x[0][0] and y[0][0]<x[1][0]:
+                        x_hor = x_hor - (x[1][0]-y[0][0])
+                        if x_hor == 0:
+                            return True
+                    if y[1][0]>x[0][0] and y[1][0]<x[1][0]:
+                        x_hor = x_hor - (y[1][0]-x[0][0])
+                        if x_hor == 0:
+                            return True
+            if x_hor==0 or x_ver==0:
+                return True
+
+
         return False
+
+    @staticmethod
+    def _get_intersect(a1, a2, b1, b2):
+        """ 
+        Returns the point of intersection of the lines passing through a2,a1 and b2,b1.
+        a1: [x, y] a point on the first line
+        a2: [x, y] another point on the first line
+        b1: [x, y] a point on the second line
+        b2: [x, y] another point on the second line
+        """
+        s = np.vstack([a1,a2,b1,b2])        # s for stacked
+        h = np.hstack((s, np.ones((4, 1)))) # h for homogeneous
+        l1 = np.cross(h[0], h[1])           # get first line
+        l2 = np.cross(h[2], h[3])           # get second line
+        x, y, z = np.cross(l1, l2)          # point of intersection
+        if z == 0:                          # lines are parallel
+            return (float('inf'), float('inf'))
+        return (x/z, y/z)
 
     @staticmethod
     def _room_view_number(self,string_id,json_room_view_number,error_log, warning_log):

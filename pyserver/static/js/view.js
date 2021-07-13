@@ -317,37 +317,38 @@ const renderViewTexts = (textObject, id) => {
   ];
   for (let j in state.rooms[currentRoom]["room_top_view"]["views"]) {
 
-    let cntForX = 0;
-    let cntForY = 0;
-    for (let i = 0; i < state.rooms[currentRoom]["room_top_view"]["views"][j].length; i++) {
-      for (let k = 0; k < state.rooms[currentRoom]["room_top_view"]["views"][j][i].length; k++) {
-        console.log(state.rooms[currentRoom]["room_top_view"]["views"][j][i][k][0], state.rooms[currentRoom]["room_top_view"]["views"][j][i][k][1]);
-        cntForX += state.rooms[currentRoom]["room_top_view"]["views"][j][i][k][0];
-        cntForY += state.rooms[currentRoom]["room_top_view"]["views"][j][i][k][1];
+    for (let z = 0; z < state.rooms[currentRoom]["room_top_view"]["views"][j].length; z++) {
+      let cntForX = 0;
+      let cntForY = 0;
+      for (let i = 0; i < state.rooms[currentRoom]["room_top_view"]["views"][j][z].length; i++) {
+        for (let k = 0; k < state.rooms[currentRoom]["room_top_view"]["views"][j][z][i].length; k++) {
+          cntForX += state.rooms[currentRoom]["room_top_view"]["views"][j][z][i][k][0];
+          cntForY += state.rooms[currentRoom]["room_top_view"]["views"][j][z][i][k][1];
+        }
       }
+      let l = cntForX / (2 * state.rooms[currentRoom]["room_top_view"]["views"][j][z].length)
+      let t = (cntForY / (2 * state.rooms[currentRoom]["room_top_view"]["views"][j][z].length))
+      const textbox = new fabric.Textbox(j, {
+        left: ((l + origin[0]) * scale) / dpi,
+        top: ((-1 * t + origin[1]) * scale) / dpi,
+        width: 40,
+        fontSize: 11,
+        textAlign: "center",
+        originX: "center",
+        originY: "center",
+        borderColor: "green",
+        editingBorderColor: "orange",
+        showTextBoxBorder: true,
+        textboxBorderColor: "green",
+        backgroundColor: "transparent",
+        objectCaching: false,
+      });
+      canvas.getObjects();
+      canvas.add(textbox);
+      canvas.selection = false;
+      canvas.renderAll();
+      canvas.calcOffset();
     }
-    let l = cntForX / (2 * state.rooms[currentRoom]["room_top_view"]["views"][j].length)
-    let t = (cntForY / (2 * state.rooms[currentRoom]["room_top_view"]["views"][j].length))
-    const textbox = new fabric.Textbox(j, {
-      left: ((l + origin[0]) * scale) / dpi,
-      top: ((-1 * t + origin[1]) * scale) / dpi,
-      width: 40,
-      fontSize: 11,
-      textAlign: "center",
-      originX: "center",
-      originY: "center",
-      borderColor: "green",
-      editingBorderColor: "orange",
-      showTextBoxBorder: true,
-      textboxBorderColor: "green",
-      backgroundColor: "transparent",
-      objectCaching: false,
-    });
-    canvas.getObjects();
-    canvas.add(textbox);
-    canvas.selection = false;
-    canvas.renderAll();
-    canvas.calcOffset();
   }
 };
 
@@ -1392,12 +1393,12 @@ const renderTableView = (tableView, id) => {
   table.classList.add("table-responsive");
   //canvas width and height- console.log
   /*console.log(container.clientHeight, container.clientWidth);
-
+ 
   //font size of the text
   var multiply = container.clientHeight * container.clientWidth;
-
+ 
   if (multiply / 4 < 6) {
-
+ 
     table.style.fontSize = "6px";
   } else if (multiply / 4 >= 6 && multiply / 4 < 12) {
     table.style.fontSize = multiply / 4 + 'px';

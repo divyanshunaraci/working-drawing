@@ -35,7 +35,7 @@ const readJSO = function (input) {
                 let parsedData;
                 // console.log(JSON.stringify(res));
                 // python server
-                const url = "http://localhost:4000/json";
+                const url = "http://13.235.82.47:4000/json";
                 const othePram = {
                     headers: {
                         "content-type": "application/json; charset=UTF-8",
@@ -493,7 +493,7 @@ window.onload = function () {
 
 function getProjects(projectNo, versionNo) {
     let userProject = [], version = [];;
-    fetch('http://localhost:5000/api/project/wdProject', {
+    fetch('http://15.206.209.192:8080/api/project/wdProject', {
         method: 'GET',
         headers: {
             'Content-type': 'application/json', // The type of data you're sending
@@ -647,7 +647,7 @@ btn.onclick = function () {
     const userId = localStorage.getItem("userId");
     let userProject = [];
     console.log(document.getElementById('modal'), localStorage.getItem("token"), userId);
-    fetch('http://localhost:5000/api/project/wdProject', {
+    fetch('http://15.206.209.192:8080/api/project/wdProject', {
         method: 'GET',
         headers: {
             'Content-type': 'application/json', // The type of data you're sending

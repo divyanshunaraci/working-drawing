@@ -340,7 +340,7 @@ class floor_plan_outline1(object):
         x0 = ls2[0]
         y0 = ls1[0]
         xn = ls2[-1]
-        yn = ls1 [-1]
+        yn = ls1[-1]
         return x0, y0, xn, yn # pass thickness if needed
 
 
@@ -368,7 +368,24 @@ class floor_plan_outline1(object):
             draw_hor_dict[item]=self.__truncate_list(draw_hor_dict[item]) #this function is detecting overlapping of the lines. For example, one line starts at 1 Ann ends at 5, other line starts at three ends at 6. This means there is no gap between these two lines these are just overlapping one another that means we do not have to show their dimension as separate. What we have to show is their complete dimension that means from 1 to 7 instead of 125 and 427. 
         for item in draw_ver_dict:
             draw_ver_dict[item]=self.__truncate_list(draw_ver_dict[item])
-        x0, y0, xn, yn = self.__find_thickness(self,draw_hor_dict, draw_ver_dict)
+        minx, maxx, miny, maxy = np.inf, -np.inf, np.inf, -np.inf
+        for x in draw_hor_dict:
+            minx = min(minx, draw_hor_dict[x][0][0],draw_hor_dict[x][0][1])
+            maxx = max(maxx, draw_hor_dict[x][0][0],draw_hor_dict[x][0][1])
+        for x in draw_ver_dict:
+            miny = min(miny, draw_ver_dict[x][0][0],draw_ver_dict[x][0][1])
+            maxy = max(maxy, draw_ver_dict[x][0][0],draw_ver_dict[x][0][1])
+        
+        # for x in draw_hor_dict:
+        #     print(draw_hor_dict[x], 'XXXX')
+        #     minx = min(minx, draw_hor_dict[x][0][0],draw_hor_dict[x][0][1])
+        #     maxx = max(maxx, draw_hor_dict[x][0][0],draw_hor_dict[x][0][1])
+        # for x in draw_ver_dict:
+        #     print(draw_hor_dict[x], 'XXXX')
+        #     miny = min(miny, draw_hor_dict[x][0][0],draw_hor_dict[x][0][1])
+        #     maxy = max(maxy, draw_hor_dict[x][0][0],draw_hor_dict[x][0][1])
+        x0, y0, xn, yn = minx, miny, maxx, maxy
+        # x0, y0, xn, yn = self.__find_thickness(self,draw_hor_dict, draw_ver_dict)
         return draw_hor_dict, draw_ver_dict, x0, y0, xn, yn
 
     

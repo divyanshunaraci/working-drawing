@@ -1026,8 +1026,8 @@ class floor_plan_component1(object):
                 z_optimum = self.__checking_outer_existence(self, outer_dim_dict, dirn, start_pt, up_down, all_coords[0], all_coords[-1], ww[0], ww[1], thickness) 
                 # at the location of z_optimum all the dimension are drawn in all_coords
                 for it1 in range(0, len(all_coords)-1):
-                    if all_coords[it1+1] - all_coords[it1] < 1 :
-                        continue
+                    # if all_coords[it1+1] - all_coords[it1] < 1 :
+                    #     continue
                     zer_string = dirn[0] + str(all_coords[it1]) +'&'+ str(all_coords[it1+1])
                     if not dim_dict[dirn].has_key(zer_string): #then only we draw and add
                         #no need ot calculate the new location cause it is already calculated

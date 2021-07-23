@@ -225,6 +225,8 @@ class floor_plan_validation(object):
                         if json_room.has_key('room_top_view'):
                             self.room_view_names[items].append('room_top_view')
                             string_id = 'Json object[rooms]['+items+'][room_top_view]'
+                            if not json_room['room_top_view'].has_key('views'):
+                                del json_object['rooms'][items]
                             error_log, warning_log = self._room_top_view(self,string_id,json_room['room_top_view'],error_log, warning_log)
                         else:
                             error_log.append('The room ' + items + ' does not contain room_top_view.' )

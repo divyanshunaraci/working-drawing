@@ -1395,7 +1395,7 @@ const renderTableView = (tableView, id) => {
   // table.style.wordWrap = 'break-word';
   // table.style.wordBreak = 'break-all';
   // table.setAttribute('style', 'width:75px;height:75px;');
-  table.setAttribute('style', 'display:block;overflow-y:scroll;font-size:10px;width:100%;height:100%;text-align:center;');
+  table.setAttribute('style', 'display:inline-table;overflow-y:scroll;font-size:10px;width:100%;text-align:center;');
   table.setAttribute("border", "1");
   // table.classList.add("main-table");
   table.classList.add("table-responsive");

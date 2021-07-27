@@ -1,3 +1,8 @@
+var containerHt = document.getElementById("wd-0").offsetHeight;
+var tableTitle = document.getElementById("tableTitle").offsetHeight;
+var tableInfo = document.getElementById("infoTable").offsetHeight;
+var canvasHeight = containerHt - tableInfo - tableTitle;
+console.log(containerHt, "containerHt", tableTitle, "tableTitle", tableInfo, "tableInfo", canvasHeight, "canvasHeight");
 const compIds = {};
 
 // handle 'project details' and 'org_details' part in json
@@ -66,6 +71,44 @@ const getRoomDetails = (json, roomNames) => {
   }
 };
 
+const generateTempTable = (table, data) => {
+  let tbody = document.createElement("tbody");
+  table.appendChild(tbody);
+  for (let element of data) {
+    let row = tbody.insertRow();
+    for (key in element) {
+      let cell = row.insertCell();
+
+      if (key === "imageURL") {
+        let img = document.createElement("img");
+        img.style.width = "20px";
+        img.style.height = "30px";
+        img.src = element[key];
+        img.setAttribute("crossorigin", "*")
+        cell.appendChild(img);
+      } else {
+        cell.contentEditable = true;
+        let text = document.createTextNode(element[key]);
+        cell.appendChild(text);
+      }
+    }
+
+    var tableHeightswithRow = table.offsetHeight;
+    // console.log(tableHeightswithRow, "tableHeightswithRow", canvasHeight, "canvasHeight");
+
+    if(tableHeightswithRow <= canvasHeight) {
+      console.log(row, "Row Found");
+      // console.log("true");
+    } else {
+      console.log(row, "Other Row Found");
+      // console.log("false");
+    }
+  }
+  
+  var tableHeightFinal = table.offsetHeight;
+  console.log(tableHeightFinal, "tableHeightFinal");
+};
+
 // handle 'rooms' part in json ( 2 )
 const getRoomObjects = (rooms) => {
   if (rooms === null) return;
@@ -122,6 +165,48 @@ const getRoomObjects = (rooms) => {
         //  handle 'view_1', 'view_2', ... 'view_n'
         let temp = handleViewDimens(rooms[name][compName], `${name}+${compName}`);
         let views = handleView(rooms[name][compName], `${name}+${compName}`);
+
+        var flag1 = 0, count1 = 0;
+        for (let i = 0; i < views.length; i++) {
+          let k = 0, j = 0;
+          if(views[i].type == "TableView") {
+            var mainTable = document.getElementById('mainHTMLBody');
+            let table = document.createElement("table");
+            table.id = "sample"+`${views[i].id}+${k++}`;
+            mainTable.append(table);
+
+            let thdata = Object.keys(views[i].compsInfo[0]);
+            generateTableHead(table, thdata);
+            const tbdata = [];
+            views[i].compsInfo.sort((a, b) => a.id - b.id);
+            views[i].compsInfo.forEach((item, id) => {
+              tbdata.push({
+                no: id + 1,
+                ...item,
+              });
+            });
+            generateTempTable(table, tbdata);
+            // if(canvasHeight == tbleHeight || canvasHeight < tbleHeight) {
+            //   let obj = new TableView(`${views[i].id}+${k++}`, views[i].name, views[i].compsInfo.splice(j, j + 10))
+            //   views.splice(i + 1, 0, obj);
+            // } else {
+            // }
+          }
+        }
+
+        // Code start for divide of 10 rows
+        var flag = 0, count = 0;
+        for (let i = 0; i < views.length; i++) {
+          let k = 0;
+          if (views[i].type == "TableView" && views[i].compsInfo.length > 10) {
+            flag = 1;
+            for (let j = 10; j <= views[i].compsInfo.length; j += 10) {
+              count++;
+              let obj = new TableView(`${views[i].id}+${k++}`, views[i].name, views[i].compsInfo.splice(j, j + 10))
+              views.splice(i + 1, 0, obj);
+            }
+          }
+        }
         resultViews = [...resultViews, ...views];
         dimens = [...dimens, ...temp[0]]; // py dimens
         viewBoxInfo = [...viewBoxInfo, ...temp[1]];
@@ -613,11 +698,18 @@ const handleSubViewDimens = (data, roomViewName, viewName) => {
   // 
   if (viewName === "front_view" && Object.keys(data["dimension"]["IDs"]).length !== 0) {
 
-
-
+    ncomp = Object.keys(data["dimension"]["IDs"]).length;
+    x = [dimens, []]
+    y = [viewBoxInfo, {}]
+    if (ncomp > 10) {
+      for (let i = 10; i <= ncomp; i += 10) {
+        x.push([])
+        y.push({})
+      }
+    }
     return [
-      [dimens, []],
-      [viewBoxInfo, {}],
+      x,
+      y,
     ];
 
   } else {

@@ -475,7 +475,7 @@ class floor_plan_validation(object):
                             del json_room_top_view_library[items]
                             continue
 
-                        if 'filler' in str(items).lower() or 'cover_panel' in str(items).lower() or 'skirting' in str(items).lower() or 'ledge' in str(items).lower():
+                        if 'filler' in str(items).lower() or 'skirting' in str(items).lower() or 'ledge' in str(items).lower():
                             del json_room_top_view_library[items]
                             continue
                         json_room_top_view_library[items]['outline'] = new_outline

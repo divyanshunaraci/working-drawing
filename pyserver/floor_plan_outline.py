@@ -592,14 +592,21 @@ class floor_plan_component1(object):
                             #converting the list to dictionary for components
                             # dict_for_view[items] = self.__create_dict(self,drawing_2_list)
                             drawing_1_list += drawing_2_list
-                            if 'filler' not in xx and 'cover_panel' not in xx and 'ledge' not in xx:
-                                dict_for_view[items] = self.__create_dict(self,drawing_2_list)
-                                component_list += drawing_2_list
-                                ID_dict[items] =  dict_for_view[items]['dims']
+                            if 'filler' not in xx and 'ledge' not in xx:
+                                if 'cover_panel' in xx:
+                                    dict_for_view[items] = self.__create_dict(self,drawing_2_list)
+                                    component_list += drawing_2_list
+                                else:
+                                    dict_for_view[items] = self.__create_dict(self,drawing_2_list)
+                                    component_list += drawing_2_list
+                                    ID_dict[items] =  dict_for_view[items]['dims']
                         
                         #Getting the dimension list from dictionary and the list of demarkation of rooms
                 
                 dimension_list = self.__creating_dimensions_room_top_view(self,dict_for_view,drawing_1_list)
+                for x, y in dimension_list['IDs'].items():
+                    if 'cover_panel' in x:
+                        dimension_list['IDs'].pop(x)
                 """ t_d2 = dict1[keys]['dims']
             x0c, y0c = t_d2['x0'], t_d2['y0']
             xnc, ync = t_d2['xn'], t_d2['yn']"""

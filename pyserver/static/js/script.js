@@ -189,7 +189,7 @@ const renderAll = () => {
     renderProjectInfo(state.projectInfo, state.roomViews.length);
     // calibrate canvas
     calibrateCanvases(state.viewBoxInfo);
-    
+
 
     // reinitialize the variables
 
@@ -238,16 +238,29 @@ const renderAll = () => {
         else {
             // console.log(view, id, 'SDGSDFSDFSDF')
             currentRoom = view.id.split('+')[0]
+            currentView = view.id.split('+')[1]
             renderView(state.projectInfo, view, id);
             if (viewTypes.includes(view.getName())) {
             }
             if (view.name === "front_view") {
-                // render material thumbnails
-                renderMaterialThumbnails(state.matThumbnails, id);
+                for (key in state.rooms) {
+                    if (key === currentRoom) {
+                        tmp = state.rooms[key]
+                        for (key2 in tmp) {
+                            if (key2 === currentView) {
+                                tmp1 = tmp[key2]["material_thumbnails"]
+                                if (Object.keys(tmp1).length > 0) {
+                                    renderMaterialThumbnails(tmp1, id);
+                                }
+                            }
+                        }
+                    }
+                }
+                // renderMaterialThumbnails(state.matThumbnails, id);
             }
-            
+
         }
-        
+
     });
     if (openNewJSON) {
         // draw py dimens
@@ -262,7 +275,7 @@ const renderAll = () => {
 };
 
 // Import the Save JSON
-$("#importSaveJSON").click(function() {
+$("#importSaveJSON").click(function () {
     $("#loader").toggle();
     $('.loader-msg').html("Validating JSON")
     $('.loader-msg').toggle();
@@ -270,7 +283,7 @@ $("#importSaveJSON").click(function() {
     fetch(window.APIAddress.importSaveJSON, {
         method: 'GET',
         headers: {
-            'Content-type': 'application/json', 
+            'Content-type': 'application/json',
             'authorization': localStorage.getItem("token")
         }
     }).then(function (response) {

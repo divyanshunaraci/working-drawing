@@ -27,6 +27,7 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
 					<div class="row">
 						<div class="col-12" style="text-align: center">
 							<span id="title">Ground Floor Plan</span>
+              <span id="extraInfo"></span>
 						</div>
 					</div>
 					<div class="row">
@@ -174,6 +175,13 @@ const renderFloorPlan = (floorPlanView, id) => {
       ele1.querySelectorAll("[id='legend-view']").forEach(b => b.setAttribute("class", "col-12"));
       ele1.querySelectorAll("[id='legend-view_1']").forEach(b => b.setAttribute("style", "display: none"));
       calibrateCanvases(state.viewBoxInfo);
+    }
+    if(elem.name == "room_top_view") {
+      ele2 = document.querySelector("#wd-" + index);
+      ele2.querySelectorAll("[id='extraInfo']").forEach(b => {
+        b.innerHTML = 'Note: Components not attached to the wall';
+        b.setAttribute('style', "position: absolute;top: 40px;width: 20%;right:0;font-size:13px;color: #d60000;");
+      });
     }
   });
   /* draw lines */

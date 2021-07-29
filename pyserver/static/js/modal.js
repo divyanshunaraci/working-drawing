@@ -35,7 +35,7 @@ const readJSO = function (input) {
                 let parsedData;
                 // console.log(JSON.stringify(res));
                 // python server
-                const url = "http://13.235.82.47:4000/json";
+                const url = "http://65.0.215.24:4000/json";
                 const othePram = {
                     headers: {
                         "content-type": "application/json; charset=UTF-8",
@@ -322,78 +322,6 @@ $("#print").on("click", async function (e) {
     download(fileName, finalHTML)
 });
 
-// print statement
-// $("#print").on("click", function (e) {
-//     print();
-// });
-
-// const print = async () => {
-//     $("#loader").toggle();
-//     $(".main").css({ opacity: 0.5 });
-
-//     let totalPagesNumber = state.roomViews ? state.roomViews.length : 1;
-//     const ele = document.querySelector(`#wd-0`);
-//     ele.scrollIntoView({ block: "start" });
-
-//     let date = new Date();
-//     let datestr = date.toISOString();
-//     datestr = datestr.replace(/[^0-9]/g, "");
-//     const filename = `Drawings_${datestr}.pdf`;
-
-//     let doc = new jsPDF("l", "px", [ele.clientWidth, ele.clientHeight]);
-//     if (totalPagesNumber === 1) {
-//         const ele = document.getElementById(`wd-0`);
-//         console.log(ele.clientWidth, ele.clientHeight);
-//         const opt = {
-//             // margin: 30,
-//             filename: filename,
-//             image: { type: "jpeg", quality: 1 },
-//             html2canvas: { scale: 3 },
-//             jsPDF: { unit: "px", format: [ele.clientWidth, ele.clientHeight], orientation: "l" },
-//         };
-//         html2pdf().set(opt).from(ele).save();
-
-//         $("#loader").toggle();
-//         $(".main").css({ opacity: 1 });
-//     } else {
-//         // Todo: create multiple pages
-//         const opt = {
-//             image: { type: "jpeg", quality: 3 },
-//             html2canvas: {
-//                 scale: 3,
-//                 dpi: 200,
-//                 letterRendering: true,
-//                 width: ele.clientWidth, // 1145
-//                 height: ele.clientHeight, // 815
-//                 useCORS: true
-//             },
-//         };
-//         await createPDF(doc, opt, totalPagesNumber);
-//         doc.save(filename);
-//         alert("Downloading PDF completed!!!");
-//         $("#loader").toggle();
-//         $(".main").css({ opacity: 1 });
-//     }
-// }
-
-// const createPDF = async (pdfDoc, options, totalPagesNumber) => {
-//     for (var pageIndex = 0; pageIndex < totalPagesNumber; pageIndex++) {
-//         const ele = document.querySelector(`#wd-${pageIndex}`);
-//         await html2pdf().set(options).from(ele).outputImg("dataurlstring").then((result) => {
-//             if (pageIndex != 0) pdfDoc.addPage();
-//             pdfDoc.addImage(
-//                 result,
-//                 "jpeg",
-//                 0,
-//                 0,
-//                 pdfDoc.internal.pageSize.width,
-//                 pdfDoc.internal.pageSize.height
-//             );
-//         });
-//     }
-// }
-
-// $(window).resize(resizeCanvas);
 var beforeWidth = $(window).width();
 var rtime;
 var timeout = false;
@@ -415,16 +343,8 @@ function resizeCanvas() {
 
         const canvas = overlayCanvases[i];
 
-        // const ratio = canvas.getWidth() / canvas.getHeight();
         const containerWidth = outerCanvasContainer.clientWidth;
         const containerHeight = outerCanvasContainer.clientHeight;
-
-        // const scale = containerWidth / canvas.getWidth();
-        // const zoom = canvas.getZoom() * scale;
-        // canvas.setDimensions({ width: containerWidth, height: containerWidth / ratio });
-        // canvas.setViewportTransform([zoom, 0, 0, zoom, 0, 0]);
-        // canvas.setDimensions({ width: containerWidth, height: containerHeight });
-        // canvas.setViewportTransform([zoom, 0, 0, 1, 0, 0]);
         if ($(window).width() !== beforeWidth) {
             const scale = containerWidth / canvas.getWidth();
             const zoom = canvas.getZoom() * scale;
@@ -495,14 +415,6 @@ window.onload = function () {
         $(".main").css({ opacity: 1 });
 
     }
-
-    // fetch('https://naraci-test.s3.ap-south-1.amazonaws.com/5ea7fd5fc5c27f1e749fc39c/v1/New+Version+Test+Json+Kitchen+copy.json').then(response=>response.json()).then(res=> {
-    //     console.log(res)
-    //     readJSO(res);
-    // })
-    // return;
-
-
 }
 
 function getProjects(projectNo, versionNo) {
@@ -568,95 +480,6 @@ function reportWindowSize() {
     widthOutput.textContent = window.innerWidth;
 }
 
-// window.onresize
-
-// function showVersionAndPrjNo() {
-//     modal.style.display = "block";
-//     document.getElementById('versionNumber').innerHTML = ''
-//     document.getElementById('modal').innerHTML = ''
-//     userPrj = [], version = [];
-//     $("#loader").toggle();
-//     $(".modal").css({ opacity: 0.5 });
-//     const userId = localStorage.getItem("userId");
-//     let userProject = [];
-//     console.log(document.getElementById('modal'), localStorage.getItem("token"), userId);
-//     fetch('http://13.233.101.175:8080/api/project/wdProject', {
-//         method: 'GET',
-//         headers: {
-//             'Content-type': 'application/json', // The type of data you're sending
-//             'authorization': localStorage.getItem("token")
-//         }
-//     }).then(function (response) {
-//         console.log(response)
-//         if (response.ok) {
-//             return response.json();
-//         }
-//         return Promise.reject(response);
-//     }).then(function (data) {
-//         console.log(data);
-//         $("#loader").toggle();
-//         $(".modal").css({ opacity: 1 });
-//         let project = [];
-//         data.forEach(el => {
-//             console.log(data, 'data');
-//             if (el.workingDrawing) {
-//                 let obj = {
-//                     "project_no": el.project_no,
-//                     "version": el.workingDrawing
-//                 }
-//                 userProject.push(el.project_no);
-//                 // version.push(el.workingDrawing);
-//                 version.push(obj);
-//             }
-//         })
-//         if (userProject.length === 0 && version.length === 0) {
-//             document.getElementById('modal').innerHTML += '<br>' + 'Version not found';
-//             return;
-//         }
-//         userPrj = [...userProject]
-//         console.log(userPrj);
-//         // userPrj.forEach(function (el) {
-//         //     document.getElementById('modal').innerHTML += '<br>' + el;
-//         // })
-//         console.log(version, 'version');
-//         version.forEach(function (el) {
-//             console.log(el);
-//             document.getElementById('modal').innerHTML += el.project_no;
-//             if (window.innerWidth == screen.width) {
-//                 for (let i = 0; i < el.version.length / 14; i++) {
-//                     document.getElementById('modal').innerHTML += '<br>'
-//                 }
-//             }
-//             else if (window.innerWidth < screen.width) {
-//                 for (let i = 0; i < el.version.length / 11; i++) {
-//                     document.getElementById('modal').innerHTML += '<br>'
-//                 }
-//             }
-//             let i = 0;
-//             // document.getElementById('versionNumber').innerHTML += '<br>'
-//             el.version.forEach(function (ele) {
-//                 // ele.wdFile = 'https://naraci-test.s3.ap-south-1.amazonaws.com/5ea7fd5fc5c27f1e749fc39c/v1/New+Version+Test+Json+Kitchen+copy.json'
-//                 ++i;
-//                 document.getElementById('versionNumber').innerHTML += ele.version + ' ' + `<i id=${ele.version}-${el.project_no} class="fa fa-download" style="margin-right:2%;"></i>`
-//                 if (i == 14 && window.innerWidth == screen.width) {
-//                     document.getElementById('versionNumber').innerHTML += '<br>';
-//                     i = 0;
-//                 }
-//                 if (i == 11 && window.innerWidth < screen.width) {
-//                     document.getElementById('versionNumber').innerHTML += '<br>';
-//                     i = 1;
-//                 }
-//             })
-//             document.getElementById('versionNumber').innerHTML += '<br>'
-//         })
-//         console.log(userPrj.length, version.length);
-
-//     }).catch(function (error) {
-//         console.warn('Something went wrong.', error);
-//     });
-// }
-
-// btn.onclick = showVersionAndPrjNo()
 
 btn.onclick = function () {
     modal.style.display = "block";
@@ -700,11 +523,6 @@ btn.onclick = function () {
             return;
         }
         userPrj = [...userProject]
-        console.log(userPrj);
-        // userPrj.forEach(function (el) {
-        //     document.getElementById('modal').innerHTML += '<br>' + el;
-        // })
-        console.log(version, 'version');
         version.forEach(function (el) {
             console.log(el);
             document.getElementById('modal').innerHTML += el.project_no;
@@ -783,14 +601,3 @@ document.getElementById("versionNumber").onclick = function (e) {
     console.log(document.getElementById(e.target.id).parentNode)
 }
 
-// To get the X and Y co-ordinate on click evenet on canvas container
-// document.addEventListener('click', function(event) {
-//     if (!event.target.matches('.overlay-canvas-container')) return;
-//     console.time('bubbling');
-//     event.preventDefault();
-//     console.log(event, "Event");
-//     var xlen = event.x;
-//     var ylen = event.y;
-//     console.log(xlen, "X", ylen, "Y");
-//     console.timeEnd('bubbling');
-//   });

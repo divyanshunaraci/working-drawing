@@ -398,7 +398,7 @@ function resizeend() {
 }
 
 
-window.addEventListener("resize", renderAll());
+window.addEventListener("resize", renderAl());
 
 // When the user clicks the button, open the modal 
 var userPrj = [], version = [];

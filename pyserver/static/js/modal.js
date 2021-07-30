@@ -256,10 +256,15 @@ function download(filename, text) {
     })
         .then((response) => response.json())
         .then((out) => {
-            let link = document.createElement('a');
-            link.href = out.pdfLink;
-            link.download = out.pdfLink;
-            link.click();
+            if(out.errorText) {
+                alert(out.errorText)
+            }
+            if(out.pdfLink) {
+                let link = document.createElement('a');
+                link.href = out.pdfLink;
+                link.download = out.pdfLink;
+                link.click();
+            }
             $("#loader").toggle();
             $(".main").css({ opacity: 1 });
         }).catch(err => console.error(err));

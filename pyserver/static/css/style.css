@@ -96,7 +96,7 @@ img.img-logo {
 .canvas-container {
   position: relative;
   width: 100%;
-  height: 71vh;
+  height: 120vh;
   pointer-events: none;
   overflow: hidden;
 }

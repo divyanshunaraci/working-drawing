@@ -179,7 +179,7 @@ const renderFloorPlan = (floorPlanView, id) => {
     if (elem.name == "room_top_view") {
       ele2 = document.querySelector("#wd-" + index);
       ele2.querySelectorAll("[id='extraInfo']").forEach(b => {
-        b.innerHTML = 'Note: Components not attached to the wall';
+        b.innerHTML = 'Note: Components not attached to the wall are showed in room plan';
         b.setAttribute('style', "position: absolute;top: 40px;width: 20%;right:0;font-size:13px;color: #d60000;");
       });
     }

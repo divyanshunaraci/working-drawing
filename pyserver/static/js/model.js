@@ -391,11 +391,6 @@ const handleView = (data, roomName) => {
     else {
       let views = handleSubView(data[viewName], roomName, viewName);
       roomSubViews = [...roomSubViews, ...views];
-      // if (viewName === "internal_view") {
-      //   // internal view
-      //   let temp = handleSubView(data[viewName], roomName, "Handles & Accessories");
-      //   roomSubViews = [...roomSubViews, ...temp];
-      // }
     }
   });
 
@@ -426,10 +421,6 @@ const handleViewDimens = (data, roomName) => {
         dimens.push(temp[0]);
         viewBoxInfo.push(temp[1]);
       }
-      // if (viewName === "internal_view") {
-      //   dimens.push([]);
-      //   viewBoxInfo.push(handleSubViewDimens(data[viewName], roomName, viewName)[1]);
-      // }
     }
   });
 
@@ -475,27 +466,6 @@ const handleSubView = (data, roomViewName, viewName) => {
       if (viewName === 'front_view' && Object.keys(data["dimension"]["IDs"]).length !== 0) {
 
         Object.keys(floor_components["library"]).forEach((compName, id) => {
-          //  handle 'floor_components' component
-          // get id from compIds
-          // if(id <= 20){
-          //   const compID = compIds[`${roomViewName}+${viewName}`][compName];
-          //   compObjects.push(
-          //     parseComp2(
-          //       compID,
-          //       compName,
-          //       floor_components["library"][compName]
-          //     )
-          //   );
-          // } else{
-          //   const compID2 = compIds[`${roomViewName}+${viewName}`][compName];
-          //   compObjects2.push(
-          //     parseComp2(
-          //       compID2,
-          //       compName,
-          //       floor_components["library"][compName]
-          //     )
-          //   );
-          // }
           const compID = compIds[`${roomViewName}+${viewName}`][compName];
           if (compID === undefined) {
             return;

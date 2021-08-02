@@ -1144,7 +1144,7 @@ const renderPyDimensions = (dimensions, id) => {
           objectCaching: false,
         });
       }
-      if (x1 == x2 && y1 == y2 && Number(dimension.label) > 150) {
+      if (x1 == x2 && y1 == y2 && Number(dimension.label) > 99) {
         lineGroup = new fabric.Group([line1, line2]);
       }
       else {
@@ -1183,12 +1183,12 @@ const renderPyDimensions = (dimensions, id) => {
     ];
     /*The value determines that if the dimension is greater than 80 it will be 
     displayed at the bottom of the dimension else in the center*/
-    const textAligni = Number(dimension.label) > 200 ? "center" : "bottom"; //200
+    const textAligni = Number(dimension.label) > 99 ? "center" : "bottom"; //200
     const textbox = new fabric.Textbox(dimension.label.toString(), {
       left: ((position[0] + origin[0] - 20) * scale) / dpi,
       top: ((-1 * position[1] + origin[1]) * scale) / dpi,
       width: 20,
-      fontSize: 14,
+      fontSize: 12,
       textAlign: "center",
       originX: "center",
       originY: textAligni,

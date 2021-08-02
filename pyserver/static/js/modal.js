@@ -243,11 +243,15 @@ const renderAl = () => {
 
 function download(filename, text) {
     var project_id = state.projectInfo.project_no;
+    const pdfRequireHeight = document.getElementById("wd-0").offsetHeight;
+    const pdfRequireWidth = document.getElementById("wd-0").offsetWidth;
     fetch(window.APIAddress.generatePDF + `/${project_id}`, {
         method: "POST",
         body: JSON.stringify({
             file: JSON.stringify(text),
-            filename: filename
+            filename: filename,
+            pdfHeight: pdfRequireHeight,
+            pdfWidth: pdfRequireWidth
         }),
         headers: {
             'authorization': localStorage.getItem("token"),

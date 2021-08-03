@@ -35,7 +35,7 @@ const readJSO = function (input) {
                 let parsedData;
                 // console.log(JSON.stringify(res));
                 // python server
-                const url = "http://65.0.215.24:4000/json";
+                const url = window.APIAddress.readJSO;
                 const othePram = {
                     headers: {
                         "content-type": "application/json; charset=UTF-8",
@@ -243,11 +243,15 @@ const renderAl = () => {
 
 function download(filename, text) {
     var project_id = state.projectInfo.project_no;
+    const pdfRequireHeight = document.getElementById("wd-0").offsetHeight;
+    const pdfRequireWidth = document.getElementById("wd-0").offsetWidth;
     fetch(window.APIAddress.generatePDF + `/${project_id}`, {
         method: "POST",
         body: JSON.stringify({
             file: JSON.stringify(text),
-            filename: filename
+            filename: filename,
+            pdfHeight: pdfRequireHeight,
+            pdfWidth: pdfRequireWidth
         }),
         headers: {
             'authorization': localStorage.getItem("token"),
@@ -424,7 +428,7 @@ window.onload = function () {
 
 function getProjects(projectNo, versionNo) {
     let userProject = [], version = [];;
-    fetch('http://15.207.181.191:8080/api/project/wdProject', {
+    fetch(window.APIAddress.getWdProject, {
         method: 'GET',
         headers: {
             'Content-type': 'application/json', // The type of data you're sending
@@ -494,7 +498,7 @@ btn.onclick = function () {
     const userId = localStorage.getItem("userId");
     let userProject = [];
     console.log(document.getElementById('modal'), localStorage.getItem("token"), userId);
-    fetch('http://15.207.181.191:8080/api/project/wdProject', {
+    fetch(window.APIAddress.getBtnClickProject, {
         method: 'GET',
         headers: {
             'Content-type': 'application/json', // The type of data you're sending

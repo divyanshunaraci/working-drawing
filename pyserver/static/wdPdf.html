@@ -4,9 +4,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv='cache-control' content='no-cache'>
+  <meta http-equiv='cache-control' content='no-cache, no-store, must-revalidate'>
   <meta http-equiv='expires' content='0'>
-  <meta http-equiv='pragma' content='no-cache'>
+  <meta http-equiv='pragma' content='no-cache, no-store, must-revalidate'>
   <title>Prototype</title>
 
   <!-- import bootstrap 4 -->
@@ -373,8 +373,11 @@
   <script src="js/view.js"></script>
   <script src="js/script.js"></script>
   <script src="js/misc.js"></script>
-  <script src="js/modal.js"></script>
-  <script src="js/constantConfig.js"></script>
+  <script src="js/modal.js?v=1.1"></script>
+  <script src="js/constantConfig.js?v=1.0"></script>
+  <script>
+    window.history.forward(1);
+  </script>
 </body>
 
 </html>

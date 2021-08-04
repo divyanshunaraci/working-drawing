@@ -377,15 +377,18 @@ class floor_plan_outline1(object):
             maxy = max(maxy, draw_ver_dict[x][0][0],draw_ver_dict[x][0][1])
         
         # for x in draw_hor_dict:
-        #     print(draw_hor_dict[x], 'XXXX')
+        #     print(draw_hor_dict[x], 'XX')
         #     minx = min(minx, draw_hor_dict[x][0][0],draw_hor_dict[x][0][1])
         #     maxx = max(maxx, draw_hor_dict[x][0][0],draw_hor_dict[x][0][1])
         # for x in draw_ver_dict:
-        #     print(draw_hor_dict[x], 'XXXX')
         #     miny = min(miny, draw_hor_dict[x][0][0],draw_hor_dict[x][0][1])
         #     maxy = max(maxy, draw_hor_dict[x][0][0],draw_hor_dict[x][0][1])
         x0, y0, xn, yn = minx, miny, maxx, maxy
-        # x0, y0, xn, yn = self.__find_thickness(self,draw_hor_dict, draw_ver_dict)
+        xt0, yt0, xtn, ytn = self.__find_thickness(self,draw_hor_dict, draw_ver_dict)
+        x0 = x0 if x0<=xt0 else xt0
+        xn = xn if xn>=xtn else xtn
+        y0 = y0 if y0<=yt0 else yt0
+        yn = yn if yn>=ytn else ytn
         return draw_hor_dict, draw_ver_dict, x0, y0, xn, yn
 
     

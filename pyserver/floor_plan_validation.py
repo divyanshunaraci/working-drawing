@@ -731,7 +731,7 @@ class floor_plan_validation(object):
                                                     y_list_max.append(lines[1][1])
                                                 else: 
                                                     print('Item deleted openings ',view_items)
-                                                    del json_room_view_number[view_items]['openings']
+                                                    del json_room_view_number[view_items]['openings'][openings_dw]
                                                 # x_list_min.append(lines[0][0])
                                                 # x_list_max.append(lines[1][0])
                                                 # y_list_min.append(lines[0][1])

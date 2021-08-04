@@ -82,7 +82,7 @@ img.img-logo {
 .tempPage {
   position: relative;
   top: 6%;
-  width: 75vw;
+  width: 85vw;
   border: 0.3px black solid;
   background-color: white;
 
@@ -96,7 +96,7 @@ img.img-logo {
 .canvas-container {
   position: relative;
   width: 100%;
-  height: 71vh;
+  height: 120vh;
   pointer-events: none;
   overflow: hidden;
 }

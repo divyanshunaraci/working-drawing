@@ -10,7 +10,7 @@ loginButton.addEventListener("click", (e) => {
         "email": loginForm.username.value,
         "password": loginForm.password.value
     }
-    fetch('http://15.207.19.54:8080/api/user/login', {
+    fetch(window.APIAddress.login, {
         method: 'POST',
         body: JSON.stringify(data), // The data
         headers: {

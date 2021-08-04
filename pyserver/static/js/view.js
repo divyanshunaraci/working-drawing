@@ -176,10 +176,10 @@ const renderFloorPlan = (floorPlanView, id) => {
       ele1.querySelectorAll("[id='legend-view_1']").forEach(b => b.setAttribute("style", "display: none"));
       calibrateCanvases(state.viewBoxInfo);
     }
-    if(elem.name == "room_top_view") {
+    if (elem.name == "room_top_view") {
       ele2 = document.querySelector("#wd-" + index);
       ele2.querySelectorAll("[id='extraInfo']").forEach(b => {
-        b.innerHTML = 'Note: Components not attached to the wall';
+        b.innerHTML = 'Note: Components not attached to the wall are showed in room plan';
         b.setAttribute('style', "position: absolute;top: 40px;width: 20%;right:0;font-size:13px;color: #d60000;");
       });
     }
@@ -1064,6 +1064,7 @@ const renderPyDimensions = (dimensions, id) => {
         left: pt1[0] - 15 * scale,
         top: pt1[1] - 15 * scale,
         stroke: "blue",
+        strokeWidth: 2,
         evented: false,
         objectCaching: false,
       }
@@ -1079,6 +1080,7 @@ const renderPyDimensions = (dimensions, id) => {
         left: pt2[0] - 15 * scale,
         top: pt2[1] - 15 * scale,
         stroke: "blue",
+        strokeWidth: 2,
         evented: false,
         objectCaching: false,
       }
@@ -1086,7 +1088,7 @@ const renderPyDimensions = (dimensions, id) => {
     // if the dimension is < 200, just draw line
     /*Here we have enable that even if the dimension is > 5 we will draw
     the blue lines */
-    if (Number(dimension.label) <= 5) { //
+    if (Number(dimension.label) <= 10) { //
       let line3 = new fabric.Line([pt1[0], pt1[1], pt2[0], pt1[2]], {
         left: pt1[0],
         top: pt1[1],
@@ -1103,9 +1105,13 @@ const renderPyDimensions = (dimensions, id) => {
         dimension,
         `${parseInt(15 / scale)}px`
       );
+
       const mid1 = jsonCoords2fabricCoords(midPts[0], scale, origin);
       const mid2 = jsonCoords2fabricCoords(midPts[1], scale, origin);
-
+      const x1 = parseInt(mid1[0]);
+      const y1 = parseInt(mid1[1]);
+      const x2 = parseInt(mid2[0]);
+      const y2 = parseInt(mid2[1]);
       let line3, line4;
       if (dimension.direction == "h") {
         line3 = new fabric.Line([pt1[0], pt1[1], mid1[0], mid1[1]], {
@@ -1138,7 +1144,12 @@ const renderPyDimensions = (dimensions, id) => {
           objectCaching: false,
         });
       }
-      lineGroup = new fabric.Group([line1, line2, line3, line4]);
+      if (x1 == x2 && y1 == y2 && Number(dimension.label) > 99) {
+        lineGroup = new fabric.Group([line1, line2]);
+      }
+      else {
+        lineGroup = new fabric.Group([line1, line2, line3, line4]);
+      }
 
     }
 
@@ -1172,11 +1183,11 @@ const renderPyDimensions = (dimensions, id) => {
     ];
     /*The value determines that if the dimension is greater than 80 it will be 
     displayed at the bottom of the dimension else in the center*/
-    const textAligni = Number(dimension.label) > 80 ? "center" : "bottom"; //200
+    const textAligni = Number(dimension.label) > 99 ? "center" : "bottom"; //200
     const textbox = new fabric.Textbox(dimension.label.toString(), {
       left: ((position[0] + origin[0] - 20) * scale) / dpi,
       top: ((-1 * position[1] + origin[1]) * scale) / dpi,
-      width: 40,
+      width: 20,
       fontSize: 12,
       textAlign: "center",
       originX: "center",
@@ -1395,7 +1406,7 @@ const renderTableView = (tableView, id) => {
   // table.style.wordWrap = 'break-word';
   // table.style.wordBreak = 'break-all';
   // table.setAttribute('style', 'width:75px;height:75px;');
-  table.setAttribute('style', 'display:block;overflow-y:scroll;font-size:10px;width:100%;height:100%;text-align:center;');
+  table.setAttribute('style', 'display:inline-table;overflow-y:scroll;font-size:10px;width:100%;text-align:center;');
   table.setAttribute("border", "1");
   // table.classList.add("main-table");
   table.classList.add("table-responsive");

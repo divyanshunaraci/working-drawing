@@ -1,15 +1,15 @@
 
 var APIAddress = {
     // Login User Module API
-    login: "http://35.154.121.217:8080/api/user/login",
+    login: "http://15.207.19.54:8080/api/user/login",
     
     // User Interface API
-    readJSO: "http://65.0.215.24:4000/json",
+    readJSO: "http://13.235.82.47:4000/json",
     
     // Transaction Service API
-    getWdProject: "http://15.207.181.191:8080/api/project/wdProject",
-    getBtnClickProject: "http://15.207.181.191:8080/api/project/wdProject",
-    generatePDF: "http://15.207.181.191:8080/api/working-drawing/generate_pdf", 
+    getWdProject: "http://15.206.209.192:8080/api/project/wdProject",
+    getBtnClickProject: "http://15.206.209.192:8080/api/project/wdProject",
+    generatePDF: "http://15.206.209.192:8080/api/working-drawing/generate_pdf", 
     importSaveJSON: "http://localhost:4000/static/json1.json",
 }
 

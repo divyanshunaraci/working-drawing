@@ -1,7 +1,7 @@
 
 var APIAddress = {
     // Login User Module API
-    login: "http://15.207.19.54:8080/api/user/login",
+    login: "http://35.154.121.217:8080/api/user/login",
     
     // User Interface API
     readJSO: "http://65.0.215.24:4000/json",

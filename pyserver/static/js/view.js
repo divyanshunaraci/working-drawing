@@ -53,7 +53,7 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
 				</div>
 			</div>
 			<div class="row">
-				<table class="table table-bordered bottom-table">
+				<table class="table table-bordered bottom-table" style="margin-bottom: ${i-1}px;">
 					<tbody>
 						<tr>
 							<td rowspan="3" contenteditable = 'true'>
@@ -77,7 +77,7 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
 					</tbody>
 				</table>
 			</div>
-    </div><br/>  <div class="html2pdf__page-break"></div>`;
+    </div><div class="html2pdf__page-break"></div>`;
 
       document.querySelector(".main").insertAdjacentHTML("beforeend", template);
     }

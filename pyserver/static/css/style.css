@@ -73,7 +73,7 @@ img.img-logo {
   height: 100vh;
   overflow-y: scroll;
   scroll-snap-type: y mandatory;
-  scroll-padding: 6%;
+  scroll-padding: 8%;
   pointer-events: all;
 }
 

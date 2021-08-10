@@ -351,6 +351,17 @@ class floor_plan_outline1(object):
     @staticmethod
     def __create_dict(self,drawing): #create dictionary only returns the dictionary created for horizontal and vertical lines. It removes the duplication of the lines all it takes care of the overlapping of the lines. It also provides the lines in the order of its distance from origin. It does not provide any detail about the exterior or interior type of line. 
         draw_hor_list, draw_ver_list = self.__separate_hor_ver(drawing)
+        if not draw_hor_list and not draw_ver_list:
+            minx, maxx, miny, maxy = np.inf, -np.inf, np.inf, -np.inf
+            for i in drawing:
+                minx = min(minx, i[0][0], i[0][1])
+                maxx = max(maxx, i[0][0], i[0][1])
+                miny = min(miny, i[1][0], i[1][1])
+                maxy = max(maxy, i[1][0], i[1][1])
+                
+            return [], [], minx, miny, maxx, maxy
+            
+
         draw_hor_dict = {item[0]: [] for item in draw_hor_list}#oh key value is created for all the horizontal and vertical lines and the key is created at the common node. It is initialized with a list . Afterwards the list will be filled with the coordinates 
         draw_ver_dict = {item[0]: [] for item in draw_ver_list}
         for item in draw_hor_list:
@@ -1778,7 +1789,21 @@ class floor_plan_component1(object):
         for item in draw_ver_dict:
             draw_ver_dict[item]=self.__truncate_list(draw_ver_dict[item])
         #x0, y0, xn, yn = 
-        dims = self.__find_thickness(self,draw_hor_dict, draw_ver_dict, outline_bool)
+        #Here the horizontal and vertical list comes blank because none
+        #of the lines are parallel to x or y axis, so we took the original 
+        #list and found the minimum and maximum coordinates and returned the value
+        #otherwise we send the list to the __find_thickness function
+        if not draw_hor_list and not draw_ver_list:
+            minx, maxx, miny, maxy = np.inf, -np.inf, np.inf, -np.inf
+            for i in drawing:
+                minx = min(minx, i[0][0], i[0][1])
+                maxx = max(maxx, i[0][0], i[0][1])
+                miny = min(miny, i[1][0], i[1][1])
+                maxy = max(maxy, i[1][0], i[1][1])
+                
+            dims = {'x0': minx, 'y0': miny, 'xn': maxx, 'yn': maxy}
+        else:
+            dims = self.__find_thickness(self,draw_hor_dict, draw_ver_dict, outline_bool)
         return {'horizontal':draw_hor_dict, 'vertical': draw_ver_dict, 'dims': dims}
 
 

@@ -241,10 +241,11 @@ const renderAl = () => {
     }
 };
 
-function download(filename, text) {
+function download(filename, text, canvasHeight) {
     var project_id = state.projectInfo.project_no;
-    const pdfRequireHeight = document.getElementById("wd-0").offsetHeight;
+    const pdfRequireHeight = canvasHeight + 30;
     const pdfRequireWidth = document.getElementById("wd-0").offsetWidth;
+    console.log(JSON.stringify(text).length, "Length", pdfRequireHeight, "pdfRequireHeight", pdfRequireWidth, "pdfRequireWidth");
     fetch(window.APIAddress.generatePDF + `/${project_id}`, {
         method: "POST",
         body: JSON.stringify({
@@ -270,21 +271,27 @@ function download(filename, text) {
                 link.click();
             }
             $("#loader").toggle();
+            $('.loader-msg').html("")
+            $('.loader-msg').toggle()
             $(".main").css({ opacity: 1 });
         }).catch(err => console.error(err));
 }
 
 $("#print").on("click", async function (e) {
     $("#loader").toggle();
+    $('.loader-msg').toggle();
     $(".main").css({ opacity: 0.5 });
-    var htmlhead = document.querySelector('head').innerHTML;
+    // var htmlhead = document.querySelector('head').innerHTML;
     var mainDiv = document.createElement('div');
     mainDiv.id = "maindiv";
-    var container = document.querySelectorAll('.whole-container');
+    var container = document.querySelectorAll('.main');
+    var canvasHeightFinal;
     for (var j = 0; j < container.length; j++) {
         if (!state.roomViews) {
             return container.innerHTML;
         } else {
+            var totalpage = state.roomViews ? state.roomViews.length : 1;;
+            var currentPage = 0;
             for (var i = 0; i < state.roomViews.length; i++) {
                 // if(state.roomViews[i].name == "table_view") {
                 //     var id = document.getElementById("wd-" + i);
@@ -298,20 +305,23 @@ $("#print").on("click", async function (e) {
                 //     mainDiv.appendChild(pagebreak);
                 // } else {
                 var convertMeToImg = $('#wd-' + i)[0];
-                const canvas = await html2canvas(convertMeToImg, { logging: true, letterRendering: 1, useCORS: true })
+                $('.loader-msg').html(`${currentPage + i}` + "/" + `${totalpage}`);
+                const canvas = await html2canvas(convertMeToImg, { logging: true, useCORS: true })
                 // Full Quality= 1.0  // Medium Quality = 0.5   // Low Quality = 0.1
-                var img = canvas.toDataURL('image/webp', 1.0);
-                subDiv = document.createElement("div");
-                subDiv.id = "canvas" + i;
-                var containerDiv = document.createElement("div");
-                containerDiv.id = "wd-" + i;
-                containerDiv.classList.add("container-fluid");
+                var img = canvas.toDataURL('image/png;base64', 1.0);
+                // subDiv = document.createElement("div");
+                // subDiv.id = "canvas" + i;
+                // var containerDiv = document.createElement("div");
+                // containerDiv.id = "wd-" + i;
+                // containerDiv.classList.add("container-fluid");
                 var imgTag = document.createElement('img');
                 imgTag.src = img;
                 imgTag.id = "imgId" + i;
-                containerDiv.appendChild(imgTag)
-                subDiv.appendChild(containerDiv);
-                mainDiv.appendChild(subDiv);
+                // imgTag.width = imgWidth;
+                // imgTag.height = imgHeight
+                // containerDiv.appendChild(imgTag)
+                // subDiv.appendChild(imgTag);
+                mainDiv.appendChild(imgTag);
                 var pagebreak = document.createElement("div");
                 pagebreak.setAttribute("style", "clear: both;page-break-after: always;");
                 mainDiv.appendChild(pagebreak);
@@ -319,6 +329,7 @@ $("#print").on("click", async function (e) {
             }
         }
     }
+    canvasHeightFinal = convertMeToImg.offsetHeight;
     elementHTML = mainDiv.innerHTML;
     // var elementScript = [].map.call(document.getElementsByTagName('script'), function(el) {
     //     return el.outerHTML;
@@ -327,8 +338,8 @@ $("#print").on("click", async function (e) {
     let datestr = date.toISOString();
     datestr = datestr.replace(/[^0-9]/g, "");
     var fileName = `Drawings_${datestr}`;
-    var finalHTML = '<html><head>' + htmlhead + '</head><body>' + elementHTML + '</body></html>'; //elementScript
-    download(fileName, finalHTML)
+    var finalHTML = '<html><body>' + elementHTML + '</body></html>'; //elementScript
+    download(fileName, finalHTML, canvasHeightFinal)
 });
 
 var beforeWidth = $(window).width();

@@ -58,40 +58,44 @@ document.querySelector("#currentPageNumber").onblur = function (e) {
 };
 
 // check if an element(working-drawing) is visible in the viewport
-function isInViewport(element) {
-  const rect = element.getBoundingClientRect();
+const isInViewport = (el) => {
+  const elementTop = el.getBoundingClientRect().top;
   return (
-    rect.top >= 0 &&
-    rect.left >= 0 &&
-    rect.bottom <=
-    (window.innerHeight || document.documentElement.clientHeight) &&
-    rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+    elementTop <= (window.innerHeight || document.documentElement.clientHeight)
   );
 }
 
-// scroll detect function
-document.querySelector(".main").addEventListener(
-  "scroll",
-  function (e) {
-    // scroll should be done on page - level
-    // and it should update the value number of '#currentPageNumber' as scroll pages
-    const pages = document.querySelectorAll(".working-drawing");
-    pages.forEach((page, id) => {
-      if (isInViewport(page)) {
-        // set currentPageNumber
-        currentPageNumber = id + 1;
+// // scroll detect function
+// document.querySelector(".main").addEventListener(
+//   "scroll",
+//   function (e) {
+//     // scroll should be done on page - level
+//     // and it should update the value number of '#currentPageNumber' as scroll pages
+//     const pages = document.querySelectorAll(".working-drawing");
+//     pages.forEach((page, id) => {
+//       if (isInViewport(page)) {
+//         // set currentPageNumber
+//         currentPageNumber = id + 1;
 
-        // set input field
-        document.querySelector("#currentPageNumber").value = currentPageNumber;
-      }
-    });
-  },
-  {
-    passive: true,
+//         // set input field
+//         document.querySelector("#currentPageNumber").value = currentPageNumber;
+//       }
+//     });
+//   },
+//   {
+//     passive: true,
+//   }
+// );
+
+document.querySelector(".main").addEventListener('scroll',function() {
+  const pages = document.querySelectorAll(".working-drawing");
+  for(let j = 0; j < pages.length; j++) {
+    if (isInViewport(pages[j])) {
+      currentPageNumber = j + 1;
+      document.querySelector("#currentPageNumber").value = currentPageNumber;
+    }
   }
-);
-
-
+});
 
 document.querySelector("#addPage").addEventListener("click", function (e) {
   if (currentPageNumber === 1 && !state.roomViews) {

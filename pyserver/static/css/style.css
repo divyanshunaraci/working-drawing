@@ -73,7 +73,7 @@ img.img-logo {
   height: 100vh;
   overflow-y: scroll;
   scroll-snap-type: y mandatory;
-  scroll-padding: 6%;
+  scroll-padding: 8%;
   pointer-events: all;
 }
 
@@ -81,12 +81,17 @@ img.img-logo {
 .working-drawing,
 .tempPage {
   position: relative;
-  top: 6%;
+  top: 8%;
   width: 85vw;
-  border: 0.3px black solid;
+  /* border: 0.3px black solid; */
   background-color: white;
 
   scroll-snap-align: start;
+}
+.html2pdf__page-break {
+  clear: both;
+  page-break-after: always;
+  margin-bottom: 20px;
 }
 
 #title {

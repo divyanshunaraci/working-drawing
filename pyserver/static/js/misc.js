@@ -179,10 +179,10 @@ document.querySelector("#removePage").addEventListener("click", function (e) {
   $("#loader").toggle();
 });
 
-$("#saveProgress").click(function() {
+$("#saveProgress").click(function () {
   var project_details = state.projectInfo;
   var floor_plan = state.roomViews[0];
-  
+
   var flrOutline = [];
   floor_plan.outline.forEach(ele => {
     flrOutline.push([
@@ -194,19 +194,19 @@ $("#saveProgress").click(function() {
   var room = state.rooms;
   var material_thumbnails = state.matThumbnails;
   let rooms = {
-    ...room, 
+    ...room,
     "material_thumbnails": material_thumbnails
   };
   var roomNames = state.roomNames;
   var dimension = [];
   state.dimens[0].forEach(ele => {
-     dimension.push([
+    dimension.push([
       ele ? ele.pt1 : "",
       ele ? ele.pt2 : "",
     ])
     return
   })
-  
+
   var flrlength = state.viewBoxInfo[0];
   var saveJSON = {
     "project_details": {
@@ -504,7 +504,7 @@ $("#blueDimen").click((e) => {
     left: 120,
     top: 50,
     width: 60,
-    fontSize: 20,
+    fontSize: 15,
     borderColor: "red",
     editingBorderColor: "blue",
     padding: 2,
@@ -515,6 +515,7 @@ $("#blueDimen").click((e) => {
     textAlign: "center",
     lockUniScaling: true,
     strokeUniform: true,
+    editTextbox: true,
   });
 
   textbox.setControlsVisibility({

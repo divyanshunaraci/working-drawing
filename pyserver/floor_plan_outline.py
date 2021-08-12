@@ -1535,7 +1535,7 @@ class floor_plan_component1(object):
             ycc = (y0c+ync)/2
             
             if abs(y1-ycc) < abs(y2-ycc):
-                if outer_dim_dict['hor'].has_key(y2) and len(outer_dim_dict['hor'][y2])>=xnc:
+                if outer_dim_dict['hor'].has_key(y2) and len(outer_dim_dict['hor'][y2])>=xnc and (xnc-x0)>=xnc and (x0c-x0)<=x0c:
                     outer_dim_dict['hor'][y2][x0c-x0:xnc-x0] = np.zeros(xnc-x0c)
                 return y1
             else:

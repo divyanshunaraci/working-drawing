@@ -1379,6 +1379,24 @@ const generateTable =
           img.src = element[key];
           img.setAttribute("crossorigin", "*")
           cell.appendChild(img);
+        } else if(key === "materials") {
+          for (materialKey of element[key]){
+            cell.contentEditable = true;
+            let text = document.createTextNode(materialKey.name);
+            let img = document.createElement("img");
+            img.style.width = "25px";
+            img.style.height = "15px";
+            img.style.display = "inline-flex";
+            img.style.marginRight = "10px";
+            img.style.marginBottom = "1px";
+            img.src = materialKey.image_url;
+            img.setAttribute("crossorigin", "*")
+            let liTag = document.createElement("li");
+            liTag.style.listStyle = "none";
+            liTag.appendChild(img);
+            liTag.appendChild(text);
+            cell.appendChild(liTag);
+          }
         } else {
           cell.contentEditable = true;
           let text = document.createTextNode(element[key]);

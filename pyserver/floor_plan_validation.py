@@ -453,10 +453,10 @@ class floor_plan_validation(object):
                             warning_log.append('Some items are missing from ' + string_id+'['+items+'][comp_details].')
                         elif len(json_room_top_view_library[items]['comp_details']) > 5:
                             warning_log.append('Some additional items exists in ' + string_id+'['+items+'][comp_details].')
-                        if json_room_top_view_library[items]['comp_details']['materials']:
-                            mat_tmp = json_room_top_view_library[items]['comp_details']['materials']
-                            mat_set = set(mat_tmp)
-                            json_room_top_view_library[items]['comp_details']['materials'] = list(mat_set)
+                        # if json_room_top_view_library[items]['comp_details']['materials']:
+                        #     mat_tmp = json_room_top_view_library[items]['comp_details']['materials']
+                        #     mat_set = set(mat_tmp)
+                        #     json_room_top_view_library[items]['comp_details']['materials'] = list(mat_set)
                         if json_room_top_view_library[items]['comp_details']['accessories']:
                             mat_tmp = json_room_top_view_library[items]['comp_details']['accessories']
                             mat_set = set(mat_tmp)
@@ -633,10 +633,10 @@ class floor_plan_validation(object):
                                                         elif len(json_room_view_name_library[items]['comp_details']) > 5:
                                                             warning_log.append('Some additional items exists in ' + string_floor_library+'['+items+'][comp_details].')
                                                         
-                                                        if json_room_view_name_library[items]['comp_details']['materials']:
-                                                            mat_tmp = json_room_view_name_library[items]['comp_details']['materials']
-                                                            mat_set = set(mat_tmp)
-                                                            json_room_view_name_library[items]['comp_details']['materials'] = list(mat_set)
+                                                        # if json_room_view_name_library[items]['comp_details']['materials']:
+                                                        #     mat_tmp = json_room_view_name_library[items]['comp_details']['materials']
+                                                        #     mat_set = set(mat_tmp)
+                                                        #     json_room_view_name_library[items]['comp_details']['materials'] = list(mat_set)
                                                         if json_room_view_name_library[items]['comp_details']['accessories']:
                                                             mat_tmp = json_room_view_name_library[items]['comp_details']['accessories']
                                                             mat_set = set(mat_tmp)

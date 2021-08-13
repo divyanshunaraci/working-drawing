@@ -14,8 +14,10 @@ class floor_plan_outline1(object):
         #this class is initialized with drawing_list that comes from JSON file and a thickness value.
         #this class id called from floor_plan_additional- the input thickness value can be changed in floor_plan_additional class
         self.draw_1_hor_dict, self.draw_1_ver_dict,  self.x0, self.y0, self.xn, self.yn = self.__create_dict(self,drawing_list) #this function identifies the outlines , the end corners for the drawing. It creates the horizontal and vertical dictionary each dictionary his keys as the one common coordinate for a line. For example the vertical line has common X coordinate and the horizontal line has common Y coordinate. Therefore in the horizontal dictionary the keys would be the vertical coordinates. Eight each of the key value, list of all the lines exist at that horizontal or vertical coordinate the list contents they start not in the end node and in each of the list there could be several of those segments of line . The first 2 items of the list are just the start an endnote data  data. If the third item exists in the dictionary that means it has been identified as one of the wall. The walls could be exterior wall left bottom top and right the interior wall left bottom right and stop N external internal wall again left right top bottom. The third item is a list where the first item is the string that is identifying the type of the wall internal external or external internal and the second 2 items shows the dimension coordinates for start node and the end node the items are XYNXY however this will be confirmed soon. 
+
+        #In deep copy, we create a new object and then recursively populating it with copies of the child object, such that original object doesn't get changed
         self.org_hor, self.org_ver, self.thickness  = copy.deepcopy(self.draw_1_hor_dict), copy.deepcopy(self.draw_1_ver_dict), thickness
-        #print(self.org_hor, self.org_ver)
+        
         self.__update_dicts() #all the data gets identified based on interier wall, inside of exterior wall
 
         self.all_detail = {'horizontal' : self.draw_1_hor_dict, 'vertical' : self.draw_1_ver_dict} #this data get updated in remove duplicate function. That means finally this variable does not contend the duplicate horizontal or vertical dimension labels. 
@@ -108,12 +110,17 @@ class floor_plan_outline1(object):
     
     @staticmethod
     def __plot_outer_dim_hor(self,thickness,strr):
+        #x0, xn is the minimum and maximum x value of the combination of all the horizontal lines 
         draw_1_hor_dict,x0,xn= self.draw_1_hor_dict, self.x0, self.xn
+        #Numpy array of 0's for the entire horizontal length.
         updating_array = np.zeros(xn-x0+1)
+        #It contains all the coordinates of the horizontal lines, i.e, the y-coordinates.
         list_keys = self.__reveal_keys(draw_1_hor_dict)
+        #It plots the topmost dimension of the horizontal lines. 
         if strr=='Et':
             list_keys=sorted(list_keys,reverse=True)
         i_list = 0
+        #This loop runs until all the values in the array is 1.
         while np.sum(updating_array) < xn-x0:
             if i_list > len(list_keys)-1:
                 break
@@ -330,6 +337,7 @@ class floor_plan_outline1(object):
 
     @staticmethod
     def __find_thickness(self,draw_hor_dict, draw_ver_dict):
+        #This function is used find the the maxmimum and minimum x and y coordinates
         ls1=self.__reveal_keys(draw_hor_dict) #all the keys in ascending order
         ls2=self.__reveal_keys(draw_ver_dict)
         r11=ls1[0:2] #first two y coordinates of the drawing
@@ -350,7 +358,11 @@ class floor_plan_outline1(object):
 
     @staticmethod
     def __create_dict(self,drawing): #create dictionary only returns the dictionary created for horizontal and vertical lines. It removes the duplication of the lines all it takes care of the overlapping of the lines. It also provides the lines in the order of its distance from origin. It does not provide any detail about the exterior or interior type of line. 
+        #Outline coordinates are seperated into horizontal and vertical lines only
         draw_hor_list, draw_ver_list = self.__separate_hor_ver(drawing)
+
+        #Sometimes we receive room_outlines which are not parallel to x or y axis, for these rooms calculating the minimum and maximum x-y coordinates is difficult,
+        #so i am seperately doing this for those rooms only which are kept in a slanting way
         if not draw_hor_list and not draw_ver_list:
             minx, maxx, miny, maxy = np.inf, -np.inf, np.inf, -np.inf
             for i in drawing:
@@ -361,7 +373,8 @@ class floor_plan_outline1(object):
                 
             return [], [], minx, miny, maxx, maxy
             
-
+        #Here only the keys for the horizontal and vertical lines are stored, and in the two consecutive for loops we are appending the values also
+        #Suppose for a horizontal line with coordinates [[2,4],[4,4]] the y-coordinates are same, so we store it like [4:[2,4]]
         draw_hor_dict = {item[0]: [] for item in draw_hor_list}#oh key value is created for all the horizontal and vertical lines and the key is created at the common node. It is initialized with a list . Afterwards the list will be filled with the coordinates 
         draw_ver_dict = {item[0]: [] for item in draw_ver_list}
         for item in draw_hor_list:
@@ -380,6 +393,8 @@ class floor_plan_outline1(object):
         for item in draw_ver_dict:
             draw_ver_dict[item]=self.__truncate_list(draw_ver_dict[item])
         minx, maxx, miny, maxy = np.inf, -np.inf, np.inf, -np.inf
+
+        #Here we are finding the minimum and maximum x and y coordinates for all the edges present in the drawing list.
         for x in draw_hor_dict:
             minx = min(minx, draw_hor_dict[x][0][0],draw_hor_dict[x][0][1])
             maxx = max(maxx, draw_hor_dict[x][0][0],draw_hor_dict[x][0][1])
@@ -396,6 +411,8 @@ class floor_plan_outline1(object):
         #     maxy = max(maxy, draw_hor_dict[x][0][0],draw_hor_dict[x][0][1])
         x0, y0, xn, yn = minx, miny, maxx, maxy
         xt0, yt0, xtn, ytn = self.__find_thickness(self,draw_hor_dict, draw_ver_dict)
+        #We compare if the values returned by __find_thickness with the existing values and 
+        #consider the minimum and maximum x and y coordinates
         x0 = x0 if x0<=xt0 else xt0
         xn = xn if xn>=xtn else xtn
         y0 = y0 if y0<=yt0 else yt0
@@ -450,6 +467,7 @@ class floor_plan_outline1(object):
 #This is the main class where data comes from HTML and sent back to HTML using hte object named .new_object
 class floor_plan_additional(object):
 
+    #return_new_j_object send the JSON file, room names, and the room view names
     def __init__(self,j_object,room_names,room_view_name):
         self.j_object = j_object
         self.new_j_object = self.return_new_j_object(self,j_object,room_names,room_view_name)
@@ -464,7 +482,9 @@ class floor_plan_additional(object):
     @staticmethod
     def return_new_j_object(self,j_object,room_names,room_view_name):
 
+        #drawing_1_list contains the x,y coordinates of the ground floor plan from the JSON
         drawing_1_list = j_object['floor_plan']['outline']
+        #floor_plan_outline1 class is called with the coordinates and the thickness value
         fp0 = floor_plan_outline1(drawing_1_list,j_object['floor_plan']['thickness']) #the thickness needs to be changed
         #fp0.plot_all_outer_dim
         j_object['floor_plan']['dimension'] = fp0.data
@@ -1535,7 +1555,7 @@ class floor_plan_component1(object):
             ycc = (y0c+ync)/2
             
             if abs(y1-ycc) < abs(y2-ycc):
-                if outer_dim_dict['hor'].has_key(y2) and len(outer_dim_dict['hor'][y2])>=xnc:
+                if outer_dim_dict['hor'].has_key(y2) and len(outer_dim_dict['hor'][y2])>=xnc and (xnc-x0)>=xnc and (x0c-x0)<=x0c:
                     outer_dim_dict['hor'][y2][x0c-x0:xnc-x0] = np.zeros(xnc-x0c)
                 return y1
             else:

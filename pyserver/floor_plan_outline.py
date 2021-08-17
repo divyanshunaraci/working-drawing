@@ -669,6 +669,9 @@ class floor_plan_component1(object):
                         for items in j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library']:
                             
                             #cover panels removed from front view
+                            item_check = str(items).lower()
+                            if 'cover_panel' in item_check:
+                                continue
                             if 'external_points' in j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]:
                                 drawing_2_list = []
                                 if view_angle == 'internal_view':

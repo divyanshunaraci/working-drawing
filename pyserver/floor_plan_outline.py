@@ -669,10 +669,6 @@ class floor_plan_component1(object):
                         for items in j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library']:
                             
                             #cover panels removed from front view
-                            c_panel = False
-                            xx = str(items).lower()
-                            if 'cover_panel' in xx:
-                                c_panel = True
                             if 'external_points' in j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]:
                                 drawing_2_list = []
                                 if view_angle == 'internal_view':
@@ -694,15 +690,18 @@ class floor_plan_component1(object):
                                 
                                  
                                 if len(drawing_2_list) != 0:
+                                                            
+                                    dict_for_view[items] = self.__create_dict(self,drawing_2_list)
+                                    component_list += drawing_2_list
                                     drawing_1_list += drawing_2_list 
-                                    if c_panel == False:
-                                        component_list += drawing_2_list
-                                        dict_for_view[items] = self.__create_dict(self,drawing_2_list)
+                                    
+                                        
 
 
                 if view_angle == 'internal_view':
                     dimension_list = self.__creating_dimensions_internal(self,dict_for_view,drawing_1_list)
                 else: #front view and top view
+                    
                     dimension_list = self.__creating_dimensions_top_front(self,dict_for_view,drawing_1_list) 
                     
             else:
@@ -809,7 +808,7 @@ class floor_plan_component1(object):
         unique_dim_x = []
         unique_dim_y = []
         for keys in dict1: 
-            if keys == 'outline':
+            if keys == 'outline' or 'cover_panel' in keys or 'filler' in keys or 'skirting' in keys:
                 continue
             t_d2 = dict1[keys]['dims']
             x0c, y0c = t_d2['x0'], t_d2['y0']
@@ -1813,7 +1812,7 @@ class floor_plan_component1(object):
         #of the lines are parallel to x or y axis, so we took the original 
         #list and found the minimum and maximum coordinates and returned the value
         #otherwise we send the list to the __find_thickness function
-        if not draw_hor_list and not draw_ver_list:
+        if len(draw_hor_list) == 0 or len(draw_ver_list) == 0:
             minx, maxx, miny, maxy = np.inf, -np.inf, np.inf, -np.inf
             for i in drawing:
                 minx = min(minx, i[0][0], i[0][1])

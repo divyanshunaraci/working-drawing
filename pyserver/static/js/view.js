@@ -324,7 +324,7 @@ const renderViewTexts = (textObject, id) => {
     state.viewBoxInfo[id]["newOriginY"],
   ];
   for (let j in state.rooms[currentRoom]["room_top_view"]["views"]) {
-
+    let newDirectionArray = new Array();
     for (let z = 0; z < state.rooms[currentRoom]["room_top_view"]["views"][j].length; z++) {
       let cntForX = 0;
       let cntForY = 0;
@@ -351,8 +351,98 @@ const renderViewTexts = (textObject, id) => {
         backgroundColor: "transparent",
         objectCaching: false,
       });
+      for(let x in state.rooms[currentRoom]) {
+        if(state.rooms[currentRoom][x]['direction']) {
+          newDirectionArray.push(
+            {
+              "direction": state.rooms[currentRoom][x]["direction"],
+              "name": x
+            }
+          )
+        }
+      }
+      var compassTopText;
+      var compassBottomText;
+      var compassLeftText;
+      var compassRightText;
+      newDirectionArray.forEach(ele => {
+        if(ele.direction == 'top') {
+          compassTopText = new fabric.Textbox(ele.name, {
+            left: 70,
+            top: 20,
+            width: 50,
+            fontSize: 14,
+            originX: "center",
+            originY: "center",
+            lockMovementY: true,
+            lockMovementX: true
+          });
+        }
+        if(ele.direction == 'bottom') {
+          compassBottomText = new fabric.Textbox(ele.name, {
+            left: 70,
+            top: 145,
+            width: 50,
+            fontSize: 14,
+            originX: "center",
+            originY: "center",
+            lockMovementY: true,
+            lockMovementX: true
+          });
+        }
+        if(ele.direction == 'left') {
+          compassLeftText = new fabric.Textbox(ele.name, {
+            left: 30,
+            top: 90,
+            width: 50,
+            fontSize: 14,
+            originX: "center",
+            originY: "center",
+            lockMovementY: true,
+            lockMovementX: true
+          });
+        }
+        if(ele.direction == 'right') {
+          compassRightText = new fabric.Textbox(ele.name, {
+            left: 130,
+            top: 65,
+            width: 50,
+            fontSize: 14,
+            originX: "center",
+            originY: "center",
+            lockMovementY: true,
+            lockMovementX: true
+          });
+        }
+      })
+      const compassHorizontalView = new fabric.Line([50, 50, 200, 50], {
+        left: 20,
+        top: 75,
+        stroke: 'green',
+        scaleX: 0.7
+      })
+      const compassverticalView = new fabric.Line([50, 50, 200, 50], {
+        left: 70,
+        top: 30,
+        stroke: 'green',
+        angle: 90,
+        scaleX: 0.7,
+        centerTransform: true
+      });
+      if(compassTopText && compassTopText.text) {
+        canvas.add(compassTopText)
+      }
+      if(compassBottomText && compassBottomText.text) {
+        canvas.add(compassBottomText)
+      }
+      if(compassLeftText && compassLeftText.text) {
+        canvas.add(compassLeftText)
+      }
+      if(compassRightText && compassRightText.text) {
+        canvas.add(compassRightText)
+      }
       canvas.getObjects();
-      canvas.add(textbox);
+      canvas.add(textbox, compassHorizontalView, compassverticalView);
       canvas.selection = false;
       canvas.renderAll();
       canvas.calcOffset();

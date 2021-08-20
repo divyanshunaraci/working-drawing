@@ -618,6 +618,8 @@ class floor_plan_component1(object):
                     if 'library' in list(j_object['rooms'][room_name][view_name]['floor_components']):
 
                         for items in j_object['rooms'][room_name][view_name]['floor_components']['library']:
+                            if 'cover_panel' in items:
+                                continue
                             drawing_2_list= j_object['rooms'][room_name][view_name]['floor_components']['library'][items]['outline']
                             drawing_2_list  = self.__clean_drawing_list(drawing_2_list)
                             
@@ -627,13 +629,13 @@ class floor_plan_component1(object):
                             # dict_for_view[items] = self.__create_dict(self,drawing_2_list)
                             drawing_1_list += drawing_2_list
                             if 'filler' not in xx and 'ledge' not in xx:
-                                if 'cover_panel' in xx:
-                                    dict_for_view[items] = self.__create_dict(self,drawing_2_list)
-                                    component_list += drawing_2_list
-                                else:
-                                    dict_for_view[items] = self.__create_dict(self,drawing_2_list)
-                                    component_list += drawing_2_list
-                                    ID_dict[items] =  dict_for_view[items]['dims']
+                                # if 'cover_panel' in xx:
+                                #     dict_for_view[items] = self.__create_dict(self,drawing_2_list)
+                                #     component_list += drawing_2_list
+                                # else:
+                                dict_for_view[items] = self.__create_dict(self,drawing_2_list)
+                                component_list += drawing_2_list
+                                ID_dict[items] =  dict_for_view[items]['dims']
                         
                         #Getting the dimension list from dictionary and the list of demarkation of rooms
                 

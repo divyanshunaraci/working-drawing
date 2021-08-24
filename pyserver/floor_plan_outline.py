@@ -18,6 +18,7 @@ class floor_plan_outline1(object):
         #In deep copy, we create a new object and then recursively populating it with copies of the child object, such that original object doesn't get changed
         self.org_hor, self.org_ver, self.thickness  = copy.deepcopy(self.draw_1_hor_dict), copy.deepcopy(self.draw_1_ver_dict), thickness
         
+
         self.__update_dicts() #all the data gets identified based on interier wall, inside of exterior wall
 
         self.all_detail = {'horizontal' : self.draw_1_hor_dict, 'vertical' : self.draw_1_ver_dict} #this data get updated in remove duplicate function. That means finally this variable does not contend the duplicate horizontal or vertical dimension labels. 
@@ -494,17 +495,20 @@ class floor_plan_additional(object):
         #room_name =['KITCHEN','GBR']#['GBR']#
         
         view_angle =['top_view','front_view','internal_view'] #
-
+        #key1 are the room names
         for key1 in room_names:
             if j_object['rooms'].has_key(key1):
-                view_name = room_view_name[key1] #
+                view_name = room_view_name[key1] 
+                #key2 stands for room_top_view, front view, internal view
                 for key2 in view_name:
                     if j_object['rooms'][key1].has_key(key2):
                         #print(key1,key2)
                         if key2 == 'room_top_view':
+                            #It returns the outline of the room and the outline of the components
                             drawing_list1 = self.output_list_room_top_views(key1, key2, j_object)
+                            #floor_plan_outline1 class returns the dimension list along with the 
+                            #component list that needs to be plotted
                             fp1 = floor_plan_outline1(drawing_list1,j_object['rooms'][key1][key2]['thickness']) # need changes to this value
-                            
                             data_from_1_room_top_view = fp1.all_data
                             fp4 = floor_plan_component1(key1, key2, data_from_1_room_top_view, j_object)
                             j_object['rooms'][key1][key2]['dimension'] = fp4.data
@@ -578,6 +582,7 @@ class floor_plan_component1(object):
         if self.view_name == 'room_top_view':
             drawing_list, component_list, ID_dict = self.output_list_room_top_views(self)  
         else:
+            #output_list_views calculated for elevation view and internal view
             drawing_list, component_list, ID_dict = self.output_list_views(self)
         return drawing_list, component_list, ID_dict
 
@@ -610,6 +615,7 @@ class floor_plan_component1(object):
                 if 'openings' in list(j_object['rooms'][room_name][view_name]):
                     for items in j_object['rooms'][room_name][view_name]['openings']:
                         if len(j_object['rooms'][room_name][view_name]['openings'][items]) >0:
+                            #Outline for the doors and windows are appended into drawing_2_list
                             drawing_2_list= j_object['rooms'][room_name][view_name]['openings'][items]
                             drawing_2_list = self.__clean_drawing_list(drawing_2_list)
                             drawing_1_list += drawing_2_list

@@ -668,38 +668,51 @@ class floor_plan_component1(object):
         
         if j_object['rooms'][room_name][view_name][view_angle].has_key('outline'):
             drawing_1_list = []
+            #Outline of the rooms for front view and internal view are stored in drawing_1_list
             drawing_1_list = j_object['rooms'][room_name][view_name][view_angle]['outline'] 
-
+            #If no outline is present we send the blank drawing list as there is no room outline
             if len(drawing_1_list) != 0 :
+                #__create_dict function returns the coordinates as a horizontal and vertical list
+                #and also returns the dims which is the minimum and maximum value of the of x and y
+                #coordinates
                 dict_for_view['outline'] = self.__create_dict(self,drawing_1_list,True)
                 if 'floor_components' in j_object['rooms'][room_name][view_name][view_angle]:
                     if 'library' in j_object['rooms'][room_name][view_name][view_angle]['floor_components']:
+                        #We iterate through the components in the current view's front view or internal view
+                        #and perform specific filters for cover_panels, fillers and skirting
                         for items in j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library']:
                             
-                            #cover panels removed from front view
+                            #cover panels removed from front view by the continue statement
                             item_check = str(items).lower()
                             if 'cover_panel' in item_check:
                                 continue
+                            #External points contains all the basic part of a component and we perform specific
+                            #filters for internal view and front view because in internal view we only show the internal
+                            #and the carcass
                             if 'external_points' in j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]:
                                 drawing_2_list = []
                                 if view_angle == 'internal_view':
                                     item_ext = ['internal','carcass']
                                 else:
                                     item_ext = ['internal','carcass','skirting','loft_skirting','cover_panels','fillers']
+                                #We iterate though the external points for every component except the cover_panels
                                 for internal_items in item_ext: #'fillers'
+                                    #We store the dimension of the external point in the drawing_2_list
                                     if internal_items in j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]['external_points']:
                                         drawing_2_list+= j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]['external_points'][internal_items]
-                                    
+                                    #Shutter basically has subdivisions in the JSON, so we go inside the shutter component and extract the shutters and handles
                                     if 'shutter' in j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]['external_points']:
                                         for item in j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]['external_points']['shutter']:
                                             if 'outline' in j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]['external_points']['shutter'][item]:
+                                                #Outline of the different shutters are stored in the drawing_2_list so the dimensions of these are displayed with the whole component 
                                                 drawing_2_list+= j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]['external_points']['shutter'][item]['outline']
                                             if 'handle' in j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]['external_points']['shutter'][item]:
                                                 if 'outline' in j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]['external_points']['shutter'][item]['handle']:
                                                     if len(j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]['external_points']['shutter'][item]['handle']['outline']) != 0:
+                                                        #Outline of the handles are being stored in the component_list and not in the drawing_2_list because the dimension of the handle need not to be shown.
                                                         component_list += j_object['rooms'][room_name][view_name][view_angle]['floor_components']['library'][items]['external_points']['shutter'][item]['handle']['outline']
                                 
-                                 
+                                #We create a dictionary with the item name for the specific item and store it in dict_for_view such that it gets displayed in the table
                                 if len(drawing_2_list) != 0:
                                                             
                                     dict_for_view[items] = self.__create_dict(self,drawing_2_list)
@@ -1121,17 +1134,24 @@ class floor_plan_component1(object):
         for keys in dict1:
             if keys == 'outline':
                 continue
+            #minimum and maximum coordinates for every component are stored here to plot
+            #the complete dimension of the component, and not the specific parts in the component
             t_d2 = dict1[keys]['dims']
             x0c, y0c = t_d2['x0'], t_d2['y0']
             xnc, ync = t_d2['xn'], t_d2['yn']
 
             #Drawing the horizontal distance first
+            #We calculate the mid point of the component and check on which quadrant it lies
+            #based on which plot the distance from the wall from that specific corner of wall
             quadrant_x = (x0c+xnc)/2 - xc0 #if negative then on the left side, otherwise right
             quadrant_y = (y0c+ync)/2 - yc0 #if negative then on the bottom side, otherwise top  
             
             '''
             if quadrant_x>=0 then right else left
             if quadrant_y>=0 then top else bottom
+
+            hor_up_down = 1 means the distance from the corner of the component to the corner of the wall is in the postive x-direction
+            ver_up_down = -1 means the distance from the corner of the component to the corner of the wall is in negative y-direction
             '''
 
             #total 4 cases
@@ -1139,6 +1159,7 @@ class floor_plan_component1(object):
                 #define x1, x2, y1 and y2 for each case
                 x1, x2, y1, y2 = xnc, xn, ync, yn
                 #hor_start_pt, ver_start_pt = yn + 200, xn + 200
+                #200 dimension is taken such that the dimensions are being plotted with 200 pixels away from the wall
                 hor_up_down, ver_up_down = 1, 1
                 hor_start_pt, ver_start_pt = yn + hor_up_down * 200, xn + ver_up_down * 200
                 quadrant = 1
@@ -1756,8 +1777,10 @@ class floor_plan_component1(object):
         dict1 = dict_for_view
         x0,y0,xn,yn= np.inf, np.inf, -np.inf, -np.inf
         '''
-        Items and outline traversed and the min and max x,y coordinates are stored in x0,xn,y0,yn
+        Items and outline traversed and the min and max x,y coordinates are stored in x0,xn,y0,yn 
         '''
+        #This extra piece of code added because in some scenarios the component is present outside the outline 
+        #of the room so the minimum and maximum, x & y coordinates needs to be changed.
         for items in dict1:
             a1,b1,a2,b2 = dict1[items]['dims']['x0'],dict1[items]['dims']['y0'],dict1[items]['dims']['xn'],dict1[items]['dims']['yn']
             if a1<x0:
@@ -1769,6 +1792,8 @@ class floor_plan_component1(object):
             if b2>yn:
                 yn = b2
         x00, y00 = x0, y0
+        #Here first we create the drawing shade for the specific view that is the front view and the internal view
+        #which is 2-D numpy array's of 0's. Places where we put 1's means a component is already present there.
         s = (xn-x00, yn - y00)
         # x00 , y00 = dict1['outline']['dims']['x0'],dict1['outline']['dims']['y0']
         # s = (dict1['outline']['dims']['xn']-x00,dict1['outline']['dims']['yn']-y00) # xn-x0,yn-y0
@@ -1780,11 +1805,14 @@ class floor_plan_component1(object):
             y00 = min(y0,y00)
             the_array[x0-x00:xn-x00,y0-y00:yn-y00] = np.ones((xn-x0,yn-y0))
             return the_array
+        #Here we take the outline of the room and change the 0's to 1's in the numpy array
         t_d1 = dict1['outline']['dims']
         the_array = updating_array(the_array,t_d1['x0'],t_d1['xi0'],t_d1['y0'],t_d1['yn'],x00 , y00)
         the_array = updating_array(the_array,t_d1['xin'],t_d1['xn'],t_d1['y0'],t_d1['yn'],x00 , y00)
         the_array = updating_array(the_array,t_d1['x0'],t_d1['xn'],t_d1['y0'],t_d1['yi0'],x00 , y00)
         the_array = updating_array(the_array,t_d1['x0'],t_d1['xn'],t_d1['yin'],t_d1['yn'],x00 , y00)
+        #Here we take all the components one by one and change the numpy array of 0's to 1's for 
+        #the edges specific to the component.
         for keys in dict1:
             if keys == 'outline':
                 continue

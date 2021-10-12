@@ -18,6 +18,20 @@ const fix_dpi = (canvas) => {
 // generate views and render project_ & org_url in every views
 const renderProjectInfo = (projectInfo, viewsCnt) => {
   if (projectInfo == null || viewsCnt < 0) return;
+  let orgDetail = {};
+  if (projectInfo.project_no.includes('DP.')) {
+    orgDetail = {
+      org_logo_url : window.decorpotOrg.DPLogo,
+      org_name: window.decorpotOrg.DPName,
+      org_address: window.decorpotOrg.DPAddress
+    }
+  } else {
+    orgDetail = {
+      org_logo_url : projectInfo.org_logo_url,
+      org_name: projectInfo.org_name,
+      org_address: projectInfo.org_address
+    }
+  }
   try {
     // const details = state.projectInfo;
     for (let i = 0; i < viewsCnt; i++) {
@@ -57,8 +71,8 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
 					<tbody>
 						<tr>
 							<td rowspan="3" contenteditable = 'true'>
-              <img src = "${projectInfo.org_logo_url}" crossorigin="" width="300" height="50" alt= "logo" />
-              <span> ${projectInfo.org_name} : ${projectInfo.org_address}</span>
+              <img src = "${orgDetail.org_logo_url}" crossorigin="" width="300" height="50" alt= "logo" />
+              <span> ${orgDetail.org_name} : ${orgDetail.org_address}</span>
 							</td>
 							<td class='drawing-title' contenteditable = 'true'>Drawing TITLE: Floor Plan</td>
 							<td contenteditable = 'true'>Designed by: ${projectInfo.designer_name}</td>

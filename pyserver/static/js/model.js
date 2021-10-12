@@ -122,6 +122,19 @@ const getRoomObjects = (rooms) => {
         //  handle 'view_1', 'view_2', ... 'view_n'
         let temp = handleViewDimens(rooms[name][compName], `${name}+${compName}`);
         let views = handleView(rooms[name][compName], `${name}+${compName}`);
+        // Code start for divide of 10 rows
+        var flag = 0, count = 0;
+        for (let i = 0; i < views.length; i++) {
+          let k = 0;
+          if (views[i].type == "TableView" && views[i].compsInfo.length > 15) {
+            flag = 1;
+            for (let j = 15; j < views[i].compsInfo.length; j += 15) {
+              count++;
+              let obj = new TableView(`${views[i].id}+${k++}`, views[i].name, views[i].compsInfo.splice(j, j + 15))
+              views.splice(i + 1, 0, obj);
+            }
+          }
+        }
         resultViews = [...resultViews, ...views];
         dimens = [...dimens, ...temp[0]]; // py dimens
         viewBoxInfo = [...viewBoxInfo, ...temp[1]];
@@ -583,11 +596,19 @@ const handleSubViewDimens = (data, roomViewName, viewName) => {
   // 
   if (viewName === "front_view" && Object.keys(data["dimension"]["IDs"]).length !== 0) {
 
-
+    ncomp = Object.keys(data["dimension"]["IDs"]).length;
+    x = [dimens, []]
+    y = [viewBoxInfo, {}]
+    if (ncomp > 15) {
+      for (let i = 15; i <= ncomp; i += 15) {
+        x.push([])
+        y.push({})
+      }
+    }
 
     return [
-      [dimens, []],
-      [viewBoxInfo, {}],
+      x,
+      y
     ];
 
   } else {

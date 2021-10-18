@@ -242,6 +242,9 @@ const renderAl = () => {
 };
 
 function download(filename, text, canvasHeight) {
+    const queryStringSearch = window.location.search;
+    const getUrlParams = new URLSearchParams(queryStringSearch);
+    const pdfVersionNo = getUrlParams.get('versionNo')
     var project_id = state.projectInfo.project_no;
     const pdfRequireHeight = canvasHeight + 30;
     const pdfRequireWidth = document.getElementById("wd-0").offsetWidth;
@@ -252,7 +255,8 @@ function download(filename, text, canvasHeight) {
             file: JSON.stringify(text),
             filename: filename,
             pdfHeight: pdfRequireHeight,
-            pdfWidth: pdfRequireWidth
+            pdfWidth: pdfRequireWidth,
+            pdfversion: pdfVersionNo
         }),
         headers: {
             'authorization': localStorage.getItem("token"),

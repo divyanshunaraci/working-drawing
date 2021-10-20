@@ -383,25 +383,25 @@ const renderViewTexts = (textObject, id) => {
         if(ele.direction == 'top') {
           compassTopText = new fabric.Textbox(ele.name, {
             left: 70,
-            top: 20,
+            top: 10,
             width: 50,
             fontSize: 14,
             originX: "center",
             originY: "center",
             lockMovementY: true,
-            lockMovementX: true
+            lockMovementX: true, selectable: false
           });
         }
         if(ele.direction == 'bottom') {
           compassBottomText = new fabric.Textbox(ele.name, {
             left: 70,
-            top: 145,
+            top: 135,
             width: 50,
             fontSize: 14,
             originX: "center",
             originY: "center",
             lockMovementY: true,
-            lockMovementX: true
+            lockMovementX: true, selectable: false
           });
         }
         if(ele.direction == 'left') {
@@ -413,36 +413,40 @@ const renderViewTexts = (textObject, id) => {
             originX: "center",
             originY: "center",
             lockMovementY: true,
-            lockMovementX: true
+            lockMovementX: true, selectable: false
           });
         }
         if(ele.direction == 'right') {
           compassRightText = new fabric.Textbox(ele.name, {
             left: 130,
-            top: 65,
+            top: 60,
             width: 50,
             fontSize: 14,
             originX: "center",
             originY: "center",
             lockMovementY: true,
-            lockMovementX: true
+            lockMovementX: true, selectable: false
           });
         }
       })
       const compassHorizontalView = new fabric.Line([50, 50, 200, 50], {
         left: 20,
         top: 75,
-        stroke: 'green',
-        scaleX: 0.7
+        stroke: 'blue', scaleX: 0.7, selectable: false
       })
       const compassverticalView = new fabric.Line([50, 50, 200, 50], {
         left: 70,
-        top: 30,
-        stroke: 'green',
+        top: 20, stroke: 'blue',
         angle: 90,
         scaleX: 0.7,
-        centerTransform: true
+        centerTransform: true, selectable: false
       });
+      const compassCircle = new fabric.Circle({ radius: 5,top: 70,left: 64,fill: "#004de6",selectable: false, border: 1 })
+      const triangleTop = new fabric.Triangle({ fill: "blue",top: 23,left: 70,height: 10,width: 10,originX: 'center',originY: 'center',selectable: false });
+      const triangleBottom = new fabric.Triangle({ angle: 180,fill: "blue",top: 125,left: 70,height: 10,width: 10,originX: 'center',originY: 'center',selectable: false });
+      const triangleLeft = new fabric.Triangle({ angle: 270,fill: "blue",top: 75,left: 23,height: 10,width: 10,originX: 'center',originY: 'center',selectable: false });
+      const triangleRight = new fabric.Triangle({ angle: 90,fill: "blue",top: 75,left: 123,height: 10,width: 10,originX: 'center',originY: 'center',selectable: false });
+
       if(compassTopText && compassTopText.text) {
         canvas.add(compassTopText)
       }
@@ -456,7 +460,7 @@ const renderViewTexts = (textObject, id) => {
         canvas.add(compassRightText)
       }
       canvas.getObjects();
-      canvas.add(textbox, compassHorizontalView, compassverticalView);
+      canvas.add(textbox, compassHorizontalView, compassverticalView, compassCircle, triangleTop, triangleBottom, triangleLeft, triangleRight);
       canvas.selection = false;
       canvas.renderAll();
       canvas.calcOffset();

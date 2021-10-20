@@ -13,19 +13,14 @@
   <!-- import bootstrap 4 -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
     integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
-  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" />
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" /> -->
+  <!-- <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" /> -->
+  <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" /> -->
 
   <!-- import custom css -->
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="css/sidebar.css" />
   <link rel="stylesheet" href="css/modal.css" />
-  <!-- import jquery -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-    crossorigin="anonymous"></script>
 </head>
 
 <body onresize="renderAll()">
@@ -197,7 +192,9 @@
     </nav>
   </header>
   <div class="w3-sidebar w3-bar-block w3-xlarge bg-dark" style="width: 50px; overflow: hidden">
-    <a href="#" style="margin-top: 10px" class="w3-bar-item w3-button"><i class="fa fa-home"></i></a>
+    <a href="#" style="margin-top: 50px" class="w3-bar-item w3-button">
+      <!-- <i class="fa fa-home"></i> -->
+    </a>
     <button class="w3-bar-item w3-button my-sideitem ">
       <input type="file" id="addImg" class="addImage" />
       <svg viewBox="0 0 512 512" width="100%" height="100%">
@@ -303,8 +300,14 @@
   </div>
   <div id="loader"></div>
   <p class="loader-msg"></p>
-  <div class="whole-container" style="margin-left: 40px">
+  <div class="whole-container" style="margin-left: 55px">
     <div class="main" id="content">
+      <div class="working-drawing-info container-fluid">
+        <div class="row">
+          <div class="col-md-12" style="margin-top: 55px">
+          </div>
+        </div>
+      </div>
       <div class="working-drawing container-fluid" id="wd-0">
         <div class="row">
           <div class="col-9">
@@ -363,18 +366,21 @@
   </div>
 
   <!-- import js script -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.1.0/fabric.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
-  <script src="js/html2pdf.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.5/dist/html2canvas.min.js"></script>
 
   <!-- import custom js script -->
   <script src="js/base.js"></script>
   <script src="js/model.js"></script>
-  <script src="js/view.js?v=1.3"></script>
+  <script src="js/view.js?v=1.4"></script>
   <script src="js/script.js"></script>
   <script src="js/misc.js?v=1.0"></script>
-  <script src="js/modal.js?v=1.3"></script>
+  <script src="js/modal.js?v=1.4"></script>
   <script src="js/constantConfig.js?v=1.1"></script>
   <script>
     window.history.forward(1);

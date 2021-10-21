@@ -152,8 +152,8 @@ const calcScaleOrigin = (viewBoxInfo, canvasWidth, canvasHeight) => {
     return { scale: 1, x: 0, y: 0 };
   } else {
     const scale = Math.min(
-      (canvasWidth / viewBoxInfo["length"]) * (2 / 3),
-      (canvasHeight / viewBoxInfo["width"]) * (2 / 3)
+      (canvasWidth / viewBoxInfo["length"]) * (2/3),
+      (canvasHeight / viewBoxInfo["width"]) * (2/3)
     );
     let tw = Math.ceil(canvasWidth / scale);
     let th = Math.ceil(canvasHeight / scale);

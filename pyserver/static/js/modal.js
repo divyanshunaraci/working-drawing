@@ -242,6 +242,9 @@ const renderAl = () => {
 };
 
 function download(filename, text, canvasHeight) {
+    const queryStringSearch = window.location.search;
+    const getUrlParams = new URLSearchParams(queryStringSearch);
+    const pdfVersionNo = getUrlParams.get('versionNo')
     var project_id = state.projectInfo.project_no;
     const pdfRequireHeight = canvasHeight + 30;
     const pdfRequireWidth = document.getElementById("wd-0").offsetWidth;
@@ -252,7 +255,8 @@ function download(filename, text, canvasHeight) {
             file: JSON.stringify(text),
             filename: filename,
             pdfHeight: pdfRequireHeight,
-            pdfWidth: pdfRequireWidth
+            pdfWidth: pdfRequireWidth,
+            pdfversion: pdfVersionNo
         }),
         headers: {
             'authorization': localStorage.getItem("token"),
@@ -288,44 +292,30 @@ $("#print").on("click", async function (e) {
     var canvasHeightFinal;
     for (var j = 0; j < container.length; j++) {
         if (!state.roomViews) {
-            return container.innerHTML;
+            const dataUrl = await domtoimage.toJpeg(document.getElementById("wd-0"), { quality: 0.95 })
+            var link = document.createElement('a');
+            link.download = 'bcde.png';
+            link.href = dataUrl;
+            link.click();
+            // return container.innerHTML;
         } else {
             var totalpage = state.roomViews ? state.roomViews.length : 1;;
             var currentPage = 0;
             for (var i = 0; i < state.roomViews.length; i++) {
-                // if(state.roomViews[i].name == "table_view") {
-                //     var id = document.getElementById("wd-" + i);
-                //     id.classList.remove("working-drawing");
-                //     var subDiv = document.createElement("div");
-                //     subDiv.id = "canvas"+ i;
-                //     subDiv.appendChild(id);
-                //     mainDiv.appendChild(subDiv);
-                //     var pagebreak = document.createElement("div");
-                //     pagebreak.setAttribute("style", "clear: both;page-break-after: always;");
-                //     mainDiv.appendChild(pagebreak);
-                // } else {
                 var convertMeToImg = $('#wd-' + i)[0];
                 $('.loader-msg').html(`${currentPage + i}` + "/" + `${totalpage}`);
-                const canvas = await html2canvas(convertMeToImg, { logging: true, useCORS: true })
-                // Full Quality= 1.0  // Medium Quality = 0.5   // Low Quality = 0.1
-                var img = canvas.toDataURL('image/png;base64', 1.0);
-                // subDiv = document.createElement("div");
-                // subDiv.id = "canvas" + i;
-                // var containerDiv = document.createElement("div");
-                // containerDiv.id = "wd-" + i;
-                // containerDiv.classList.add("container-fluid");
-                var imgTag = document.createElement('img');
-                imgTag.src = img;
-                imgTag.id = "imgId" + i;
-                // imgTag.width = imgWidth;
-                // imgTag.height = imgHeight
-                // containerDiv.appendChild(imgTag)
-                // subDiv.appendChild(imgTag);
-                mainDiv.appendChild(imgTag);
-                var pagebreak = document.createElement("div");
-                pagebreak.setAttribute("style", "clear: both;page-break-after: always;");
-                mainDiv.appendChild(pagebreak);
-                // }
+                try {
+                    const dataUrl = await domtoimage.toJpeg(convertMeToImg, { quality: 0.95 })
+                    var imgTag = new Image();
+                    imgTag.src = dataUrl;
+                    imgTag.id = "imgId" + i;
+                    mainDiv.appendChild(imgTag);
+                    var pagebreak = document.createElement("div");
+                    pagebreak.setAttribute("style", "clear: both;page-break-after: always;");
+                    mainDiv.appendChild(pagebreak);
+                } catch (error) {
+                    console.log(error, "error");
+                }
             }
         }
     }

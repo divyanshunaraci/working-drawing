@@ -95,7 +95,8 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
 
       document.querySelector(".main").insertAdjacentHTML("beforeend", template);
     }
-
+    const topExtraSpace = `<div class="row"><div class="col-md-12" style="margin-top: 55px"></div></div>`
+    document.querySelector("#wd-0").insertAdjacentHTML("beforebegin", topExtraSpace);
     // add space
     document
       .querySelector(".main")

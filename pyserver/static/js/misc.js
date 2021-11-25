@@ -91,8 +91,8 @@ document.querySelector(".main").addEventListener('scroll',function() {
   const pages = document.querySelectorAll(".working-drawing");
   for(let j = 0; j < pages.length; j++) {
     if (isInViewport(pages[j])) {
-      currentPageNumber = j + 1;
-      document.querySelector("#currentPageNumber").value = currentPageNumber;
+      currentPageNumber = j - 1;
+      document.querySelector("#currentPageNumber").value = currentPageNumber + 1;
     }
   }
 });

@@ -240,7 +240,7 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
         '<div class = "tempPage container-fluid"></div>'
       );
     // initialize the current and total page number in menu bar
-    document.querySelector("#totalPgNumber").textContent = viewsCnt;
+    document.querySelector("#totalPgNumber").textContent = viewsCnt + 1;
     document.querySelector("#currentPageNumber").value = 1;
 
     $('.bottom-table').find('td').on("input", function (e) {

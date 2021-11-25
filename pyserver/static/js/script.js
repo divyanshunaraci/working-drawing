@@ -145,7 +145,8 @@ const parseJSON = (parsedData) => {
 
         // get project_ & org_details
         state.projectInfo = getProjectInfo(parsedData);
-
+        state.spaceNamesData = getSpaceNamesInfo(parsedData);
+        state.handleData = getHandleData(parsedData);
         // get floor plan & names of rooms
         const info = getFloorPlan(parsedData);
         state.roomViews = [info[0]]; // push floorPlanView
@@ -256,7 +257,21 @@ const renderAll = () => {
                         }
                     }
                 }
-                // renderMaterialThumbnails(state.matThumbnails, id);
+
+                let tmpHandle = [];
+                state.handleData.forEach(ele => {
+                    Object.keys(ele).forEach(key => {
+                        hdl = ele[key]
+                        tmpHandle.push({
+                            hdldata: hdl
+                        })
+                    })
+                }) 
+                // Need to enable the code once we get handle size and quantity.
+                // for(let m = 0; m < tmpHandle.length; m++) {
+                //     renderHandleData(tmpHandle[m], id);
+                //     break;
+                // }
             }
 
         }

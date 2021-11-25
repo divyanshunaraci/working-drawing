@@ -11,6 +11,111 @@ const getProjectInfo = (json) => {
   return details;
 };
 
+const getSpaceNamesInfo = (json) => {
+  let materials = []
+  let libr = {}
+  let roomNames = []
+  let names = []
+  let rooms = json["rooms"]
+  Object.keys(rooms).forEach(roomName=>{
+    roomNames.push(roomName)
+  })
+  for (let i = 0; i < roomNames.length; i++){
+    let views = rooms[roomNames[i]]
+    Object.keys(views).forEach(indViews=>{
+      let individualView = views[indViews]
+      Object.keys(individualView).forEach(key => {
+        if (key === "floor_components"){
+          let lib = individualView[key]["library"]
+          Object.keys(lib).forEach(comp=>{
+            let material = lib[comp]["comp_details"]["materials"]
+            let name = []
+            name.push(material)
+            for (let i = 0; i < name.length; i++){
+              if (name[i].length == 0){
+                continue
+              }
+              if (name[i].length > 1){
+                for (let j = 0; j < name[i].length; j++){
+                  names.push(name[i][j])
+                }
+              }else{
+                for (let k = 0; k < name[i].length; k++){
+                  names.push(name[i][k])
+                }
+              }
+            }
+          })
+        }
+        if (key === "front_view"){
+          let lib1 = individualView[key]["floor_components"]["library"]
+          Object.keys(lib1).forEach(comp1 => {
+            let material1 = lib1[comp1]["comp_details"]["materials"]
+            let name1 = []
+            name1.push(material1)
+            for (let i = 0; i < name1.length; i++){
+              if (name1[i].length == 0){
+                continue
+              }
+              if (name1[i].length > 1){
+                for (let j = 0; j < name1[i].length; j++){
+                  names.push(name1[i][j])
+                }
+              }else{
+                for (let k = 0; k < name1[i].length; k++){
+                  names.push(name1[i][k])
+                }
+              }
+            }
+          })
+        }
+      })
+    })
+    libr[roomNames[i]] = names
+    names = []
+  }
+  materials.push(libr)
+  return materials
+}
+
+const getHandleData = (json) => {
+  let handleNames = []
+  let handles = {}
+  let roomNames = []
+  let allHandles = []
+  let rooms = json["rooms"]
+  Object.keys(rooms).forEach(roomName=>{
+    roomNames.push(roomName)
+  })
+  for (let i = 0; i < roomNames.length; i++){
+    let views = rooms[roomNames[i]]
+    Object.keys(views).forEach(indViews => {
+      let individualView = views[indViews]
+      console.log(individualView, "individual views here")
+      Object.keys(individualView).forEach(key => {
+        if (key === "front_view"){
+          let lib = individualView[key]["floor_components"]["library"]
+          Object.keys(lib).forEach(comp => {
+            let shutter = lib[comp]["external_points"]["shutter"]
+            if (shutter !== undefined){
+              Object.keys(shutter).forEach(shtr => {
+                let handleName = shutter[shtr]["handle"]["name"]
+                if (handleName !== undefined){
+                  handleNames.push(handleName)
+                }
+              })
+            }
+          })
+        }
+      })
+    })
+    handles[roomNames[i]] = handleNames
+    handleNames = []
+  }
+  allHandles.push(handles)
+  console.log(allHandles, "final handles")
+  return allHandles;
+}
 // handle 'floor_plan' part in json
 const getFloorPlan = (json) => {
   if (Object.keys(json).includes("floor_plan")) {

@@ -158,9 +158,10 @@ th {
   padding: .3rem;
 }
 
-.side-table td {
+.side-table td, .side-Handletable td {
   padding: 0.3rem;
   vertical-align: middle;
+  border: 1px solid #aaa;
 }
 .side-table img {
   margin: 2px;

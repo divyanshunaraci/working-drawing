@@ -123,7 +123,8 @@ const parseJSO = (parsedData) => {
 
         // get project_ & org_details
         state.projectInfo = getProjectInfo(parsedData);
-
+        state.spaceNamesData = getSpaceNamesInfo(parsedData);
+        // state.handleData = getHandleData(parsedData);
         // get floor plan & names of rooms
         const info = getFloorPlan(parsedData);
         state.roomViews = [info[0]]; // push floorPlanView
@@ -227,6 +228,32 @@ const renderAl = () => {
                     }
                 }
                 // renderMaterialThumbnails(state.matThumbnails, id);
+                let handleNames = [];
+                let dupRemoveHandleData = [];
+                for (key in state.rooms) {
+                    if (key === currentRoom) {
+                        tmp = state.rooms[key];
+                        for (key2 in tmp) {
+                            if (key2 === currentView) {
+                                tmp1 = tmp[key2]["front_view"]
+                                let lib = tmp1["floor_components"]["library"];
+                                Object.keys(lib).forEach(comp => {
+                                    let shutter = lib[comp]["external_points"]["shutter"]
+                                    if (shutter !== undefined){
+                                        Object.keys(shutter).forEach(shtr => {
+                                            let handleName = shutter[shtr]["handle"]["name"]
+                                            if (handleName !== undefined){
+                                                handleNames.push(handleName)
+                                                dupRemoveHandleData = handleNames.filter((v,i) => handleNames.findIndex(item => item == v) === i );
+                                            }
+                                        })
+                                    }
+                                })
+                                renderHandleData(dupRemoveHandleData, id)
+                            }
+                        }
+                    }
+                }
             }
         }
     });
@@ -301,6 +328,29 @@ $("#print").on("click", async function (e) {
         } else {
             var totalpage = state.roomViews ? state.roomViews.length : 1;;
             var currentPage = 0;
+            
+            // Starting two pages to print
+            var projInfoId = $('#project-info')[0];
+            var edgeBandInfo = $('#laminate-edgeband-info')[0];
+            
+            const projInfoIdUrl = await domtoimage.toJpeg(projInfoId, { quality: 0.95 })
+            var projInfoIdUrlImgTag = new Image();
+            projInfoIdUrlImgTag.src = projInfoIdUrl;
+            projInfoIdUrlImgTag.id = "project-info";
+            mainDiv.appendChild(projInfoIdUrlImgTag);
+            var pagebreak = document.createElement("div");
+            pagebreak.setAttribute("style", "clear: both;page-break-after: always;");
+            mainDiv.appendChild(pagebreak);
+            
+            const edgeBandInfoUrl = await domtoimage.toJpeg(edgeBandInfo, { quality: 0.95 })
+            var edgeBandInfoUrlImgTag = new Image();
+            edgeBandInfoUrlImgTag.src = edgeBandInfoUrl;
+            edgeBandInfoUrlImgTag.id = "laminate-edgeband-info";
+            mainDiv.appendChild(edgeBandInfoUrlImgTag);
+            var pagebreak = document.createElement("div");
+            pagebreak.setAttribute("style", "clear: both;page-break-after: always;");
+            mainDiv.appendChild(pagebreak);
+            
             for (var i = 0; i < state.roomViews.length; i++) {
                 var convertMeToImg = $('#wd-' + i)[0];
                 $('.loader-msg').html(`${currentPage + i}` + "/" + `${totalpage}`);

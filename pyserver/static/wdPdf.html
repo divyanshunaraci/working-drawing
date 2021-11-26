@@ -13,10 +13,6 @@
   <!-- import bootstrap 4 -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
     integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" />
-  <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" /> -->
-  <!-- <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css" /> -->
-  <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" /> -->
-
   <!-- import custom css -->
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="css/sidebar.css" />
@@ -24,6 +20,7 @@
 </head>
 
 <body onresize="renderAll()">
+  <!-- Top Nav Bar -->
   <header>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="z-index: 9;">
       <a class="navbar-brand" href="#" style="padding-top: 0; padding-bottom: 2"><small>2D Floor Plan</small></a>
@@ -143,18 +140,12 @@
 
         <!-- The Modal -->
         <div id="myModal" class="modal">
-
           <!-- Modal content -->
           <div class="modal-content">
-
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span class="close" aria-hidden="true">&times;</span>
             </button>
-
-            <!-- <div id="modal"></div> -->
-            <!-- <div id="versionNumber" style="display: flex;float: left;"></div> -->
             <br>
-
             <table class="table">
               <thead class="thead-light">
                 <tr>
@@ -167,13 +158,9 @@
                   <td id="modal" style="text-align: center;"></td>
                   <td id="versionNumber"></td>
                 </tr>
-
               </tbody>
             </table>
-
-
           </div>
-
         </div>
 
         <form class="form-inline my-2 my-lg-0">
@@ -191,6 +178,8 @@
       </div>
     </nav>
   </header>
+
+  <!-- Side Menu -->
   <div class="w3-sidebar w3-bar-block w3-xlarge bg-dark" style="width: 50px; overflow: hidden">
     <a href="#" style="margin-top: 50px" class="w3-bar-item w3-button">
       <!-- <i class="fa fa-home"></i> -->
@@ -226,7 +215,6 @@
           <g></g>
         </svg>
       </svg>
-
     </button>
 
     <button class="w3-bar-item w3-button my-sideitem" id="addArrow">
@@ -235,8 +223,8 @@
           d="M505.772,5.964L274.419,56.371l74.596,85.702L6.272,484.867c-5.689,5.689-5.689,14.906,0,20.596c2.844,2.845,6.571,4.267,10.297,4.267c3.726,0,7.453-1.422,10.297-4.267l341.316-341.369l70.939,81.502L505.772,5.964z">
         </path>
       </svg>
-
     </button>
+
     <button class="w3-bar-item w3-button my-sideitem" id="commentBox">
       <svg viewBox="0 0 512 512" width="100%" height="100%">
         <g>
@@ -249,14 +237,15 @@
         </g>
       </svg>
     </button>
+
     <button class="w3-bar-item w3-button my-sideitem" id="blueDimen">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
         <path fill="white"
           d="M256.236,504,120,367.764V329.608h72v-144H120V146.98L255.766,11.216,392,147.452v38.156H320v144h72v38.627ZM159.1,361.608l97.137,97.137,97.137-97.137H288v-208h64.9L255.766,56.471l-97.138,97.137H224v208Z"
           class="ci-primary" />
       </svg>
-
     </button>
+
     <button class="w3-bar-item w3-button my-sideitem" id="addTableRow">
       <svg class="svg-icon" style="
             width: 1.0009765625em;
@@ -269,37 +258,39 @@
           d="M128 320l576 0c35.392 0 64-28.672 64-64L768 128c0-35.328-28.608-64-64-64L128 64C92.608 64 64 92.672 64 128l0 128C64 291.328 92.608 320 128 320zM576 128l128 0 0 128L576 256 576 128zM320 128l192 0 0 128L320 256 320 128zM128 128l128 0 0 128L128 256 128 128zM704 512 128 512C92.608 512 64 540.672 64 576l0 320c0 35.392 28.608 64 64 64l576 0c35.392 0 64-28.608 64-64L768 576C768 540.672 739.392 512 704 512zM256 896 128 896l0-128 128 0L256 896zM256 704 128 704 128 576l128 0L256 704zM512 896 320 896l0-128 192 0L512 896zM512 704 320 704 320 576l192 0L512 704zM704 896 576 896l0-128 128 0L704 896zM704 704 576 704 576 576l128 0L704 704zM955.84 263.36l-168.192 112.512c-27.776 18.624-27.776 61.76 0 80.384l168.192 112.512c29.696 19.84 68.288-2.816 68.288-40.192L1024.128 303.552C1024.128 266.176 985.472 243.52 955.84 263.36z" />
       </svg>
     </button>
+
     <button class="w3-bar-item w3-button my-sideitem" id="addTableColumn">
       <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
         xmlns:svgjs="http://svgjs.com/svgjs" version="1.1" width="22" height="22" x="0" y="0" viewBox="0 0 512 512"
-        style="enable-background:new 0 0 512 512" xml:space="preserve" class="">
+        style="enable-background:new 0 0 512 512" xml:space="preserve">
         <g>
           <path xmlns="http://www.w3.org/2000/svg"
             d="m181.332031 106.667969c-3.925781 0-7.828125-1.429688-10.921875-4.3125l-80-74.664063c-4.820312-4.480468-6.378906-11.457031-3.96875-17.558594 2.410156-6.121093 8.320313-10.132812 14.890625-10.132812h160c6.570313 0 12.480469 4.011719 14.871094 10.132812 2.410156 6.125.851563 13.078126-3.96875 17.558594l-80 74.664063c-3.070313 2.882812-6.976563 4.3125-10.902344 4.3125zm-39.421875-74.667969 39.421875 36.777344 39.425781-36.777344zm0 0"
-            fill="#ffffff" data-original="#000000" style="" class="" />
+            fill="#ffffff" data-original="#000000" />
           <path xmlns="http://www.w3.org/2000/svg"
             d="m90.667969 512h-53.335938c-20.585937 0-37.332031-16.746094-37.332031-37.332031v-330.667969c0-20.585938 16.746094-37.332031 37.332031-37.332031h53.335938c20.585937 0 37.332031 16.746093 37.332031 37.332031v330.667969c0 20.585937-16.746094 37.332031-37.332031 37.332031zm-53.335938-373.332031c-2.941406 0-5.332031 2.386719-5.332031 5.332031v330.667969c0 2.941406 2.390625 5.332031 5.332031 5.332031h53.335938c2.941406 0 5.332031-2.390625 5.332031-5.332031v-330.667969c0-2.945312-2.390625-5.332031-5.332031-5.332031zm0 0"
-            fill="#ffffff" data-original="#000000" style="" class="" />
+            fill="#ffffff" data-original="#000000" />
           <path xmlns="http://www.w3.org/2000/svg"
             d="m432 512h-160c-20.585938 0-37.332031-16.746094-37.332031-37.332031v-330.667969c0-20.585938 16.746093-37.332031 37.332031-37.332031h160c20.585938 0 37.332031 16.746093 37.332031 37.332031v330.667969c0 20.585937-16.746093 37.332031-37.332031 37.332031zm-160-373.332031c-2.945312 0-5.332031 2.386719-5.332031 5.332031v330.667969c0 2.941406 2.386719 5.332031 5.332031 5.332031h160c2.945312 0 5.332031-2.390625 5.332031-5.332031v-330.667969c0-2.945312-2.386719-5.332031-5.332031-5.332031zm0 0"
-            fill="#ffffff" data-original="#000000" style="" class="" />
+            fill="#ffffff" data-original="#000000" />
           <path xmlns="http://www.w3.org/2000/svg"
             d="m112 325.332031h-96c-8.832031 0-16-7.167969-16-16s7.167969-16 16-16h96c8.832031 0 16 7.167969 16 16s-7.167969 16-16 16zm0 0"
-            fill="#ffffff" data-original="#000000" style="" class="" />
+            fill="#ffffff" data-original="#000000" />
           <path xmlns="http://www.w3.org/2000/svg"
             d="m453.332031 325.332031h-202.664062c-8.832031 0-16-7.167969-16-16s7.167969-16 16-16h202.664062c8.832031 0 16 7.167969 16 16s-7.167969 16-16 16zm0 0"
-            fill="#ffffff" data-original="#000000" style="" class="" />
+            fill="#ffffff" data-original="#000000" />
           <path xmlns="http://www.w3.org/2000/svg"
             d="m352 512c-8.832031 0-16-7.167969-16-16v-373.332031c0-8.832031 7.167969-16 16-16s16 7.167969 16 16v373.332031c0 8.832031-7.167969 16-16 16zm0 0"
-            fill="#ffffff" data-original="#000000" style="" class="" />
+            fill="#ffffff" data-original="#000000" />
         </g>
       </svg>
-
-
     </button>
   </div>
+
   <div id="loader"></div>
+
   <p class="loader-msg"></p>
+
   <div class="whole-container" style="margin-left: 55px">
     <div class="main" id="content">
       <div class="working-drawing-info container-fluid">
@@ -308,6 +299,97 @@
           </div>
         </div>
       </div>
+      <div class="working-drawing container-fluid" id="project-info" style="height: 90vh;">
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <span id="title">Project Details: </span>
+          </div>
+          <div class="col-md-6">
+            <img src="https://naraci-test.s3.ap-south-1.amazonaws.com/decorpot/static/decorpot.png" alt="Org Logo" style="width: 150px;float: right;">
+          </div>
+          <div class="col-md-12">
+            <table class="table table-bordered" style="margin: 20px auto;width: 70%">
+              <tbody style="font-size: 14px;">
+                <tr>
+                  <td>Client Name</td>
+                  <td>Mr. / Mrs. ABC</td>
+                </tr>
+                <tr>
+                  <td>Apartment Address</td>
+                  <td>Address Address Address Address</td>
+                </tr>
+                <tr>
+                  <td>Client Contact Number</td>
+                  <td>9999999999</td>
+                </tr>
+                <tr>
+                  <td>Desinger Name</td>
+                  <td>Mr. / Mrs. ABC</td>
+                </tr>
+                <tr>
+                  <td>Visualizer Name</td>
+                  <td>Mr. / Mrs. ABC</td>
+                </tr>
+                <tr>
+                  <td>Target Completion Date</td>
+                  <td>11/11/2021</td>
+                </tr>
+                <tr>
+                  <td>Contract Sign Date</td>
+                  <td>11/11/2021</td>
+                </tr>
+                <tr>
+                  <td>Project Number (Factory)</td>
+                  <td>DP.1111.1</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="html2pdf__page-break"></div>
+      <div class="working-drawing container-fluid" id="laminate-edgeband-info" >
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <span id="title">Laminates & Edge Band Required: </span>
+          </div>
+          <div class="col-md-6">
+            <img src="https://naraci-test.s3.ap-south-1.amazonaws.com/decorpot/static/decorpot.png" alt="Org Logo" style="width: 150px;float: right;">
+          </div>
+          <div class="col-md-12" id="laminateEdgeBand">
+            <table class="table table-bordered">
+              <thead style="font-weight: 700;">
+                <tr>
+                  <td>Space (Desigenr)</td>
+                  <td>Laminate Company & Code (Designer)</td>
+                  <td>Laminate Quantity (Factory)</td>
+                  <td>Checked By</td>
+                  <td>Edge Band Code (Factory)</td>
+                  <td>Edge Band Quantity (Factory)</td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td rowspan="2">Living</td>
+                  <td>DPA-127</td>
+                  <td>1</td>
+                  <td>ABC</td>
+                  <td>DPA-120</td>
+                  <td>2</td>
+                </tr>
+                <tr>
+                  <td>DPA-127</td>
+                  <td>1</td>
+                  <td>ABC</td>
+                  <td>DPA-120</td>
+                  <td>2</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="html2pdf__page-break"></div>
       <div class="working-drawing container-fluid" id="wd-0">
         <div class="row">
           <div class="col-9">
@@ -376,11 +458,11 @@
 
   <!-- import custom js script -->
   <script src="js/base.js"></script>
-  <script src="js/model.js"></script>
-  <script src="js/view.js?v=1.4"></script>
-  <script src="js/script.js"></script>
-  <script src="js/misc.js?v=1.0"></script>
-  <script src="js/modal.js?v=1.4"></script>
+  <script src="js/model.js?v=1.0"></script>
+  <script src="js/view.js?v=1.5"></script>
+  <script src="js/script.js?v=1.0"></script>
+  <script src="js/misc.js?v=1.1"></script>
+  <script src="js/modal.js?v=1.5"></script>
   <script src="js/constantConfig.js?v=1.1"></script>
   <script>
     window.history.forward(1);

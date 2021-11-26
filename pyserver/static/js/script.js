@@ -145,7 +145,8 @@ const parseJSON = (parsedData) => {
 
         // get project_ & org_details
         state.projectInfo = getProjectInfo(parsedData);
-
+        state.spaceNamesData = getSpaceNamesInfo(parsedData);
+        // state.handleData = getHandleData(parsedData);
         // get floor plan & names of rooms
         const info = getFloorPlan(parsedData);
         state.roomViews = [info[0]]; // push floorPlanView
@@ -242,7 +243,7 @@ const renderAll = () => {
             renderView(state.projectInfo, view, id);
             if (viewTypes.includes(view.getName())) {
             }
-            if (view.name === "front_view") {
+            if (view.name === "render_wall_view" || view.name === "image_view") {
                 for (key in state.rooms) {
                     if (key === currentRoom) {
                         tmp = state.rooms[key]
@@ -256,7 +257,33 @@ const renderAll = () => {
                         }
                     }
                 }
-                // renderMaterialThumbnails(state.matThumbnails, id);
+
+                let handleNames = [];
+                let dupRemoveMaterialData = [];
+                for (key in state.rooms) {
+                    if (key === currentRoom) {
+                        tmp = state.rooms[key];
+                        for (key2 in tmp) {
+                            if (key2 === currentView) {
+                                tmp1 = tmp[key2]["front_view"]
+                                let lib = tmp1["floor_components"]["library"];
+                                Object.keys(lib).forEach(comp => {
+                                    let shutter = lib[comp]["external_points"]["shutter"]
+                                    if (shutter !== undefined){
+                                        Object.keys(shutter).forEach(shtr => {
+                                            let handleName = shutter[shtr]["handle"]["name"]
+                                            if (handleName !== undefined){
+                                                handleNames.push(handleName)
+                                                dupRemoveMaterialData = handleNames.filter((v,i) => handleNames.findIndex(item => item == v) === i );
+                                            }
+                                        })
+                                    }
+                                })
+                                renderHandleData(dupRemoveMaterialData, id)
+                            }
+                        }
+                    }
+                }
             }
 
         }

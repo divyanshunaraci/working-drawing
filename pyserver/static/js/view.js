@@ -13,11 +13,25 @@ const fix_dpi = (canvas) => {
   //set the correct attributes for a crystal clear image!
   canvas.setAttribute("width", style.width() * dpi);
   canvas.setAttribute("height", style.height() * dpi);
+  canvas.selectable = true;
 };
 
 // generate views and render project_ & org_url in every views
 const renderProjectInfo = (projectInfo, viewsCnt) => {
   if (projectInfo == null || viewsCnt < 0) return;
+  let matData = [];
+  state.spaceNamesData.forEach(ele => {
+    Object.keys(ele).forEach(key => {
+      rooms = ele[key]
+      let dupRemoveMaterialData = rooms.filter((v,i) => rooms.findIndex(item => item.name == v.name) === i )
+      matData.push({
+        rname: key,
+        materialdata: dupRemoveMaterialData,
+        matlen: dupRemoveMaterialData.length
+      })
+    })
+  })
+
   let orgDetail = {};
   if (projectInfo.project_no.includes('DP.')) {
     orgDetail = {
@@ -35,68 +49,190 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
   try {
     // const details = state.projectInfo;
     for (let i = 0; i < viewsCnt; i++) {
-      const template = `<div class="working-drawing container-fluid" id = 'wd-${i}'>
-			<div class="row">
-				<div id="legend-view" class="col-9">
-					<div class="row">
-						<div class="col-12" style="text-align: center">
-							<span id="title">Ground Floor Plan</span>
-              <span id="extraInfo"></span>
-						</div>
-					</div>
-					<div class="row">
-						<div class = "canvas-container">
-						<canvas  ></canvas>
-						<canvas class = 'overlay-canvas-container' id = "c#${i}"></canvas>
-						</div>
-					</div>
-				</div>
-				<div id=legend-view_1 class="col-3">
-              <div class = 'row' style=" height: 2.5em">
-								<div class = 'col-12' style="text-align: center">
-									<span style="font-size: large">Legend</span>
-                   <button class="legend-add-row">+</button>
-                   <input type="file" class="legend-add-image" />
-								</div>
-							</div>
-					<div class = 'fixed-table-body'>
-					<table class="table table-bordered side-table" >
-
-					
-					</table></div>
-				</div>
-			</div>
-			<div class="row">
-				<table class="table table-bordered bottom-table" style="margin-bottom: ${i-1}px;">
-					<tbody>
-						<tr>
-							<td rowspan="3" contenteditable = 'true'>
-              <img src = "${orgDetail.org_logo_url}" crossorigin="" width="300" height="50" alt= "logo" />
-              <span> ${orgDetail.org_name} : ${orgDetail.org_address}</span>
-							</td>
-							<td class='drawing-title' contenteditable = 'true'>Drawing TITLE: Floor Plan</td>
-							<td contenteditable = 'true'>Designed by: ${projectInfo.designer_name}</td>
-							<td contenteditable = 'true'>Scale: NTS</td>
-						</tr>
-						<tr>
-							<td contenteditable = 'true'>Project Title: ${projectInfo.project_name}</td>
-							<td contenteditable = 'true'>Drafted by: xxx</td>
-							<td contenteditable = 'true'>Drawing Revision: R0</td>
-						</tr>
-						<tr>
-							<td contenteditable = 'true'>Location: ${projectInfo.apartment_name}</td>
-							<td contenteditable = 'true' >Checked by: XYZ</td>
-							<td contenteditable = 'true'>Date: ${projectInfo.contract_date}</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-    </div><div class="html2pdf__page-break"></div>`;
+      const template = `
+      <div class="working-drawing container-fluid" id='wd-${i}'>
+        <div class="row">
+          <div id="legend-view" class="col-9">
+            <div class="row">
+              <div class="col-12" style="text-align: center">
+                <span id="title">Ground Floor Plan</span>
+                <span id="extraInfo"></span>
+              </div>
+            </div>
+            <div class="row">
+             
+                <div class="canvas-container">
+                  <canvas  ></canvas>
+                  <canvas class = 'overlay-canvas-container' id = "c#${i}"></canvas>
+                </div>
+            </div>
+          </div>
+          <div id="legend-view_1" class="col-3">
+            <div class = 'row' style=" height: 2.5em">
+              <div class = 'col-12' style="text-align: center">
+                <span style="font-size: large">Legend</span>
+                <button class="legend-add-row">+</button>
+                <input type="file" class="legend-add-image" />
+              </div>
+            </div>
+            <div class = 'fixed-table-body'>
+              <h6>Materials Details</h6>
+              <table class="table table-bordered side-table" >            
+              </table>
+            </div>
+            <div class='fixed-table-body'>
+              <h6>Handles Details</h6>
+              <table class="table table-bordered side-Handletable" >            
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <table class="table table-bordered bottom-table" style="margin-bottom: ${i-1}px;">
+            <tbody>
+              <tr>
+                <td rowspan="3" contenteditable = 'true'>
+                <img src = "${orgDetail.org_logo_url}" crossorigin="" width="300" height="50" alt= "logo" />
+                <span> ${orgDetail.org_name} : ${orgDetail.org_address}</span>
+                </td>
+                <td class='drawing-title' contenteditable = 'true'>Drawing TITLE: Floor Plan</td>
+                <td contenteditable = 'true'>Designed by: ${projectInfo.designer_name}</td>
+                <td contenteditable = 'true'>Scale: NTS</td>
+              </tr>
+              <tr>
+                <td contenteditable = 'true'>Project Title: ${projectInfo.project_name}</td>
+                <td contenteditable = 'true'>Drafted by: xxx</td>
+                <td contenteditable = 'true'>Drawing Revision: R0</td>
+              </tr>
+              <tr>
+                <td contenteditable = 'true'>Location: ${projectInfo.apartment_name}</td>
+                <td contenteditable = 'true' >Checked by: XYZ</td>
+                <td contenteditable = 'true'>Date: ${projectInfo.contract_date}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="html2pdf__page-break"></div>`;
 
       document.querySelector(".main").insertAdjacentHTML("beforeend", template);
     }
-    const topExtraSpace = `<div class="row"><div class="col-md-12" style="margin-top: 55px"></div></div>`
-    document.querySelector("#wd-0").insertAdjacentHTML("beforebegin", topExtraSpace);
+
+    // Material Table Data Page
+    const materialTableDataPage = `
+      <div class="working-drawing container-fluid" id="laminate-edgeband-info">
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <span id="title">Laminates & Edge Band Required: </span>
+          </div>
+          <div class="col-md-6">
+            <img src="${orgDetail.org_logo_url}" alt="Org Logo" style="width: 150px;float: right;">
+          </div>
+          <div class="col-md-12">
+            <div id="laminateEdgeBand">
+              <table class="table table-bordered">
+                <thead style="font-weight: 700;">
+                  <tr>
+                    <td>Space (Desigenr)</td>
+                    <td>Laminate Company & Code (Designer)</td>
+                    <td>Laminate Quantity (Factory)</td>
+                    <td>Checked By</td>
+                    <td>Edge Band Code (Factory)</td>
+                    <td>Edge Band Quantity (Factory)</td>
+                  </tr>
+                </thead>
+                <tbody id="laminatetbodyData">
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="html2pdf__page-break"></div>`
+    document.querySelector("#wd-0").insertAdjacentHTML("beforebegin", materialTableDataPage);
+
+    // Table body data show
+    for(let i = 0; i < matData.length; i++) {
+      const tableInfoSpace = `
+        <tr id="othertaginfo-${i}">
+          <td contenteditable = 'true' id="submaterial-${i}" rowspan="${matData[i].matlen +1 }" style="text-align: center;
+          vertical-align: middle;">${matData[i].rname}</td>
+        </tr>`
+      document.querySelector("#laminatetbodyData").insertAdjacentHTML("beforeend", tableInfoSpace);
+      
+      let mlen = `${matData[i].matlen}`;
+      let finalLength = parseInt(mlen)
+      for(let k = 1; k <= finalLength; k++) {
+        for(let j = 0; j < matData[i].materialdata.length; j++) {         
+          const subtableMatRow = `
+            <td contenteditable = 'true'>${matData[i].materialdata[j].name}</td>
+            <td contenteditable = 'true'>0</td>
+            <td contenteditable = 'true'>Name</td>
+            <td contenteditable = 'true'>${matData[i].materialdata[j].edge_band_code}</td>
+            <td contenteditable = 'true'>0</td>`
+          document.querySelector(`#othertaginfo-${i}`).insertAdjacentHTML("afterend", subtableMatRow);
+        }
+        break
+      }
+    }
+
+    // Project Details Page
+    const topProjectInfoDetailPage = `
+      <div class="row">
+        <div class="col-md-12" style="margin-top: 55px">
+        </div>
+      </div>
+      <div class="working-drawing container-fluid" id="project-info" style="height: 90vh;">
+        <div class="row pt-4">
+          <div class="col-md-6">
+            <span id="title">Project Details: </span>
+          </div>
+          <div class="col-md-6">
+            <img src="${orgDetail.org_logo_url}" alt="Org Logo" style="width: 150px;float: right;">
+          </div>
+          <div class="col-md-12">
+            <table class="table table-bordered" style="margin: 20px auto;width: 70%">
+              <tbody style="font-size: 14px;">
+                <tr>
+                  <td>Client Name</td>
+                  <td contenteditable = 'true'>Mr. / Mrs. ${projectInfo.client_name}</td>
+                </tr>
+                <tr>
+                  <td>Apartment Address</td>
+                  <td contenteditable = 'true'>${projectInfo.apartment_name}</td>
+                </tr>
+                <tr>
+                  <td>Client Contact Number</td>
+                  <td contenteditable = 'true'>9999999999</td>
+                </tr>
+                <tr>
+                  <td>Desinger Name</td>
+                  <td contenteditable = 'true'>Mr. / Mrs. ${projectInfo.designer_name}</td>
+                </tr>
+                <tr>
+                  <td>Visualizer Name</td>
+                  <td contenteditable = 'true'>Mr. / Mrs. ABC</td>
+                </tr>
+                <tr>
+                  <td>Target Completion Date</td>
+                  <td contenteditable = 'true'>11/11/2021</td>
+                </tr>
+                <tr>
+                  <td>Contract Sign Date</td>
+                  <td contenteditable = 'true'>${projectInfo.contract_date}</td>
+                </tr>
+                <tr>
+                  <td>Project Number (Factory)</td>
+                  <td contenteditable = 'true'>${projectInfo.project_no}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="html2pdf__page-break"></div>`
+    document.querySelector("#laminate-edgeband-info").insertAdjacentHTML("beforebegin", topProjectInfoDetailPage);
+    
     // add space
     document
       .querySelector(".main")
@@ -105,7 +241,7 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
         '<div class = "tempPage container-fluid"></div>'
       );
     // initialize the current and total page number in menu bar
-    document.querySelector("#totalPgNumber").textContent = viewsCnt;
+    document.querySelector("#totalPgNumber").textContent = viewsCnt + 1;
     document.querySelector("#currentPageNumber").value = 1;
 
     $('.bottom-table').find('td').on("input", function (e) {
@@ -185,7 +321,7 @@ const calcScaleOrigin = (viewBoxInfo, canvasWidth, canvasHeight) => {
 const renderFloorPlan = (floorPlanView, id) => {
   // To hide the legneds view and dimension scaling
   state.roomViews.forEach((elem, index) => {
-    if (elem.name == "Ground floor plan" || elem.name == "room_top_view" || elem.name == "top_view" || elem.name == "table_view" || elem.name == "render_wall_view" || elem.name == "internal_view" || elem.name == "EXTRA_VIEW" || elem.type == "ImageView") {
+    if (elem.name == "Ground floor plan" || elem.name == "room_top_view" || elem.name == "top_view" || elem.name == "front_view" || elem.name == "table_view" || elem.name == "internal_view" || elem.name == "EXTRA_VIEW") {
       ele1 = document.querySelector("#wd-" + index);
       ele1.querySelectorAll("[id='legend-view']").forEach(b => b.setAttribute("class", "col-12"));
       ele1.querySelectorAll("[id='legend-view_1']").forEach(b => b.setAttribute("style", "display: none"));
@@ -205,7 +341,7 @@ const renderFloorPlan = (floorPlanView, id) => {
   cx.beginPath();
   cx.strokeStyle = "black";
   cx.lineWidth = "16";
-
+  cx.selectable = true;
   path.forEach((edge) => {
     const el = edge.getCoords();
     cx.moveTo(el[0][0], -1 * el[0][1]);
@@ -475,6 +611,7 @@ const renderRenderView = (imgURL, id) => {
   const cx = document.querySelector(`#wd-${id} canvas`).getContext("2d");
   // reset the canvas transform( setTransform is absolute transformation )
   cx.setTransform(1, 0, 0, 1, 0, 0);
+  cx.selectable = true;
   const image = new Image(canvas.width, canvas.height);
   image.setAttribute("crossorigin", "*")
   image.onload = drawImageActualSize; // Draw when image has loaded
@@ -870,6 +1007,8 @@ const renderOutline = (outline, id, type, dashPattern = [], view_name = '') => {
     cx.lineTo(el[1][0], -1 * el[1][1]);
   });
   cx.stroke();
+  cx.editable = true;
+  cx.selectable = true;
   cx.closePath();
 };
 
@@ -955,7 +1094,7 @@ const renderTexts = (textObject, id) => {
 
       canvas.getObjects();
       canvas.add(textbox);
-      canvas.selection = false;
+      canvas.selectable = true;
       canvas.renderAll();
       canvas.calcOffset();
     }
@@ -1084,6 +1223,7 @@ const renderDimensions = (dimensions, id) => {
   cx.beginPath();
   cx.strokeStyle = "blue";
   cx.lineWidth = "4";
+  cx.selectable = true;
   dimensions.forEach((dimension) => {
     const rect = dimension.boundRect;
     // horizontal dimension
@@ -1143,6 +1283,7 @@ const renderDimensions = (dimensions, id) => {
       cx.restore();
     }
   });
+  cx.selectable = true;
   cx.stroke();
   cx.closePath();
 };
@@ -1176,6 +1317,7 @@ const renderPyDimensions = (dimensions, id) => {
         strokeWidth: 2,
         evented: false,
         objectCaching: false,
+        selectable: true
       }
     );
     let line2 = new fabric.Line(
@@ -1192,6 +1334,7 @@ const renderPyDimensions = (dimensions, id) => {
         strokeWidth: 2,
         evented: false,
         objectCaching: false,
+        selectable: true
       }
     );
     // if the dimension is < 200, just draw line
@@ -1204,6 +1347,7 @@ const renderPyDimensions = (dimensions, id) => {
         stroke: "blue",
         evented: false,
         objectCaching: false,
+        selectable: true
       });
       lineGroup = new fabric.Group([line1, line2, line3]);
     }
@@ -1229,6 +1373,7 @@ const renderPyDimensions = (dimensions, id) => {
           stroke: "blue",
           evented: false,
           objectCaching: false,
+          selectable: true
         });
         line4 = new fabric.Line([mid2[0], mid2[1], pt2[0], pt2[1]], {
           left: mid2[0],
@@ -1236,6 +1381,7 @@ const renderPyDimensions = (dimensions, id) => {
           stroke: "blue",
           evented: false,
           objectCaching: false,
+          selectable: true
         });
       } else {
         line3 = new fabric.Line([mid1[0], mid1[1], pt1[0], pt1[1]], {
@@ -1244,6 +1390,7 @@ const renderPyDimensions = (dimensions, id) => {
           stroke: "blue",
           evented: false,
           objectCaching: false,
+          selectable: true
         });
         line4 = new fabric.Line([pt2[0], pt2[1], mid2[0], mid2[1]], {
           left: pt2[0],
@@ -1251,6 +1398,7 @@ const renderPyDimensions = (dimensions, id) => {
           stroke: "blue",
           evented: false,
           objectCaching: false,
+          selectable: true
         });
       }
       if (x1 == x2 && y1 == y2 && Number(dimension.label) > 99) {
@@ -1445,8 +1593,8 @@ const renderMaterialThumbnails = (matThumbnails, id) => {
 
   // generate table head
   // const headData = ['S.No', '', 'Finishes'];
-  const headData = ["", "Finishes"];
-  generateTableHead(table, headData);
+  // const headData = ["", "Finishes"];
+  // generateTableHead(table, headData);
 
   // generate main content of table
   const data = [];
@@ -1630,4 +1778,30 @@ const jsonCoords2fabricCoords = (pos, scale, origin) => {
   const x = ((pos[0] + origin[0]) * scale) / dpi;
   const y = ((-1 * pos[1] + origin[1]) * scale) / dpi;
   return [x, y];
+};
+
+// Render Handle Data
+const renderHandleData = (handleDetail, id) => {
+  if (!handleDetail) {
+    return;
+  }
+  if (handleDetail.length === 0) {
+    return;
+  }
+  // get side-table element
+  let table = document.querySelector(`#wd-${id} .side-Handletable`);
+
+  // generate table head
+  // const headData = ['Handle/KNOB', 'Size/Model No', 'Quantity'];
+  // generateTableHead(table, headData);
+
+  // generate main content of table
+  const data = [];
+  Object.keys(handleDetail).forEach((key, id) => {
+    data.push({
+      srNo: id + 1,
+      name: handleDetail[key],
+    });
+  });
+  generateTable(table, data);
 };

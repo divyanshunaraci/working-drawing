@@ -23,13 +23,14 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
   state.spaceNamesData.forEach(ele => {
     Object.keys(ele).forEach(key => {
       rooms = ele[key]
+      let dupRemoveMaterialData = rooms.filter((v,i) => rooms.findIndex(item => item.name == v.name) === i )
       matData.push({
         rname: key,
-        materialdata: rooms,
-        matlen: rooms.length
+        materialdata: dupRemoveMaterialData,
+        matlen: dupRemoveMaterialData.length
       })
     })
-  }) 
+  })
 
   let orgDetail = {};
   if (projectInfo.project_no.includes('DP.')) {
@@ -130,7 +131,7 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
           <div class="col-md-12">
             <div id="laminateEdgeBand">
               <table class="table table-bordered">
-                <thead>
+                <thead style="font-weight: 700;">
                   <tr>
                     <td>Space (Desigenr)</td>
                     <td>Laminate Company & Code (Designer)</td>
@@ -181,7 +182,7 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
         <div class="col-md-12" style="margin-top: 55px">
         </div>
       </div>
-      <div class="working-drawing container-fluid" id="project-info">
+      <div class="working-drawing container-fluid" id="project-info" style="height: 90vh;">
         <div class="row pt-4">
           <div class="col-md-6">
             <span id="title">Project Details: </span>
@@ -190,8 +191,8 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
             <img src="${orgDetail.org_logo_url}" alt="Org Logo" style="width: 150px;float: right;">
           </div>
           <div class="col-md-12">
-            <table class="table table-bordered">
-              <tbody>
+            <table class="table table-bordered" style="margin: 20px auto;width: 70%">
+              <tbody style="font-size: 14px;">
                 <tr>
                   <td>Client Name</td>
                   <td contenteditable = 'true'>Mr. / Mrs. ${projectInfo.client_name}</td>
@@ -320,7 +321,7 @@ const calcScaleOrigin = (viewBoxInfo, canvasWidth, canvasHeight) => {
 const renderFloorPlan = (floorPlanView, id) => {
   // To hide the legneds view and dimension scaling
   state.roomViews.forEach((elem, index) => {
-    if (elem.name == "Ground floor plan" || elem.name == "room_top_view" || elem.name == "top_view" || elem.name == "table_view" || elem.name == "render_wall_view" || elem.name == "internal_view" || elem.name == "EXTRA_VIEW" || elem.type == "ImageView") {
+    if (elem.name == "Ground floor plan" || elem.name == "room_top_view" || elem.name == "top_view" || elem.name == "front_view" || elem.name == "table_view" || elem.name == "internal_view" || elem.name == "EXTRA_VIEW") {
       ele1 = document.querySelector("#wd-" + index);
       ele1.querySelectorAll("[id='legend-view']").forEach(b => b.setAttribute("class", "col-12"));
       ele1.querySelectorAll("[id='legend-view_1']").forEach(b => b.setAttribute("style", "display: none"));
@@ -1791,13 +1792,14 @@ const renderHandleData = (handleDetail, id) => {
   let table = document.querySelector(`#wd-${id} .side-Handletable`);
 
   // generate table head
-  const headData = ['Handle/KNOB', 'Size/Model No', 'Quantity'];
-  generateTableHead(table, headData);
+  // const headData = ['Handle/KNOB', 'Size/Model No', 'Quantity'];
+  // generateTableHead(table, headData);
 
   // generate main content of table
   const data = [];
   Object.keys(handleDetail).forEach((key, id) => {
     data.push({
+      srNo: id + 1,
       name: handleDetail[key],
     });
   });

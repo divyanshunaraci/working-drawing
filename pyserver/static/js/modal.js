@@ -124,7 +124,7 @@ const parseJSO = (parsedData) => {
         // get project_ & org_details
         state.projectInfo = getProjectInfo(parsedData);
         state.spaceNamesData = getSpaceNamesInfo(parsedData);
-        state.handleData = getHandleData(parsedData);
+        // state.handleData = getHandleData(parsedData);
         // get floor plan & names of rooms
         const info = getFloorPlan(parsedData);
         state.roomViews = [info[0]]; // push floorPlanView
@@ -228,20 +228,32 @@ const renderAl = () => {
                     }
                 }
                 // renderMaterialThumbnails(state.matThumbnails, id);
-                let tmpHandle = [];
-                state.handleData.forEach(ele => {
-                    Object.keys(ele).forEach(key => {
-                        hdl = ele[key]
-                        tmpHandle.push({
-                            hdldata: hdl
-                        })
-                    })
-                }) 
-                // Need to enable the code once we get handle size and quantity.
-                // for(let m = 0; m < tmpHandle.length; m++) {
-                //     renderHandleData(tmpHandle[m], id);
-                //     break;
-                // }
+                let handleNames = [];
+                let dupRemoveHandleData = [];
+                for (key in state.rooms) {
+                    if (key === currentRoom) {
+                        tmp = state.rooms[key];
+                        for (key2 in tmp) {
+                            if (key2 === currentView) {
+                                tmp1 = tmp[key2]["front_view"]
+                                let lib = tmp1["floor_components"]["library"];
+                                Object.keys(lib).forEach(comp => {
+                                    let shutter = lib[comp]["external_points"]["shutter"]
+                                    if (shutter !== undefined){
+                                        Object.keys(shutter).forEach(shtr => {
+                                            let handleName = shutter[shtr]["handle"]["name"]
+                                            if (handleName !== undefined){
+                                                handleNames.push(handleName)
+                                                dupRemoveHandleData = handleNames.filter((v,i) => handleNames.findIndex(item => item == v) === i );
+                                            }
+                                        })
+                                    }
+                                })
+                                renderHandleData(dupRemoveHandleData, id)
+                            }
+                        }
+                    }
+                }
             }
         }
     });

@@ -78,44 +78,43 @@ const getSpaceNamesInfo = (json) => {
   return materials
 }
 
-const getHandleData = (json) => {
-  let handleNames = []
-  let handles = {}
-  let roomNames = []
-  let allHandles = []
-  let rooms = json["rooms"]
-  Object.keys(rooms).forEach(roomName=>{
-    roomNames.push(roomName)
-  })
-  for (let i = 0; i < roomNames.length; i++){
-    let views = rooms[roomNames[i]]
-    Object.keys(views).forEach(indViews => {
-      let individualView = views[indViews]
-      console.log(individualView, "individual views here")
-      Object.keys(individualView).forEach(key => {
-        if (key === "front_view"){
-          let lib = individualView[key]["floor_components"]["library"]
-          Object.keys(lib).forEach(comp => {
-            let shutter = lib[comp]["external_points"]["shutter"]
-            if (shutter !== undefined){
-              Object.keys(shutter).forEach(shtr => {
-                let handleName = shutter[shtr]["handle"]["name"]
-                if (handleName !== undefined){
-                  handleNames.push(handleName)
-                }
-              })
-            }
-          })
-        }
-      })
-    })
-    handles[roomNames[i]] = handleNames
-    handleNames = []
-  }
-  allHandles.push(handles)
-  console.log(allHandles, "final handles")
-  return allHandles;
-}
+// const getHandleData = (json) => {
+//   let handleNames = []
+//   let handles = {}
+//   let roomNames = []
+//   let allHandles = []
+//   let rooms = json["rooms"]
+//   Object.keys(rooms).forEach(roomName=>{
+//     roomNames.push(roomName)
+//   })
+//   for (let i = 0; i < roomNames.length; i++){
+//     let views = rooms[roomNames[i]]
+//     Object.keys(views).forEach(indViews => {
+//       let individualView = views[indViews]
+//       Object.keys(individualView).forEach(key => {
+//         if (key === "front_view"){
+//           let lib = individualView[key]["floor_components"]["library"]
+//           Object.keys(lib).forEach(comp => {
+//             let shutter = lib[comp]["external_points"]["shutter"]
+//             if (shutter !== undefined){
+//               Object.keys(shutter).forEach(shtr => {
+//                 let handleName = shutter[shtr]["handle"]["name"]
+//                 if (handleName !== undefined){
+//                   handleNames.push(handleName)
+//                 }
+//               })
+//             }
+//           })
+//         }
+//       })
+//     })
+//     handles[roomNames[i]] = handleNames
+//     handleNames = []
+//   }
+//   allHandles.push(handles)
+//   console.log(allHandles, "final handles")
+//   return allHandles;
+// }
 // handle 'floor_plan' part in json
 const getFloorPlan = (json) => {
   if (Object.keys(json).includes("floor_plan")) {
@@ -186,37 +185,38 @@ const getRoomObjects = (rooms) => {
     // loop through room views/individual comps
     let i = 0;
     Object.keys(rooms[name]).forEach((compName) => {
-      if (compName == "room_top_view") {
-        //  handle 'room_top_view' data
-        let temp = handleRoomTopViewDimens(rooms[name][compName], name);
-        let views = handleRoomTopView(rooms[name][compName], name);
-        let flag = 0, count = 0;
-        for (let i = 0; i < views.length; i++) {
-          let k = 0;
-          if (views[i].type == "TableView" && views[i].compsInfo.length > 15) {
-            flag = 1;
-            for (let j = 15; j < views[i].compsInfo.length; j += 15) {
-              count++;
-              let obj = new TableView(`${views[i].id}+${k++}`, views[i].name, views[i].compsInfo.splice(j, j + 15))
-              views.splice(i + 1, 0, obj);
-            }
-          }
-        }
+      // if (compName == "room_top_view") {
+      //   //  handle 'room_top_view' data
+      //   let temp = handleRoomTopViewDimens(rooms[name][compName], name);
+      //   let views = handleRoomTopView(rooms[name][compName], name);
+      //   let flag = 0, count = 0;
+      //   for (let i = 0; i < views.length; i++) {
+      //     let k = 0;
+      //     if (views[i].type == "TableView" && views[i].compsInfo.length > 15) {
+      //       flag = 1;
+      //       for (let j = 15; j < views[i].compsInfo.length; j += 15) {
+      //         count++;
+      //         let obj = new TableView(`${views[i].id}+${k++}`, views[i].name, views[i].compsInfo.splice(j, j + 15))
+      //         views.splice(i + 1, 0, obj);
+      //       }
+      //     }
+      //   }
 
-        resultViews = [...resultViews, ...views];
-        dimens = [...dimens, ...temp[0]]; // py dimens
-        viewBoxInfo = [...viewBoxInfo, ...temp[1]];
-        console.log(temp)
-        if (flag == 1) {
-          for (i = 1; i <= count; i++) {
-            viewBoxInfo = [...viewBoxInfo, temp[1]];
-            dimens = [...dimens, temp[[0]]]
-          }
+      //   resultViews = [...resultViews, ...views];
+      //   dimens = [...dimens, ...temp[0]]; // py dimens
+      //   viewBoxInfo = [...viewBoxInfo, ...temp[1]];
+      //   console.log(temp)
+      //   if (flag == 1) {
+      //     for (i = 1; i <= count; i++) {
+      //       viewBoxInfo = [...viewBoxInfo, temp[1]];
+      //       dimens = [...dimens, temp[[0]]]
+      //     }
 
-        }
+      //   }
 
 
-      } else if (compName == "render_individual_comps") {
+      // } else 
+      if (compName == "render_individual_comps") {
         // handle 'render_individual_comps'
         let temp = handleIndividualCompsDimens(rooms[name][compName], name);
         let views = handleIndividualComps(rooms[name][compName], name);

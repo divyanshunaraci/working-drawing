@@ -24,6 +24,7 @@ var openNewJSON = false;
 
 
 const readJSO = function (input) {
+    console.log(input, "input");
     try {
 
         $("#loader").toggle();
@@ -524,6 +525,8 @@ function getProjects(projectNo, versionNo) {
                         readJSO(ele.wdFile)
                     }
                 })
+            } else {
+                console.log("Project WD file Not found");
             }
         })
 

@@ -6,10 +6,10 @@ var APIAddress = {
     // User Interface API
     readJSO: "http://65.0.215.24:4000/json",
     
-    // Transaction Service API
-    getWdProject: "http://15.207.181.191:8080/api/project/wdProject",
+    // Transaction Service API\
+    getWdProject: "http://15.206.209.192:8080/api/project/wdProject",
     getBtnClickProject: "http://15.207.181.191:8080/api/project/wdProject",
-    generatePDF: "http://15.207.181.191:8080/api/working-drawing/generate_pdf", 
+    generatePDF: "http://15.206.209.192:8080/api/working-drawing/generate_pdf", 
     importSaveJSON: "http://localhost:4000/static/json1.json",
 }
 var decorpotOrg = {

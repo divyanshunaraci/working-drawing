@@ -63,6 +63,31 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
             <div class = "row main-class" id = "div-${i}">
 
             </div>
+            <div class="row" style = "background-color:white">
+              <table class="table table-bordered bottom-table" style="margin-bottom: ${i-1}px;">
+                <tbody>
+                  <tr>
+                    <td rowspan="3" contenteditable = 'true'>
+                    <img src = "${orgDetail.org_logo_url}" crossorigin="" width="300" height="50" alt= "logo" />
+                    <span> ${orgDetail.org_name} : ${orgDetail.org_address}</span>
+                    </td>
+                    <td class='drawing-title' contenteditable = 'true'>Drawing TITLE: Floor Plan</td>
+                    <td contenteditable = 'true'>Designed by: ${projectInfo.designer_name}</td>
+                    <td contenteditable = 'true'>Scale: NTS</td>
+                  </tr>
+                  <tr>
+                    <td contenteditable = 'true'>Project Title: ${projectInfo.project_name}</td>
+                    <td contenteditable = 'true'>Drafted by: xxx</td>
+                    <td contenteditable = 'true'>Drawing Revision: R0</td>
+                  </tr>
+                  <tr>
+                    <td contenteditable = 'true'>Location: ${projectInfo.apartment_name}</td>
+                    <td contenteditable = 'true' >Checked by: XYZ</td>
+                    <td contenteditable = 'true'>Date: ${projectInfo.contract_date}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
           <div class="html2pdf__page-break"></div>`
         document.querySelector(".main").insertAdjacentHTML("beforeend", check)
@@ -73,6 +98,31 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
           <div class = "container" id="checkId-${i}" style = "margin-left:1px">
             <div class = "row main-class" id = "div-${i}">
 
+            </div>
+            <div class="row" style = "background-color:white">
+              <table class="table table-bordered bottom-table" style="margin-bottom: ${i-1}px;">
+                <tbody>
+                  <tr>
+                    <td rowspan="3" contenteditable = 'true'>
+                    <img src = "${orgDetail.org_logo_url}" crossorigin="" width="300" height="50" alt= "logo" />
+                    <span> ${orgDetail.org_name} : ${orgDetail.org_address}</span>
+                    </td>
+                    <td class='drawing-title' contenteditable = 'true'>Drawing TITLE: Floor Plan</td>
+                    <td contenteditable = 'true'>Designed by: ${projectInfo.designer_name}</td>
+                    <td contenteditable = 'true'>Scale: NTS</td>
+                  </tr>
+                  <tr>
+                    <td contenteditable = 'true'>Project Title: ${projectInfo.project_name}</td>
+                    <td contenteditable = 'true'>Drafted by: xxx</td>
+                    <td contenteditable = 'true'>Drawing Revision: R0</td>
+                  </tr>
+                  <tr>
+                    <td contenteditable = 'true'>Location: ${projectInfo.apartment_name}</td>
+                    <td contenteditable = 'true' >Checked by: XYZ</td>
+                    <td contenteditable = 'true'>Date: ${projectInfo.contract_date}</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
           <div class="html2pdf__page-break"></div>`
@@ -88,14 +138,14 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
           <div id="legend-view" class="col-9">
             <div class="row">
               <div class="col-12">
-                <span id="title" style="font-size:22px">Ground Floor Plan</span>
+                <span id="title" style="font-size:21px">Ground Floor Plan</span>
                 <span id="extraInfo"></span>
               </div>
             </div>
             <div class="row">
              
                 <div class="canvas-container">
-                  <canvas id='checks'  style="height:300px"></canvas>
+                  <canvas id='checks'></canvas>
                   <canvas class = 'overlay-canvas-container' id = "c#${i}"></canvas>
                 </div>
             </div>
@@ -119,31 +169,6 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
               </table>
             </div>
           </div>
-        </div>
-        <div class="row">
-          <table class="table table-bordered bottom-table" style="margin-bottom: ${i-1}px;">
-            <tbody>
-              <tr>
-                <td rowspan="3" contenteditable = 'true'>
-                <img src = "${orgDetail.org_logo_url}" crossorigin="" width="300" height="50" alt= "logo" />
-                <span> ${orgDetail.org_name} : ${orgDetail.org_address}</span>
-                </td>
-                <td class='drawing-title' contenteditable = 'true'>Drawing TITLE: Floor Plan</td>
-                <td contenteditable = 'true'>Designed by: ${projectInfo.designer_name}</td>
-                <td contenteditable = 'true'>Scale: NTS</td>
-              </tr>
-              <tr>
-                <td contenteditable = 'true'>Project Title: ${projectInfo.project_name}</td>
-                <td contenteditable = 'true'>Drafted by: xxx</td>
-                <td contenteditable = 'true'>Drawing Revision: R0</td>
-              </tr>
-              <tr>
-                <td contenteditable = 'true'>Location: ${projectInfo.apartment_name}</td>
-                <td contenteditable = 'true' >Checked by: XYZ</td>
-                <td contenteditable = 'true'>Date: ${projectInfo.contract_date}</td>
-              </tr>
-            </tbody>
-          </table>
         </div>
       </div>
       `;
@@ -428,8 +453,10 @@ const renderFloorPlan = (floorPlanView, id) => {
       ele1.contentEditable = true
     }
     if (elem.name === "render_wall_view") {
-      ele1 = document.querySelector("#checks")
-      ele1.setAttribute('style', "height: 300px")
+      ele1 = document.querySelector("#wd-" + index)
+      ele1.querySelectorAll("[id='checks']").forEach(b => {
+        b.setAttribute('style', 'height: 300px')
+      })
     }
   });
   /* draw lines */
@@ -1830,7 +1857,7 @@ const renderTableView = (tableView, id) => {
   // table.style.wordWrap = 'break-word';
   // table.style.wordBreak = 'break-all';
   // table.setAttribute('style', 'width:75px;height:75px;');
-  table.setAttribute('style', 'display:inline-table;overflow-y:scroll;font-size:10px;width:100%;text-align:center;');
+  table.setAttribute('style', 'display:inline-table;overflow-y:auto;font-size:10px;width:100%;height:auto;text-align:center;');
   table.setAttribute("border", "1");
   // table.classList.add("main-table");
   table.classList.add("table-responsive");

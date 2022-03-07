@@ -264,7 +264,7 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
           const subtableMatRow = `
             <td contenteditable = 'true'>${matData[i].materialdata[j].name}</td>
             <td contenteditable = 'true'>0</td>
-            <td contenteditable = 'true'>Name</td>
+            <td contenteditable = 'true'></td>
             <td contenteditable = 'true'>${matData[i].materialdata[j].edge_band_code}</td>
             <td contenteditable = 'true'>0</td>`
           document.querySelector(`#othertaginfo-${i}`).insertAdjacentHTML("afterend", subtableMatRow);

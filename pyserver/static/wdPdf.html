@@ -390,58 +390,62 @@
         </div>
       </div>
       <div class="html2pdf__page-break"></div>
-      <div class="working-drawing container-fluid" id="wd-0">
-        <div class="row">
-          <div class="col-9">
+      <div class = "container" id = "checkId-0">
+        <div class="row  main-class" id = "div-0">
+          <div class="working-drawing container-fluid col-md-6" id="wd-0">
             <div class="row">
-              <div class="col-12" style="text-align: center">
-                <span id="title">Ground Floor Plan</span>
+              <div class="col-9">
+                <div class="row">
+                  <div class="col-12" style="text-align: center">
+                    <span id="title">Ground Floor Plan</span>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="canvas-container">
+                    <canvas></canvas>
+                    <canvas class="overlay-canvas-container" id="c#0"></canvas>
+                  </div>
+                </div>
               </div>
-            </div>
-            <div class="row">
-              <div class="canvas-container">
-                <canvas></canvas>
-                <canvas class="overlay-canvas-container" id="c#0"></canvas>
-              </div>
-            </div>
-          </div>
-          <div class="col-3">
-            <div class="row" style="height: 2.5em">
-              <div class="col-12" style="text-align: center">
-                <span style="font-size: large">Legend</span>
-                <button class="legend-add-row">
-                  +
-                </button>
-                <input type="file" class="legend-add-image" />
-              </div>
-            </div>
+              <div class="col-3">
+                <div class="row" style="height: 2.5em">
+                  <div class="col-12" style="text-align: center">
+                    <span style="font-size: large">Legend</span>
+                    <button class="legend-add-row">
+                      +
+                    </button>
+                    <input type="file" class="legend-add-image" />
+                  </div>
+                </div>
 
-            <div class="table-responsive fixed-table-body">
-              <table class="table table-bordered side-table"></table>
+                <div class="table-responsive fixed-table-body">
+                  <table class="table table-bordered side-table"></table>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <table class="table table-bordered">
+                <tbody>
+                  <tr>
+                    <td rowspan="3"></td>
+                    <td class="drawing-title">Drawing Title:</td>
+                    <td>Designed by:</td>
+                    <td>Scale:</td>
+                  </tr>
+                  <tr>
+                    <td>Project Title:</td>
+                    <td>Drafted by:</td>
+                    <td>Drawing Revision:</td>
+                  </tr>
+                  <tr>
+                    <td>Location:</td>
+                    <td>Checked by:</td>
+                    <td>Date:</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
-        </div>
-        <div class="row">
-          <table class="table table-bordered">
-            <tbody>
-              <tr>
-                <td rowspan="3"></td>
-                <td class="drawing-title">Drawing Title:</td>
-                <td>Designed by:</td>
-                <td>Scale:</td>
-              </tr>
-              <tr>
-                <td>Project Title:</td>
-                <td>Drafted by:</td>
-                <td>Drawing Revision:</td>
-              </tr>
-              <tr>
-                <td>Location:</td>
-                <td>Checked by:</td>
-                <td>Date:</td>
-              </tr>
-            </tbody>
-          </table>
         </div>
       </div>
     </div>

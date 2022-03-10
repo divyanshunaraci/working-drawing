@@ -11,9 +11,11 @@ const fix_dpi = (canvas) => {
     },
   };
   //set the correct attributes for a crystal clear image!
+  // console.log(typeof canvas, 'canvas')
   canvas.setAttribute("width", style.width() * dpi);
   canvas.setAttribute("height", style.height() * dpi);
   canvas.selectable = true;
+  
 };
 
 // generate views and render project_ & org_url in every views
@@ -47,22 +49,103 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
     }
   }
   try {
-    // const details = state.projectInfo;
+    const details = state.projectInfo;
+    // const check = `
+    // <div class = "container" id="checkId">
+    //   <div class = "row main-class">
+
+    //   </div>
+    // </div>`
+    if (viewsCnt%2 === 0){
+      for (let i = 0; i < viewsCnt/2; i++){
+        const check = `
+          <div class = "container" id="checkId-${i}" style="margin-left:1px">
+            <div class = "row main-class" id = "div-${i}">
+
+            </div>
+            <div class="row" style = "background-color:white">
+              <table class="table table-bordered bottom-table" style="margin-bottom: ${i-1}px;">
+                <tbody>
+                  <tr>
+                    <td rowspan="3" contenteditable = 'true'>
+                    <img src = "${orgDetail.org_logo_url}" crossorigin="" width="300" height="50" alt= "logo" />
+                    <span> ${orgDetail.org_name} : ${orgDetail.org_address}</span>
+                    </td>
+                    <td class='drawing-title' contenteditable = 'true'>Drawing TITLE: Floor Plan</td>
+                    <td contenteditable = 'true'>Designed by: ${projectInfo.designer_name}</td>
+                    <td contenteditable = 'true'>Scale: NTS</td>
+                  </tr>
+                  <tr>
+                    <td contenteditable = 'true'>Project Title: ${projectInfo.project_name}</td>
+                    <td contenteditable = 'true'>Drafted by: xxx</td>
+                    <td contenteditable = 'true'>Drawing Revision: R0</td>
+                  </tr>
+                  <tr>
+                    <td contenteditable = 'true'>Location: ${projectInfo.apartment_name}</td>
+                    <td contenteditable = 'true' >Checked by: XYZ</td>
+                    <td contenteditable = 'true'>Date: ${projectInfo.contract_date}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="html2pdf__page-break"></div>`
+        document.querySelector(".main").insertAdjacentHTML("beforeend", check)
+      }
+    }else{
+      for (let i = 0; i < Math.ceil(viewsCnt/2); i++){
+        const check = `
+          <div class = "container" id="checkId-${i}" style = "margin-left:1px">
+            <div class = "row main-class" id = "div-${i}">
+
+            </div>
+            <div class="row" style = "background-color:white">
+              <table class="table table-bordered bottom-table" style="margin-bottom: ${i-1}px;">
+                <tbody>
+                  <tr>
+                    <td rowspan="3" contenteditable = 'true'>
+                    <img src = "${orgDetail.org_logo_url}" crossorigin="" width="300" height="50" alt= "logo" />
+                    <span> ${orgDetail.org_name} : ${orgDetail.org_address}</span>
+                    </td>
+                    <td class='drawing-title' contenteditable = 'true'>Drawing TITLE: Floor Plan</td>
+                    <td contenteditable = 'true'>Designed by: ${projectInfo.designer_name}</td>
+                    <td contenteditable = 'true'>Scale: NTS</td>
+                  </tr>
+                  <tr>
+                    <td contenteditable = 'true'>Project Title: ${projectInfo.project_name}</td>
+                    <td contenteditable = 'true'>Drafted by: xxx</td>
+                    <td contenteditable = 'true'>Drawing Revision: R0</td>
+                  </tr>
+                  <tr>
+                    <td contenteditable = 'true'>Location: ${projectInfo.apartment_name}</td>
+                    <td contenteditable = 'true' >Checked by: XYZ</td>
+                    <td contenteditable = 'true'>Date: ${projectInfo.contract_date}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="html2pdf__page-break"></div>`
+        document.querySelector(".main").insertAdjacentHTML("beforeend", check)
+      }
+    }
+    
+    let viewsCount = []
     for (let i = 0; i < viewsCnt; i++) {
       const template = `
-      <div class="working-drawing container-fluid" id='wd-${i}'>
+      <div class="working-drawing container-fluid col-md-6 checkNumber" id='wd-${i}'>
         <div class="row">
           <div id="legend-view" class="col-9">
             <div class="row">
-              <div class="col-12" style="text-align: center">
-                <span id="title">Ground Floor Plan</span>
+              <div class="col-12">
+                <span id="title" style="font-size:21px">Ground Floor Plan</span>
                 <span id="extraInfo"></span>
               </div>
             </div>
             <div class="row">
              
                 <div class="canvas-container">
-                  <canvas  ></canvas>
+                  <canvas id='checks'></canvas>
                   <canvas class = 'overlay-canvas-container' id = "c#${i}"></canvas>
                 </div>
             </div>
@@ -87,37 +170,51 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
             </div>
           </div>
         </div>
-        <div class="row">
-          <table class="table table-bordered bottom-table" style="margin-bottom: ${i-1}px;">
-            <tbody>
-              <tr>
-                <td rowspan="3" contenteditable = 'true'>
-                <img src = "${orgDetail.org_logo_url}" crossorigin="" width="300" height="50" alt= "logo" />
-                <span> ${orgDetail.org_name} : ${orgDetail.org_address}</span>
-                </td>
-                <td class='drawing-title' contenteditable = 'true'>Drawing TITLE: Floor Plan</td>
-                <td contenteditable = 'true'>Designed by: ${projectInfo.designer_name}</td>
-                <td contenteditable = 'true'>Scale: NTS</td>
-              </tr>
-              <tr>
-                <td contenteditable = 'true'>Project Title: ${projectInfo.project_name}</td>
-                <td contenteditable = 'true'>Drafted by: xxx</td>
-                <td contenteditable = 'true'>Drawing Revision: R0</td>
-              </tr>
-              <tr>
-                <td contenteditable = 'true'>Location: ${projectInfo.apartment_name}</td>
-                <td contenteditable = 'true' >Checked by: XYZ</td>
-                <td contenteditable = 'true'>Date: ${projectInfo.contract_date}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
       </div>
-      <div class="html2pdf__page-break"></div>`;
-
-      document.querySelector(".main").insertAdjacentHTML("beforeend", template);
+      `;
+      viewsCount.push(template)
+      // document.querySelector(".main-class").insertAdjacentHTML("beforeend", template);
+      // const pageBreak = `<div class="html2pdf__page-break"></div>`;
+      // if (i %2 === 0){
+      //   document.querySelector(`#wd-${i}`).insertAdjacentHTML("beforeend", pageBreak);
+      // }else{
+      //   document.querySelector(`#wd-${i}`).insertAdjacentHTML("beforeend", pageBreak)
+      // }
+    }
+    console.log(viewsCount.length, 'the count of views')
+    let len = viewsCount.length
+    if (len%2 === 0){
+      console.log('even hit')
+      for (let i = 0; i < Math.ceil(len/2); i++){
+        for (let j = 0; j < len; j++){
+          if (document.getElementById(`div-${i}`).childElementCount !== 2 && j < len){
+            document.getElementById(`div-${i}`).insertAdjacentHTML('beforeend', viewsCount[j])
+            document.getElementById(`div-${i}`).insertAdjacentHTML('beforeend', viewsCount[j+1])
+            let index = viewsCount.indexOf(viewsCount[j])
+            viewsCount.splice(index,2)
+            console.log(document.getElementById(`div-${i}`))
+          }
+        }
+      }
+    }else{
+      console.log('odd hit')
+      for (let i = 0; i < Math.ceil(len/2); i++){ // i = 0-8
+        for (let j = 0; j < len; j++){ //j = 0-4
+          if (document.getElementById(`div-${i}`).childElementCount !== 2 && j < len-1){
+            document.getElementById(`div-${i}`).insertAdjacentHTML('beforeend', viewsCount[j])
+            document.getElementById(`div-${i}`).insertAdjacentHTML('beforeend', viewsCount[j+1])
+            let index = viewsCount.indexOf(viewsCount[j])
+            viewsCount.splice(index,2)
+            console.log(document.getElementById(`div-${i}`))
+          }else if (document.getElementById(`div-${i}`).childElementCount !== 2){
+            document.getElementById(`div-${i}`).insertAdjacentHTML('beforeend', viewsCount[j])
+            console.log(document.getElementById(`div-${i}`))
+          }
+        }
+      }
     }
 
+ //[[0,1],[2,3],[4,5]]
     // Material Table Data Page
     const materialTableDataPage = `
       <div class="working-drawing container-fluid" id="laminate-edgeband-info">
@@ -149,7 +246,7 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
         </div>
       </div>
       <div class="html2pdf__page-break"></div>`
-    document.querySelector("#wd-0").insertAdjacentHTML("beforebegin", materialTableDataPage);
+    document.querySelector("#checkId-0").insertAdjacentHTML("beforebegin", materialTableDataPage);
 
     // Table body data show
     for(let i = 0; i < matData.length; i++) {
@@ -167,7 +264,7 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
           const subtableMatRow = `
             <td contenteditable = 'true'>${matData[i].materialdata[j].name}</td>
             <td contenteditable = 'true'>0</td>
-            <td contenteditable = 'true'>Name</td>
+            <td contenteditable = 'true'></td>
             <td contenteditable = 'true'>${matData[i].materialdata[j].edge_band_code}</td>
             <td contenteditable = 'true'>0</td>`
           document.querySelector(`#othertaginfo-${i}`).insertAdjacentHTML("afterend", subtableMatRow);
@@ -268,11 +365,28 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
   } catch (err) {
     console.log(err);
   }
+  // let x = document.getElementsByClassName("checkNumber")
+  // let z = document.getElementsByClassName("html2pdf__page-break")
+  // for (let i = 0; i < x.length; i++){
+  //   let evOrOdd = x[i].id
+  //   let y = evOrOdd.split('-')
+  //   if(Number(y[1])%2 === 0){
+  //     x[i].setAttribute('style', 'display: block; float: left')
+  //   }else{
+  //     x[i].setAttribute('style', 'display: block; float: right')
+  //   }
+  // }
+  // for (let i = 0; i < z.length; i++){
+  //   if(i%2 === 0){
+  //     z[i].setAttribute('style', 'display: none;')
+  //   }
+  // }
 };
 
 // fix dpi of canvases and calibrate the origin point
 const calibrateCanvases = (viewBoxInfoes) => {
-  for (let i = 0; i < viewBoxInfoes.length; i++) {
+  console.log(viewBoxInfoes.length, 'view')
+  for (let i = 0; i < viewBoxInfoes.length-1; i++) {
     // fix canvas-dpi
     const canvas = document.querySelector(`#wd-${i} canvas`);
     fix_dpi(canvas);
@@ -321,7 +435,7 @@ const calcScaleOrigin = (viewBoxInfo, canvasWidth, canvasHeight) => {
 const renderFloorPlan = (floorPlanView, id) => {
   // To hide the legneds view and dimension scaling
   state.roomViews.forEach((elem, index) => {
-    if (elem.name == "Ground floor plan" || elem.name == "room_top_view" || elem.name == "top_view" || elem.name == "front_view" || elem.name == "table_view" || elem.name == "internal_view" || elem.name == "EXTRA_VIEW") {
+    if (elem.name == "Ground floor plan" || elem.name == "room_top_view" || elem.name == "top_view" || elem.name == "front_view" || elem.name == "internal_view" || elem.name == "EXTRA_VIEW") {
       ele1 = document.querySelector("#wd-" + index);
       ele1.querySelectorAll("[id='legend-view']").forEach(b => b.setAttribute("class", "col-12"));
       ele1.querySelectorAll("[id='legend-view_1']").forEach(b => b.setAttribute("style", "display: none"));
@@ -333,6 +447,16 @@ const renderFloorPlan = (floorPlanView, id) => {
         b.innerHTML = 'Note: Components not attached to the wall are showed in room plan';
         b.setAttribute('style', "position: absolute;top: 40px;width: 20%;right:0;font-size:13px;color: #d60000;");
       });
+    }
+    if (elem.name === "EXTRA_VIEW"){
+      ele1 = document.querySelector("#wd-" + index);
+      ele1.contentEditable = true
+    }
+    if (elem.name === "render_wall_view") {
+      ele1 = document.querySelector("#wd-" + index)
+      ele1.querySelectorAll("[id='checks']").forEach(b => {
+        b.setAttribute('style', 'height: 300px')
+      })
     }
   });
   /* draw lines */
@@ -662,7 +786,7 @@ const renderTitle = (view, id) => {
       break;
     case "table_view":
       $(`#wd-${id} #title`).text(
-        `${roomName} ${temp[1].toUpperCase()} - ${temp[2].toUpperCase()}`
+        `${roomName} ${temp[1].toUpperCase()} - TABLE_VIEW`
       );
       break;
     case "EXTRA_VIEW":
@@ -1623,6 +1747,8 @@ const generateTableHead = (table, data) => {
 const generateTable =
   (table, data) => {
     let tbody = document.createElement("tbody");
+    let btn1 = ""
+    // console.log(data, "all the data here")
     table.appendChild(tbody);
     for (let element of data) {
       let row = tbody.insertRow();
@@ -1661,6 +1787,56 @@ const generateTable =
         }
       }
     }
+    for (let i = 0; i < data.length; i++){
+      if (data[i].hasOwnProperty("imageURL")){
+        tbody.classList.add("finishes")
+        let btn3 = document.createElement("button")
+        btn3.innerHTML = "-"
+        btn3.classList.add("delete-finish")
+        table.appendChild(btn3)
+        let tf = document.querySelector('.finishes')
+        if (tf.rows.length > 1){
+          btn3.onclick = () => {
+            tf.deleteRow(tf.rows.length-1)
+          }
+        }else{
+          btn3.onclick = () => {
+            tf.deleteRow(tf.rows.length)
+          }
+        } 
+      }
+      break
+    }
+    for (let i = 0; i < data.length; i++){
+      if (data[i].hasOwnProperty("id")){
+        tbody.classList.add(`tabs${i}`)
+        btn1 = document.createElement("button")
+        btn1.innerHTML = "+"
+        btn1.classList.add('add-row')
+        let btn2 = document.createElement("button")
+        btn2.innerHTML = "-"
+        btn2.classList.add('delete-row')
+        tbody.appendChild(btn1)
+        btn1.onclick = () => {
+          tbody.appendChild(btn2)
+          let tb = document.querySelector('.tabs')
+          let tc = document.querySelector('.tabs').rows[0].cells.length
+          let tr = tb.rows.length
+          let row = tb.insertRow(data.length)
+          for (let j = 0; j < tc; j++){
+            let cell1 = row.insertCell(j)
+            cell1.contentEditable = true
+            cell1.style.height = "30px"
+          }
+          if (tr > data.length){
+            btn2.onclick = () => {
+              tb.deleteRow(data.length)
+            }
+          }
+        }
+        break
+      }
+    }
   };
 
 // render 'TableView'
@@ -1681,7 +1857,7 @@ const renderTableView = (tableView, id) => {
   // table.style.wordWrap = 'break-word';
   // table.style.wordBreak = 'break-all';
   // table.setAttribute('style', 'width:75px;height:75px;');
-  table.setAttribute('style', 'display:inline-table;overflow-y:scroll;font-size:10px;width:100%;text-align:center;');
+  table.setAttribute('style', 'display:inline-table;overflow-y:auto;font-size:10px;width:100%;height:auto;text-align:center;');
   table.setAttribute("border", "1");
   // table.classList.add("main-table");
   table.classList.add("table-responsive");

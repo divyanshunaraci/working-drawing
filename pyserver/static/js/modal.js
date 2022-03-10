@@ -270,13 +270,14 @@ const renderAl = () => {
 };
 
 function download(filename, text, canvasHeight) {
+    console.log(canvasHeight)
     const queryStringSearch = window.location.search;
     const getUrlParams = new URLSearchParams(queryStringSearch);
     const pdfVersionNo = getUrlParams.get('versionNo')
     var project_id = state.projectInfo.project_no;
     const pdfRequireHeight = canvasHeight + 30;
-    const pdfRequireWidth = document.getElementById("wd-0").offsetWidth;
-    console.log(JSON.stringify(text).length, "Length", pdfRequireHeight, "pdfRequireHeight", pdfRequireWidth, "pdfRequireWidth");
+    const pdfRequireWidth = document.getElementById("checkId-0").offsetWidth;
+    console.log(JSON.stringify(text), "Length", pdfRequireHeight, "pdfRequireHeight", pdfRequireWidth, "pdfRequireWidth");
     fetch(window.APIAddress.generatePDF + `/${project_id}`, {
         method: "POST",
         body: JSON.stringify({
@@ -319,6 +320,7 @@ $("#print").on("click", async function (e) {
     var container = document.querySelectorAll('.main');
     var canvasHeightFinal;
     for (var j = 0; j < container.length; j++) {
+        // console.log(container[j], "<<<<<");
         if (!state.roomViews) {
             const dataUrl = await domtoimage.toJpeg(document.getElementById("wd-0"), { quality: 0.95 })
             var link = document.createElement('a');
@@ -344,6 +346,7 @@ $("#print").on("click", async function (e) {
             mainDiv.appendChild(pagebreak);
             
             const edgeBandInfoUrl = await domtoimage.toJpeg(edgeBandInfo, { quality: 0.95 })
+            // console.log(edgeBandInfoUrl, "edgeBandInfoUrl")
             var edgeBandInfoUrlImgTag = new Image();
             edgeBandInfoUrlImgTag.src = edgeBandInfoUrl;
             edgeBandInfoUrlImgTag.id = "laminate-edgeband-info";
@@ -351,23 +354,103 @@ $("#print").on("click", async function (e) {
             var pagebreak = document.createElement("div");
             pagebreak.setAttribute("style", "clear: both;page-break-after: always;");
             mainDiv.appendChild(pagebreak);
-            
-            for (var i = 0; i < state.roomViews.length; i++) {
-                var convertMeToImg = $('#wd-' + i)[0];
-                $('.loader-msg').html(`${currentPage + i}` + "/" + `${totalpage}`);
-                try {
-                    const dataUrl = await domtoimage.toJpeg(convertMeToImg, { quality: 0.95 })
-                    var imgTag = new Image();
-                    imgTag.src = dataUrl;
-                    imgTag.id = "imgId" + i;
-                    mainDiv.appendChild(imgTag);
-                    var pagebreak = document.createElement("div");
-                    pagebreak.setAttribute("style", "clear: both;page-break-after: always;");
-                    mainDiv.appendChild(pagebreak);
-                } catch (error) {
-                    console.log(error, "error");
+            console.log(state.roomViews.length, ' the length of rooms')
+            let lenOfRooms =  state.roomViews.length
+            if (lenOfRooms%2 === 0){
+                for (var i = 0; i < lenOfRooms/2; i++){
+                    var convertMeToImg = $('#checkId-' + i)[0]
+                    $('.loader-msg').html(`${currentPage + i}` + "/" + `${totalpage}`);
+                    try{
+                        const dataUrl = await domtoimage.toJpeg(convertMeToImg, { quality: 0.95 })
+                        var imgTag = new Image();
+                        imgTag.src = dataUrl;
+                        imgTag.id = "imgId-" + i;
+                        mainDiv.appendChild(imgTag);
+                        console.log(dataUrl, "1st")
+                        var pagebreak = document.createElement("div");
+                        pagebreak.setAttribute("style", "clear: both;page-break-after: always;");
+                        mainDiv.appendChild(pagebreak)
+                    }catch (error) {
+                        console.log(error, "error");
+                    }
+                }
+            }else{
+                for (var i = 0; i < Math.ceil(lenOfRooms/2); i++){
+                    var convertMeToImg = $('#checkId-' + i)[0]
+                    console.log(convertMeToImg, 'image', convertMeToImg.offsetHeight)
+                    $('.loader-msg').html(`${currentPage + i}` + "/" + `${Math.round(totalpage/2)}`);
+                    try{
+                        const dataUrl = await domtoimage.toJpeg(convertMeToImg, { quality: 0.95 })
+                        var imgTag = new Image();
+                        imgTag.src = dataUrl;
+                        imgTag.id = "imgId-" + i;
+                        // console.log(dataUrl, "2st")
+                        mainDiv.appendChild(imgTag);
+                        var pagebreak = document.createElement("div");
+                        pagebreak.setAttribute("style", "clear: both;page-break-after: always;");
+                        mainDiv.appendChild(pagebreak)
+                    }catch (error) {
+                        console.log(error, "error");
+                    }
                 }
             }
+    //         for (var i = 0; i < state.roomViews.length; i++) {
+    //             console.log(state.roomViews.length, 'the length in state')
+    //             var x = document.createElement('div')
+    //             x.setAttribute('id', `wd1-${i}`)
+    //             x.setAttribute('class', "working-drawing container-fluid")
+    //             x.setAttribute('style', 'width: 500px')
+    //             // var convertMeToImg = $('#wd1-' + i);
+    //             if (i % 2 !== 0){
+    //                 let append1 = $('#wd-' + i)[0]
+    //                 x.append(append1)
+    //                 let append2 = $('#wd-' + (i+1))[0]
+    //                 x.append(append2)
+    //             } else {
+    //                 let append1 = $('#wd-' + i)[0]
+    //                 if (append1 !== undefined){
+    //                     x.append(append1)
+    //                 }
+    //                 // if (append1.length > 0){
+    //                 //     x.append(append1)
+    //                 // }
+    //             }
+    //             console.log(x, 'the x')
+    //             // var convertMeToImg = $('#wd1-' + i)[0];
+    //             // convertMeToImg.setAttribute('style', "")
+    //             // convertMeToImg.setAttribute('class', "working-drawing container-fluid checkNumber")
+    //             // console.log(convertMeToImg,'image')
+    //             // $('.loader-msg').html(`${currentPage + i}` + "/" + `${totalpage}`);
+    //             try {
+    //                 // console.log(x, 'x undefined check')
+    //                 const dataUrl = await domtoimage.toJpeg(x, { quality: 0.95 })
+    //                 // domtoimage.toJpeg(convertMeToImg, { quality: 0.95 })
+    //                 //     .then(function (dataUrl) {
+    //                 //             var link = document.createElement('a');
+    //                 //             link.download = 'my-image-name.jpeg';
+    //                 //             link.href = dataUrl;
+    //                 //             link.click();
+    //                 //         });
+    //                 console.log(dataUrl, 'url datta')
+    //                 var imgTag = new Image();
+    //                 imgTag.src = dataUrl;
+    //                 imgTag.id = "imgId-" + i;
+    //                 if(i%2 === 0){
+    //                     imgTag.setAttribute('style', 'display: block; float: left')
+    //                   }else{
+    //                     imgTag.setAttribute('style', 'display: block; float: right')
+    //                   }
+    //                 mainDiv.appendChild(imgTag);
+    //                 var pagebreak = document.createElement("div");
+    //                 pagebreak.setAttribute("style", "clear: both;page-break-after: always;");
+    //                 if(i%2 === 0){
+    //                     pagebreak.setAttribute('style', 'display: none;')
+    //                   }
+    //                 mainDiv.appendChild(pagebreak);
+    //             } catch (error) {
+    //                 console.log(error, "error");
+    //             }
+    //         }
         }
     }
     canvasHeightFinal = convertMeToImg.offsetHeight;

@@ -749,6 +749,24 @@ function addLegendRow(e) {
   } else {
     reader.readAsDataURL(e.target.files[0]);
   }
+  const btn = document.createElement("button");
+  var table = document.querySelector(
+    `#wd-${currentPageNumber - 1} .side-table`
+  );
+  btn.innerHTML = "-";
+  btn.classList.add("delete-finish");
+  table.appendChild(btn);
+  btn.onclick = () => {
+    if (table.rows.length >= 1) {
+      btn.onclick = () => {
+        table.deleteRow(table.rows.length - 1);
+      };
+    } else {
+      btn.onclick = () => {
+        table.deleteRow(table.rows.length);
+      };
+    }
+  };
 }
 
 // add column to table ( table view )

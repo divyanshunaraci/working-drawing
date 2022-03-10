@@ -320,7 +320,7 @@ $("#print").on("click", async function (e) {
     var container = document.querySelectorAll('.main');
     var canvasHeightFinal;
     for (var j = 0; j < container.length; j++) {
-        console.log(container[j], "<<<<<");
+        // console.log(container[j], "<<<<<");
         if (!state.roomViews) {
             const dataUrl = await domtoimage.toJpeg(document.getElementById("wd-0"), { quality: 0.95 })
             var link = document.createElement('a');
@@ -378,7 +378,7 @@ $("#print").on("click", async function (e) {
                 for (var i = 0; i < Math.ceil(lenOfRooms/2); i++){
                     var convertMeToImg = $('#checkId-' + i)[0]
                     console.log(convertMeToImg, 'image', convertMeToImg.offsetHeight)
-                    $('.loader-msg').html(`${currentPage + i}` + "/" + `${totalpage}`);
+                    $('.loader-msg').html(`${currentPage + i}` + "/" + `${Math.round(totalpage/2)}`);
                     try{
                         const dataUrl = await domtoimage.toJpeg(convertMeToImg, { quality: 0.95 })
                         var imgTag = new Image();

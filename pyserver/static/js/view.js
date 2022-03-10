@@ -1748,7 +1748,7 @@ const generateTable =
   (table, data) => {
     let tbody = document.createElement("tbody");
     let btn1 = ""
-    console.log(data, "all the data here")
+    // console.log(data, "all the data here")
     table.appendChild(tbody);
     for (let element of data) {
       let row = tbody.insertRow();

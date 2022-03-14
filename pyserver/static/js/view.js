@@ -1894,7 +1894,6 @@ const renderTableView = (tableView, id) => {
   });
 
   // generate main content of table
-  console.log(compsInfo, 'before push')
   const data = [];
   compsInfo.sort((a, b) => a.id - b.id);
   compsInfo.forEach((item, id) => {

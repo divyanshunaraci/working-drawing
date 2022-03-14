@@ -197,6 +197,11 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
         }
       }
     }else{
+      const createdDiv = `
+      <div class="working-drawing container-fluid col-md-6 checkNumber" id='wd'>
+      </div>
+      `
+      viewsCount.push(createdDiv)
       console.log('odd hit')
       for (let i = 0; i < Math.ceil(len/2); i++){ // i = 0-8
         for (let j = 0; j < len; j++){ //j = 0-4
@@ -205,9 +210,6 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
             document.getElementById(`div-${i}`).insertAdjacentHTML('beforeend', viewsCount[j+1])
             let index = viewsCount.indexOf(viewsCount[j])
             viewsCount.splice(index,2)
-            console.log(document.getElementById(`div-${i}`))
-          }else if (document.getElementById(`div-${i}`).childElementCount !== 2){
-            document.getElementById(`div-${i}`).insertAdjacentHTML('beforeend', viewsCount[j])
             console.log(document.getElementById(`div-${i}`))
           }
         }
@@ -1857,7 +1859,7 @@ const renderTableView = (tableView, id) => {
   // table.style.wordWrap = 'break-word';
   // table.style.wordBreak = 'break-all';
   // table.setAttribute('style', 'width:75px;height:75px;');
-  table.setAttribute('style', 'display:inline-table;overflow-y:auto;font-size:10px;width:100%;height:auto;text-align:center;');
+  table.setAttribute('style', 'display:inline-table;overflow-y:scroll;font-size:10px;width:100%;text-align:center;');
   table.setAttribute("border", "1");
   // table.classList.add("main-table");
   table.classList.add("table-responsive");
@@ -1900,10 +1902,9 @@ const renderTableView = (tableView, id) => {
       ...item,
     });
   });
-
   for (data_temp in data) {
     let str = data[data_temp].name
-    data[data_temp].name = str.slice(0, str.lastIndexOf(str.match(/[a-z]/ig)[str.match(/[a-z]/ig).length - 1]) + 1)
+    data[data_temp].name = str.slice(0, str.lastIndexOf(str.match(/./ig)[str.match(/./ig).length - 1]) + 1)
   }
 
   //change the text size 6 px 

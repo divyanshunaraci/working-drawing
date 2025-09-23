@@ -496,10 +496,10 @@ class floor_plan_additional(object):
         view_angle =['top_view','front_view','internal_view'] #
 
         for key1 in room_names:
-            if j_object['rooms'].has_key(key1):
+            if key1 in j_object['rooms']:
                 view_name = room_view_name[key1] #
                 for key2 in view_name:
-                    if j_object['rooms'][key1].has_key(key2):
+                    if key2 in j_object['rooms'][key1]:
                         #print(key1,key2)
                         if key2 == 'room_top_view':
                             drawing_list1 = self.output_list_room_top_views(key1, key2, j_object)
@@ -513,7 +513,7 @@ class floor_plan_additional(object):
                             del j_object['rooms'][key1][key2]['thickness']
                         else:
                             for key3 in view_angle:
-                                if j_object['rooms'][key1][key2].has_key(key3):
+                                if key3 in j_object['rooms'][key1][key2]:
                                     fp3 = floor_plan_component1(key1, key2, key3, j_object)
                                     j_object['rooms'][key1][key2][key3]['dimension'] = fp3.data 
                                     j_object['rooms'][key1][key2][key3]['component'] = fp3.components
@@ -658,7 +658,7 @@ class floor_plan_component1(object):
         room_name, view_name, view_angle, j_object = self.room_name,self.view_name,self.view_angle, self.j_object
         component_list = []
         
-        if j_object['rooms'][room_name][view_name][view_angle].has_key('outline'):
+        if 'outline' in j_object['rooms'][room_name][view_name][view_angle]:
             drawing_1_list = []
             drawing_1_list = j_object['rooms'][room_name][view_name][view_angle]['outline'] 
 
@@ -736,7 +736,7 @@ class floor_plan_component1(object):
             
             x0c, y0c, xnc, ync = t_d2['x0'], t_d2['y0'], t_d2['xn'], t_d2['yn']
             xc, yc = (x0c+xnc)/2, (y0c+ync)/2
-            r1 = np.sqrt((xc-x0)^2+(yc-y0)^2)+np.power((yc-y0),2)
+            r1 = np.sqrt((xc-x0)**2+(yc-y0)**2)+np.power((yc-y0),2)
             
             rank = __unique_rank_number(rank, keys, com_dtemp, r1)
             """com_dtemp[r1] = keys
@@ -795,7 +795,7 @@ class floor_plan_component1(object):
         for i in range(len(ls1)-2):        
             if ls1[i+1] - ls1[i] > 50:
                 ver_string = 'v' + str(ls1[i]) + '&' + str(ls1[i+1]) if str1 == 'ver' else 'h' + str(ls1[i]) + '&' + str(ls1[i+1])
-                if not dim_dict[str1].has_key(ver_string):
+                if ver_string not in dim_dict[str1]:
                     x_opt = 100 + max(dict1[keys][f_str1][ls1[i]][0][0],dict1[keys][f_str1][ls1[i+1]][0][0])
                     dim_dict[str1][ver_string] = [x_opt,[ls1[i],ls1[i+1]]]
                     if str1 == 'ver':
@@ -846,10 +846,10 @@ class floor_plan_component1(object):
             hor_string = 'h' + str(x0c) + '&' + str(xnc)
             ver_string = 'v' + str(y0c) + '&' + str(ync)
 
-            if dim_dict['hor'].has_key(hor_string) and dim_dict['ver'].has_key(ver_string):
+            if hor_string in dim_dict['hor'] and ver_string in dim_dict['ver']:
                 then_chill = 1 #because both the dimensions are already displayed and listed in dim_dict
 
-            elif not dim_dict['hor'].has_key(hor_string) and dim_dict['ver'].has_key(ver_string): #vertical exists but horizontal does not exist
+            elif hor_string not in dim_dict['hor'] and ver_string in dim_dict['ver']: #vertical exists but horizontal does not exist
                 if str1 == 'room_top_view' and xtmp == 'ver':
                     y_opt = self.__update_hornver_dim_room_top_view(self,t_d2,the_array,outline_dim,outer_dim_dict,'y_opt')
                 else:
@@ -860,7 +860,7 @@ class floor_plan_component1(object):
                 else:
                     dim_dict['hor'][hor_string] = [y_opt, [x0c,xnc]]
                     dimension_list.append([[x0c,y_opt],[xnc,y_opt]])
-            elif dim_dict['hor'].has_key(hor_string) and not dim_dict['ver'].has_key(ver_string): #horizontal exists but vertical does not exists
+            elif hor_string in dim_dict['hor'] and ver_string not in dim_dict['ver']: #horizontal exists but vertical does not exists
                 if str1 == 'room_top_view' and xtmp == 'hor':
                     x_opt = self.__update_hornver_dim_room_top_view(self,t_d2,the_array,outline_dim,outer_dim_dict,'x_opt')
                 else:
@@ -1072,7 +1072,7 @@ class floor_plan_component1(object):
                     if all_coords[it1+1] - all_coords[it1] < 10 :
                         continue
                     zer_string = dirn[0] + str(all_coords[it1]) +'&'+ str(all_coords[it1+1])
-                    if not dim_dict[dirn].has_key(zer_string): #then only we draw and add
+                    if zer_string not in dim_dict[dirn]: #then only we draw and add
                         #no need ot calculate the new location cause it is already calculated
                         dim_dict[dirn][zer_string] = [z_optimum, [all_coords[it1], all_coords[it1+1]]]
                         if dirn == 'hor':
@@ -1083,7 +1083,7 @@ class floor_plan_component1(object):
 
             """if hor_dim_check:
                 hor_string = 'h' + str(x1) + '&' + str(x2) 
-                if not dim_dict['hor'].has_key(hor_string): #then only draw later add it too
+                if hor_string not in dim_dict['hor']: #then only draw later add it too
                     y_new = self.__checking_outer_existence(self,outer_dim_dict, 'hor', hor_start_pt, hor_up_down, x1, x2, x0, xn, thickness)
                     dim_dict['hor'][hor_string] = [y_new, [x1, x2]]
                     dimension_list.append([[x1, y_new], [x2, y_new]])
@@ -1091,7 +1091,7 @@ class floor_plan_component1(object):
             
             if ver_dim_check:
                 ver_string = 'v' + str(y1) + '&' + str(y2)
-                if not dim_dict['ver'].has_key(ver_string): #then only draw later add it too
+                if ver_string not in dim_dict['ver']: #then only draw later add it too
                     x_new = self.__checking_outer_existence(self,outer_dim_dict, 'ver', ver_start_pt, ver_up_down, y1, y2, y0, yn, thickness)
                     dim_dict['ver'][ver_string] = [x_new, [y1, y2]]
                     dimension_list.append([[x_new,y1],[x_new,y2]])"""
@@ -1213,7 +1213,7 @@ class floor_plan_component1(object):
                     if all_coords[it1+1] - all_coords[it1] < 2 :
                         continue
                     zer_string = dirn[0] + str(all_coords[it1]) +'&'+ str(all_coords[it1+1])
-                    if not dim_dict[dirn].has_key(zer_string): #then only we draw and add
+                    if zer_string not in dim_dict[dirn]: #then only we draw and add
                         #no need ot calculate the new location cause it is already calculated
                         dim_dict[dirn][zer_string] = [z_optimum, [all_coords[it1], all_coords[it1+1]]]
                         if dirn == 'hor':
@@ -1224,7 +1224,7 @@ class floor_plan_component1(object):
 
             """if hor_dim_check:
                 hor_string = 'h' + str(x1) + '&' + str(x2) 
-                if not dim_dict['hor'].has_key(hor_string): #then only draw later add it too
+                if hor_string not in dim_dict['hor']: #then only draw later add it too
                     y_new = self.__checking_outer_existence(self,outer_dim_dict, 'hor', hor_start_pt, hor_up_down, x1, x2, x0, xn, thickness)
                     dim_dict['hor'][hor_string] = [y_new, [x1, x2]]
                     dimension_list.append([[x1, y_new], [x2, y_new]])
@@ -1232,7 +1232,7 @@ class floor_plan_component1(object):
             
             if ver_dim_check:
                 ver_string = 'v' + str(y1) + '&' + str(y2)
-                if not dim_dict['ver'].has_key(ver_string): #then only draw later add it too
+                if ver_string not in dim_dict['ver']: #then only draw later add it too
                     x_new = self.__checking_outer_existence(self,outer_dim_dict, 'ver', ver_start_pt, ver_up_down, y1, y2, y0, yn, thickness)
                     dim_dict['ver'][ver_string] = [x_new, [y1, y2]]
                     dimension_list.append([[x_new,y1],[x_new,y2]])"""
@@ -1322,7 +1322,7 @@ class floor_plan_component1(object):
         key1 shows either horizontal dimension or vertical dimension 
         the x1 x2 x0 xn nomanclature made for  horizontal dimension
         """
-        if not outer_dim_dict[key1].has_key(yi):
+        if yi not in outer_dim_dict[key1]:
             
             outer_dim_dict[key1][yi] = np.zeros(xn-x0)
             outer_dim_dict[key1][yi][x1-x0:x2-x0]=1
@@ -1407,13 +1407,13 @@ class floor_plan_component1(object):
             
             if abs(y1-ycc) < abs(y2-ycc):
                 
-                if outer_dim_dict['hor'].has_key(y2):
+                if y2 in outer_dim_dict['hor']:
                     
                     outer_dim_dict['hor'][y2][x0c-x0:xnc-x0] = np.zeros(xnc-x0c)
                 return y1
             else:
                 
-                if outer_dim_dict['hor'].has_key(y1):
+                if y1 in outer_dim_dict['hor']:
                     
                     outer_dim_dict['hor'][y1][x0c-x0:xnc-x0] = np.zeros(xnc-x0c)
                 
@@ -1467,14 +1467,14 @@ class floor_plan_component1(object):
             
             if abs(y1-ycc) < abs(y2-ycc):
                 
-                if outer_dim_dict['ver'].has_key(y2):
+                if y2 in outer_dim_dict['ver']:
                     
                     outer_dim_dict['ver'][y2][x0c-y0:xnc-y0] = np.zeros(xnc-x0c)
                 return y1
                 
             else:
                 
-                if outer_dim_dict['ver'].has_key(y1):
+                if y1 in outer_dim_dict['ver']:
                     
                     outer_dim_dict['ver'][y1][x0c-y0:xnc-y0] = np.zeros(xnc-x0c)
                 
@@ -1557,12 +1557,12 @@ class floor_plan_component1(object):
             ycc = (y0c+ync)/2
             
             if abs(y1-ycc) < abs(y2-ycc):
-                if outer_dim_dict['hor'].has_key(y2) and len(outer_dim_dict['hor'][y2])>=xnc and (xnc-x0)>=xnc and (x0c-x0)<=x0c:
+                if y2 in outer_dim_dict['hor'] and len(outer_dim_dict['hor'][y2])>=xnc and (xnc-x0)>=xnc and (x0c-x0)<=x0c:
                     outer_dim_dict['hor'][y2][x0c-x0:xnc-x0] = np.zeros(xnc-x0c)
                 return y1
             else:
                 
-                if outer_dim_dict['hor'].has_key(y1) and len(outer_dim_dict['hor'][y1])>=xnc:
+                if y1 in outer_dim_dict['hor'] and len(outer_dim_dict['hor'][y1])>=xnc:
                     
                     outer_dim_dict['hor'][y1][x0c-x0:xnc-x0] = np.zeros(xnc-x0c)
                 
@@ -1615,14 +1615,14 @@ class floor_plan_component1(object):
             
             if abs(y1-ycc) < abs(y2-ycc):
                 #
-                if outer_dim_dict['ver'].has_key(y2) and len(outer_dim_dict['ver'][y2])>=xnc:
+                if y2 in outer_dim_dict['ver'] and len(outer_dim_dict['ver'][y2])>=xnc:
                
                     outer_dim_dict['ver'][y2][x0c-y0:xnc-y0] = np.zeros(xnc-x0c)
                 return y1
                 
             else:
                 #
-                if outer_dim_dict['ver'].has_key(y1) and len(outer_dim_dict['ver'][y1])>=xnc:
+                if y1 in outer_dim_dict['ver'] and len(outer_dim_dict['ver'][y1])>=xnc:
                     #
                     outer_dim_dict['ver'][y1][x0c-y0:xnc-y0] = np.zeros(xnc-x0c)
                 #
@@ -1664,8 +1664,8 @@ class floor_plan_component1(object):
                             for key1 in items[2:]:
                                 if key1[0] == 'Eb' or key1[0] == 'Et' or key1[0] == 'Er' or key1[0] == 'El':
                                     
-                                    if all_update_data[keys].has_key(key1[0]):
-                                        if all_update_data[keys][key1[0]].has_key(lines):
+                                    if key1[0] in all_update_data[keys]:
+                                        if lines in all_update_data[keys][key1[0]]:
                                             all_update_data[keys][key1[0]][lines].append(items[0:2])
                                         else:
                                             all_update_data[keys][key1[0]][lines] = [items[0:2]]

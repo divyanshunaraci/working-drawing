@@ -28,7 +28,27 @@ def json_example():
         print("json request is made")
         req = request.get_json()
         
-        j_object = json.loads(req, object_pairs_hook=collections.OrderedDict)
+        # Debug: Print the incoming JSON data
+        print("=== INCOMING JSON DATA ===")
+        print("Type of req:", type(req))
+        print("Raw req data:", repr(req))
+        
+        # Check if req is a string and parse it
+        if isinstance(req, str):
+            import json
+            req = json.loads(req)
+            print("Parsed req type:", type(req))
+            print("Parsed req keys:", list(req.keys()) if isinstance(req, dict) else "Not a dict")
+        
+        print("Final req data:")
+        import json
+        print(json.dumps(req, indent=2, default=str))
+        print("=== END INCOMING DATA ===")
+        
+        # Convert to OrderedDict to maintain key order
+        j_object = collections.OrderedDict()
+        for key, value in req.items():
+            j_object[key] = value
         
         #sending the data to python and getting back new json with details of dimension and all
 

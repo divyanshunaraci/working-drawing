@@ -14,7 +14,7 @@ class floor_plan_validation(object):
     def warning(self):
         warning_log_clean = []
         for items in self.warning_log:
-            if isinstance(items, unicode):
+            if isinstance(items, str):
                 warning_log_clean.append(items)
         return warning_log_clean
     
@@ -26,7 +26,7 @@ class floor_plan_validation(object):
     def error(self):
         error_log_clean = []
         for items in self.error_log:
-            if isinstance(items, unicode):
+            if isinstance(items, str):
                 error_log_clean.append(items)
         return error_log_clean
     
@@ -63,7 +63,7 @@ class floor_plan_validation(object):
     def _project_details(self,error_log, warning_log, json_object):
         #validaitng if key exists- if not then returned as error
         #checking if any additional keys exist- if yes then returned as warning   
-        if json_object.has_key('project_details'):
+        if 'project_details' in json_object:
             project_details_names = ['project_no','project_name','apartment_name','designer_name','flat_number','client_id','client_name','contract_date','name_title','target_date']
             
             json_project_details = json_object['project_details']
@@ -83,7 +83,7 @@ class floor_plan_validation(object):
     def _org_details(self,error_log, warning_log, json_object):
         #validaitng if key exists- if not then returned as error
         #checking if any additional keys exist- if yes then returned as warning 
-        if json_object.has_key('org_details'):
+        if 'org_details' in json_object:
             org_details_names = ['org_name','org_logo_url','org_address']
             json_org_details = json_object['org_details']
             for items in json_org_details:
@@ -102,9 +102,9 @@ class floor_plan_validation(object):
         #validating the room name position coordinates 
         #validating the format of outline
         room_names = []
-        if json_object.has_key('floor_plan'):
+        if 'floor_plan' in json_object:
             json_floor_plan = json_object['floor_plan']
-            if json_floor_plan.has_key('room_name_positions') and json_floor_plan.has_key('outline'):
+            if 'room_name_positions' in json_floor_plan and 'outline' in json_floor_plan:
                 error_log, warning_log, limit_coord, new_outline = self._outline('Json object[floor_plan][outline]', json_floor_plan['outline'], error_log, warning_log, PerformCheck = True)
                 json_floor_plan['outline'] = new_outline
                 json_floor_plan["thickness"] = int(self._thickness(limit_coord,'floor_plan'))
@@ -120,8 +120,8 @@ class floor_plan_validation(object):
                 else:
                     error_log.append('Json object[floor_plan][room_name_positions] is empty') 
             else:
-                if not json_floor_plan.has_key('room_name_positions'):
-                    if not json_floor_plan.has_key('outline'):
+                if 'room_name_positions' not in json_floor_plan:
+                    if 'outline' not in json_floor_plan:
                         error_log.append('Json object[floor_plan] does not contain the key name: room_name_positions.' )
                         error_log.append('Json object[floor_plan] does not contain the key name: outline.' )
                     else:
@@ -210,7 +210,7 @@ class floor_plan_validation(object):
     def _rooms(self, room_names):
         error_log, warning_log = self.error_log, self.warning_log
         json_object = self.j_object
-        if json_object.has_key('rooms'):
+        if 'rooms' in json_object:
             json_rooms = json_object['rooms']
             if not json_rooms:
                 error_log.append('Json object[rooms] is empty.')
@@ -222,10 +222,10 @@ class floor_plan_validation(object):
                         self.room_view_names[items] = []
                         self.room_name.append(items)
                         json_room = json_rooms[items]
-                        if json_room.has_key('room_top_view'):
+                        if 'room_top_view' in json_room:
                             self.room_view_names[items].append('room_top_view')
                             string_id = 'Json object[rooms]['+items+'][room_top_view]'
-                            if not json_room['room_top_view'].has_key('views'):
+                            if 'views' not in json_room['room_top_view']:
                                 del json_object['rooms'][items]
                             error_log, warning_log = self._room_top_view(self,string_id,json_room['room_top_view'],error_log, warning_log)
                         else:
@@ -233,7 +233,7 @@ class floor_plan_validation(object):
 
                         #check_con = 
                         
-                        if json_room.has_key('render_individual_comps'):
+                        if 'render_individual_comps' in json_room:
                             #check_len = 
                             if len(json_room['render_individual_comps']) == 0 :
                                 warning_log.append('Json object[rooms]['+items+'][render_individual_comps] is empty.') #warning
@@ -254,7 +254,7 @@ class floor_plan_validation(object):
                         
                         # while view_number !=0 :
                         #     view_number_name = 'view_' + str(view_number)
-                        #     if json_room.has_key(view_number_name) :
+                        #     if view_number_name in json_room :
                         #         if not json_room[view_number_name]:
                         #             warning_log.append('Json object[rooms]['+items+']['+view_number_name+'] is empty.') #error
                         #         else:
@@ -321,12 +321,12 @@ class floor_plan_validation(object):
         if check_len == 0:# if the dictionary is empty
             error_log.append(string_id + 'is empty')
         else:
-            check_con = json_room_top_view.has_key('outline')
+            check_con = 'outline' in json_room_top_view
             if check_con:
                 room_top_view_outline = json_room_top_view['outline']
                 error_log, warning_log, limit_coord, new_outline = self._outline(string_id+'[outline]', room_top_view_outline, error_log, warning_log, PerformCheck = True)
                 json_room_top_view['outline'] = new_outline
-                if(json_room_top_view.has_key('views')):
+                if('views' in json_room_top_view):
                     json_room_top_view_views = json_room_top_view['views']
                     for views in json_room_top_view_views.keys():
                         for j in range(0,len(json_room_top_view['views'][views])):
@@ -338,7 +338,7 @@ class floor_plan_validation(object):
 
                             
                     #json_room_top_view['views'][views] = new_outline_views
-                if(json_room_top_view.has_key('openings')):
+                if('openings' in json_room_top_view):
                     json_room_top_view_views = json_room_top_view['openings']
                     for views in json_room_top_view_views.keys():
                         for i in range(0,(len(json_room_top_view['openings'][views]))):
@@ -357,9 +357,9 @@ class floor_plan_validation(object):
                 
                 else:
                     # del json_room_top_view['floor_components']
-                    check_con = json_room_top_view.has_key('floor_components')
+                    check_con = 'floor_components' in json_room_top_view
                     if check_con:
-                        check_con1 = json_room_top_view['floor_components'].has_key('library')
+                        check_con1 = 'library' in json_room_top_view['floor_components']
                         if check_con1:
                             check_con2 = len(json_room_top_view['floor_components']['library'])
                             if check_con2 == 0:
@@ -379,7 +379,7 @@ class floor_plan_validation(object):
                         warning_log.append(string_id + 'does not contain the key name floor_components') #error
                     
                     del json_room_top_view['external']
-                    check_con = json_room_top_view.has_key('external')
+                    check_con = 'external' in json_room_top_view
                     if check_con:
                         
                         check_len = len(json_room_top_view['external'])
@@ -448,7 +448,7 @@ class floor_plan_validation(object):
                 if not json_room_top_view_library[items]:
                     warning_log.append(string_id+'['+items+'] is empty.')
                 else:
-                    if json_room_top_view_library[items].has_key('comp_details'):
+                    if 'comp_details' in json_room_top_view_library[items]:
                         if len(json_room_top_view_library[items]['comp_details']) < 5:
                             warning_log.append('Some items are missing from ' + string_id+'['+items+'][comp_details].')
                         elif len(json_room_top_view_library[items]['comp_details']) > 5:
@@ -465,7 +465,7 @@ class floor_plan_validation(object):
                     else:
                         warning_log.append(string_id+'['+items+'] has no key comp_details.')
                     
-                    if json_room_top_view_library[items].has_key('outline'):
+                    if 'outline' in json_room_top_view_library[items]:
                         error_log, warning_log, lines, new_outline = self._outline(string_id+'['+items+'][outline]',json_room_top_view_library[items]['outline'],error_log, warning_log,limit_coord[0][0],limit_coord[0][1])
                         # if(lines[0][0] < limit_coord[0][0] or lines[0][1] < limit_coord[0][1] or lines[1][0] > limit_coord[1][0] or lines[1][1] > limit_coord[1][1]):
                         #     del json_room_top_view_library[items]
@@ -574,7 +574,7 @@ class floor_plan_validation(object):
                     if check_len == 0:
                         del json_room_view_number['render_wall_view']
                     else:
-                        check_con = json_room_view_number['render_wall_view'].has_key('image_url')
+                        check_con = 'image_url' in json_room_view_number['render_wall_view']
                         if not check_con:  # render wall view has no image url
                             warning_log.append(string_id +'[' +view_items+'] does not contain image_url')
                             del json_room_view_number['render_wall_view']
@@ -594,7 +594,7 @@ class floor_plan_validation(object):
                         y_list_min.append(np.inf)
                         x_list_max.append(-np.inf)
                         y_list_max.append(-np.inf)
-                        check_con = json_room_view_number[view_items].has_key('outline')
+                        check_con = 'outline' in json_room_view_number[view_items]
                         for key_views in list(json_room_view_number[view_items]):
                             if not key_views in ["outline","floor_components","external","openings" ]:
                                 warning_log.append('Additional item: ' +string_id+'][' +view_items + '][' + key_views + 'exists.' )
@@ -611,10 +611,10 @@ class floor_plan_validation(object):
                                 error_log.append(string_id+'][' +view_items + '][outline] is empty. ')
                                 del json_room_view_number[view_items]['outline']
                             else:
-                                check_con1 = json_room_view_number[view_items].has_key('floor_components')
+                                check_con1 = 'floor_components' in json_room_view_number[view_items]
                                 
                                 if check_con1: #floor components exists
-                                    check_con2 = json_room_view_number[view_items]['floor_components'].has_key('library')
+                                    check_con2 = 'library' in json_room_view_number[view_items]['floor_components']
                                     if check_con2: #library exists
                                         string_floor_library = string_id + '][' +view_items + '][floor_components][library]'
                                         check_len = len(json_room_view_number[view_items]['floor_components']['library'])
@@ -627,7 +627,7 @@ class floor_plan_validation(object):
                                                     warning_log.append(string_floor_library+'['+items+'] is empty.')
                                                     del_yes *=0
                                                 else:
-                                                    if json_room_view_name_library[items].has_key('comp_details'):
+                                                    if 'comp_details' in json_room_view_name_library[items]:
                                                         if len(json_room_view_name_library[items]['comp_details']) < 5:
                                                             warning_log.append('Some items are missing from ' + string_floor_library+'['+items+'][comp_details].')
                                                         elif len(json_room_view_name_library[items]['comp_details']) > 5:
@@ -788,8 +788,8 @@ class floor_plan_validation(object):
                                 len_out = 0
 
                                 for item in list(json_room_view_name_library_external_points[items]):
-                                    if json_room_view_name_library_external_points[items][item].has_key('handle'):
-                                        if json_room_view_name_library_external_points[items][item]['handle'].has_key('outline'):
+                                    if 'handle' in json_room_view_name_library_external_points[items][item]:
+                                        if 'outline' in json_room_view_name_library_external_points[items][item]['handle']:
                                             string_id_shutter_handle = string_id + '[' + items + '][' + item + '][handle][outline]'
                                             error_log,  warning_log, lines, new_outline = self._outline(string_id_shutter_handle, json_room_view_name_library_external_points[items][item]['handle']['outline'], error_log, warning_log,limit_coord[0][0],limit_coord[0][1] )
                                             json_room_view_name_library_external_points[items][item]['handle']['outline'] = new_outline

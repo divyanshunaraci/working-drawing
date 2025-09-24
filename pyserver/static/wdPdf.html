@@ -32,9 +32,21 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
           <li id="print" class="button">
-            <button class="w3-bar-item w3-button my-navitem">
+            <button class="w3-bar-item w3-button my-navitem" title="Generate PDF (Server)">
               <svg viewBox="0 0 512 512" width="30" height="30">
                 <g>
+                  <path
+                    d="M511.293,143.133h-114.81V42.48H115.544v100.653H0.707v257.523H92.57v68.863h326.857v-68.863h91.865V143.133 L511.293,143.133z M143.887,70.823h224.251v72.311H143.887V70.823z M391.084,441.177H120.915v-109.44h270.169V441.177z M482.95,372.312h-63.522v-68.92H92.571v68.92H29.05V171.477h453.901L482.95,372.312L482.95,372.312z">
+                  </path>
+                  <rect x="418.18" y="206.628" width="28.346" height="28.343"></rect>
+                </g>
+              </svg>
+            </button>
+          </li>
+          <li id="printAlternative" class="button">
+            <button class="w3-bar-item w3-button my-navitem" title="Generate PDF (Local)" style="background-color: #28a745;">
+              <svg viewBox="0 0 512 512" width="25" height="25">
+                <g fill="white">
                   <path
                     d="M511.293,143.133h-114.81V42.48H115.544v100.653H0.707v257.523H92.57v68.863h326.857v-68.863h91.865V143.133 L511.293,143.133z M143.887,70.823h224.251v72.311H143.887V70.823z M391.084,441.177H120.915v-109.44h270.169V441.177z M482.95,372.312h-63.522v-68.92H92.571v68.92H29.05V171.477h453.901L482.95,372.312L482.95,372.312z">
                   </path>
@@ -459,6 +471,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.1.0/fabric.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.5/dist/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <!-- import custom js script -->
   <script src="js/base.js"></script>

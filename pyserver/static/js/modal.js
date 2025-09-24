@@ -292,8 +292,15 @@ function download(filename, text, canvasHeight) {
             "Content-type": "application/json; charset=UTF-8"
         },
     })
-        .then((response) => response.json())
+        .then((response) => {
+            console.log('PDF API Response Status:', response.status);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
         .then((out) => {
+            console.log('PDF API Response:', out);
             if(out.errorText) {
                 alert(out.errorText)
             }
@@ -307,8 +314,67 @@ function download(filename, text, canvasHeight) {
             $('.loader-msg').html("")
             $('.loader-msg').toggle()
             $(".main").css({ opacity: 1 });
-        }).catch(err => console.error(err));
+        }).catch(err => {
+            console.error('PDF Generation Error:', err);
+            alert('PDF generation failed: ' + err.message);
+            $("#loader").toggle();
+            $('.loader-msg').html("")
+            $('.loader-msg').toggle()
+            $(".main").css({ opacity: 1 });
+        });
 }
+
+// Alternative PDF generation using html2canvas
+$("#printAlternative").on("click", async function (e) {
+    try {
+        $("#loader").toggle();
+        $('.loader-msg').html("Generating PDF...");
+        $('.loader-msg').toggle();
+        $(".main").css({ opacity: 0.5 });
+
+        const element = document.querySelector('.main');
+        const canvas = await html2canvas(element, {
+            scale: 2,
+            useCORS: true,
+            allowTaint: true
+        });
+
+        // Create PDF using jsPDF
+        const imgData = canvas.toDataURL('image/png');
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const imgWidth = 210;
+        const pageHeight = 295;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        let heightLeft = imgHeight;
+
+        let position = 0;
+
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+
+        while (heightLeft >= 0) {
+            position = heightLeft - imgHeight;
+            pdf.addPage();
+            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+        }
+
+        pdf.save('working-drawing.pdf');
+
+        $("#loader").toggle();
+        $('.loader-msg').html("");
+        $('.loader-msg').toggle();
+        $(".main").css({ opacity: 1 });
+    } catch (error) {
+        console.error('Alternative PDF generation failed:', error);
+        alert('PDF generation failed: ' + error.message);
+        $("#loader").toggle();
+        $('.loader-msg').html("");
+        $('.loader-msg').toggle();
+        $(".main").css({ opacity: 1 });
+    }
+});
 
 $("#print").on("click", async function (e) {
     $("#loader").toggle();
@@ -361,17 +427,27 @@ $("#print").on("click", async function (e) {
                     var convertMeToImg = $('#checkId-' + i)[0]
                     $('.loader-msg').html(`${currentPage + i}` + "/" + `${totalpage}`);
                     try{
-                        const dataUrl = await domtoimage.toJpeg(convertMeToImg, { quality: 0.95 })
+                        console.log('Converting element to image:', convertMeToImg);
+                        const dataUrl = await Promise.race([
+                            domtoimage.toJpeg(convertMeToImg, { quality: 0.95 }),
+                            new Promise((_, reject) => setTimeout(() => reject(new Error('DOM to image timeout')), 30000))
+                        ]);
                         var imgTag = new Image();
                         imgTag.src = dataUrl;
                         imgTag.id = "imgId-" + i;
                         mainDiv.appendChild(imgTag);
-                        console.log(dataUrl, "1st")
+                        console.log("Successfully converted page", i);
                         var pagebreak = document.createElement("div");
                         pagebreak.setAttribute("style", "clear: both;page-break-after: always;");
                         mainDiv.appendChild(pagebreak)
                     }catch (error) {
-                        console.log(error, "error");
+                        console.error("Error converting page", i, ":", error);
+                        alert(`Failed to convert page ${i} to image: ${error.message}`);
+                        $("#loader").toggle();
+                        $('.loader-msg').html("")
+                        $('.loader-msg').toggle()
+                        $(".main").css({ opacity: 1 });
+                        return;
                     }
                 }
             }else{
@@ -380,17 +456,27 @@ $("#print").on("click", async function (e) {
                     console.log(convertMeToImg, 'image', convertMeToImg.offsetHeight)
                     $('.loader-msg').html(`${currentPage + i}` + "/" + `${Math.round(totalpage/2)}`);
                     try{
-                        const dataUrl = await domtoimage.toJpeg(convertMeToImg, { quality: 0.95 })
+                        console.log('Converting element to image (odd):', convertMeToImg);
+                        const dataUrl = await Promise.race([
+                            domtoimage.toJpeg(convertMeToImg, { quality: 0.95 }),
+                            new Promise((_, reject) => setTimeout(() => reject(new Error('DOM to image timeout')), 30000))
+                        ]);
                         var imgTag = new Image();
                         imgTag.src = dataUrl;
                         imgTag.id = "imgId-" + i;
-                        // console.log(dataUrl, "2st")
                         mainDiv.appendChild(imgTag);
+                        console.log("Successfully converted page (odd)", i);
                         var pagebreak = document.createElement("div");
                         pagebreak.setAttribute("style", "clear: both;page-break-after: always;");
                         mainDiv.appendChild(pagebreak)
                     }catch (error) {
-                        console.log(error, "error");
+                        console.error("Error converting page (odd)", i, ":", error);
+                        alert(`Failed to convert page ${i} to image: ${error.message}`);
+                        $("#loader").toggle();
+                        $('.loader-msg').html("")
+                        $('.loader-msg').toggle()
+                        $(".main").css({ opacity: 1 });
+                        return;
                     }
                 }
             }

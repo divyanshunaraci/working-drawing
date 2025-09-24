@@ -347,7 +347,81 @@ $("#printAlternative").on("click", async function (e) {
         
         console.log(`Generating PDF with ${totalPages} pages for ${lenOfRooms} room views`);
         
-        // Capture each checkId container as a separate PDF page
+        // First, capture the project information page if it exists
+        const projectInfoElement = document.getElementById('project-info');
+        if (projectInfoElement) {
+            $('.loader-msg').html('Capturing project information page...');
+            
+            try {
+                const canvas = await html2canvas(projectInfoElement, {
+                    scale: 1.5,
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: '#ffffff',
+                    width: projectInfoElement.offsetWidth,
+                    height: projectInfoElement.offsetHeight
+                });
+
+                const imgData = canvas.toDataURL('image/png');
+                const imgWidth = pageWidth - 20;
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                
+                pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, Math.min(imgHeight, pageHeight - 20));
+                isFirstPage = false;
+                pageCount++;
+                
+                console.log('Successfully captured project information page');
+            } catch (pageError) {
+                console.error('Failed to capture project info page:', pageError);
+                pdf.setFontSize(16);
+                pdf.setTextColor(255, 0, 0);
+                pdf.text('Error: Failed to capture project information page', 20, 50);
+                pdf.text(`${pageError.message}`, 20, 70);
+                isFirstPage = false;
+                pageCount++;
+            }
+        }
+        
+        // Next, capture the laminate/edge band information page if it exists
+        const edgeBandElement = document.getElementById('laminate-edgeband-info');
+        if (edgeBandElement) {
+            $('.loader-msg').html('Capturing materials information page...');
+            
+            try {
+                if (!isFirstPage) {
+                    pdf.addPage();
+                }
+                
+                const canvas = await html2canvas(edgeBandElement, {
+                    scale: 1.5,
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: '#ffffff',
+                    width: edgeBandElement.offsetWidth,
+                    height: edgeBandElement.offsetHeight
+                });
+
+                const imgData = canvas.toDataURL('image/png');
+                const imgWidth = pageWidth - 20;
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                
+                pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, Math.min(imgHeight, pageHeight - 20));
+                isFirstPage = false;
+                pageCount++;
+                
+                console.log('Successfully captured materials information page');
+            } catch (pageError) {
+                console.error('Failed to capture materials info page:', pageError);
+                pdf.setFontSize(16);
+                pdf.setTextColor(255, 0, 0);
+                pdf.text('Error: Failed to capture materials information page', 20, 50);
+                pdf.text(`${pageError.message}`, 20, 70);
+                isFirstPage = false;
+                pageCount++;
+            }
+        }
+        
+        // Now capture each checkId container as a separate PDF page
         for (let i = 0; i < totalPages; i++) {
             const element = document.getElementById(`checkId-${i}`);
             

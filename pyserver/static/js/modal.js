@@ -332,35 +332,90 @@ $("#printAlternative").on("click", async function (e) {
         $('.loader-msg').toggle();
         $(".main").css({ opacity: 0.5 });
 
-        const element = document.querySelector('.main');
-        const canvas = await html2canvas(element, {
-            scale: 2,
-            useCORS: true,
-            allowTaint: true
-        });
-
         // Create PDF using jsPDF
-        const imgData = canvas.toDataURL('image/png');
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF('p', 'mm', 'a4');
-        const imgWidth = 210;
-        const pageHeight = 295;
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-        let heightLeft = imgHeight;
+        const pageWidth = 210; // A4 width in mm
+        const pageHeight = 297; // A4 height in mm
+        
+        let isFirstPage = true;
+        let pageCount = 0;
+        
+        // Get the total number of pages needed
+        let lenOfRooms = state.roomViews ? state.roomViews.length : 1;
+        let totalPages = Math.ceil(lenOfRooms/2);
+        
+        console.log(`Generating PDF with ${totalPages} pages for ${lenOfRooms} room views`);
+        
+        // Capture each checkId container as a separate PDF page
+        for (let i = 0; i < totalPages; i++) {
+            const element = document.getElementById(`checkId-${i}`);
+            
+            if (!element) {
+                console.warn(`Element checkId-${i} not found, skipping`);
+                continue;
+            }
+            
+            $('.loader-msg').html(`Capturing page ${i + 1} of ${totalPages}...`);
+            
+            try {
+                // Capture the element
+                const canvas = await html2canvas(element, {
+                    scale: 1.5,
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: '#ffffff',
+                    width: element.offsetWidth,
+                    height: element.offsetHeight
+                });
 
-        let position = 0;
-
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
-
-        while (heightLeft >= 0) {
-            position = heightLeft - imgHeight;
-            pdf.addPage();
-            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-            heightLeft -= pageHeight;
+                // Convert to image
+                const imgData = canvas.toDataURL('image/png');
+                
+                // Calculate dimensions to fit A4
+                const imgWidth = pageWidth - 20; // Leave 10mm margin on each side
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                
+                // Add new page if not the first page
+                if (!isFirstPage) {
+                    pdf.addPage();
+                }
+                isFirstPage = false;
+                
+                // Add image to PDF
+                pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, Math.min(imgHeight, pageHeight - 20));
+                pageCount++;
+                
+                console.log(`Successfully captured page ${i + 1}`);
+                
+            } catch (pageError) {
+                console.error(`Failed to capture page ${i}:`, pageError);
+                // Add error page
+                if (!isFirstPage) {
+                    pdf.addPage();
+                }
+                isFirstPage = false;
+                
+                pdf.setFontSize(16);
+                pdf.setTextColor(255, 0, 0);
+                pdf.text(`Error: Failed to capture page ${i + 1}`, 20, 50);
+                pdf.text(`${pageError.message}`, 20, 70);
+                pageCount++;
+            }
         }
-
-        pdf.save('working-drawing.pdf');
+        
+        if (pageCount === 0) {
+            throw new Error('No pages were successfully captured');
+        }
+        
+        // Save the PDF
+        let date = new Date();
+        let datestr = date.toISOString().replace(/[^0-9]/g, "");
+        const filename = `WorkingDrawing_${datestr}.pdf`;
+        
+        pdf.save(filename);
+        
+        alert(`PDF generated successfully with ${pageCount} pages!`);
 
         $("#loader").toggle();
         $('.loader-msg').html("");
@@ -422,61 +477,192 @@ $("#print").on("click", async function (e) {
             mainDiv.appendChild(pagebreak);
             console.log(state.roomViews.length, ' the length of rooms')
             let lenOfRooms =  state.roomViews.length
+            let totalPages = Math.ceil(lenOfRooms/2);
+            console.log(`Room views: ${lenOfRooms}, Total pages needed: ${totalPages}`);
+            
+            // Debug: Check which checkId elements exist
+            for (let j = 0; j < totalPages; j++) {
+                const elem = document.getElementById(`checkId-${j}`);
+                console.log(`checkId-${j} exists:`, !!elem);
+            }
+            
             if (lenOfRooms%2 === 0){
                 for (var i = 0; i < lenOfRooms/2; i++){
                     var convertMeToImg = $('#checkId-' + i)[0]
-                    $('.loader-msg').html(`${currentPage + i}` + "/" + `${totalpage}`);
-                    try{
-                        console.log('Converting element to image:', convertMeToImg);
-                        const dataUrl = await Promise.race([
-                            domtoimage.toJpeg(convertMeToImg, { quality: 0.95 }),
-                            new Promise((_, reject) => setTimeout(() => reject(new Error('DOM to image timeout')), 30000))
-                        ]);
-                        var imgTag = new Image();
-                        imgTag.src = dataUrl;
-                        imgTag.id = "imgId-" + i;
-                        mainDiv.appendChild(imgTag);
-                        console.log("Successfully converted page", i);
-                        var pagebreak = document.createElement("div");
-                        pagebreak.setAttribute("style", "clear: both;page-break-after: always;");
-                        mainDiv.appendChild(pagebreak)
-                    }catch (error) {
-                        console.error("Error converting page", i, ":", error);
-                        alert(`Failed to convert page ${i} to image: ${error.message}`);
+                    // Check if element exists before trying to convert
+                    if (!convertMeToImg) {
+                        console.error(`Element checkId-${i} not found`);
+                        alert(`Failed to convert page ${i} to image: Element not found`);
                         $("#loader").toggle();
                         $('.loader-msg').html("")
                         $('.loader-msg').toggle()
                         $(".main").css({ opacity: 1 });
                         return;
                     }
-                }
-            }else{
-                for (var i = 0; i < Math.ceil(lenOfRooms/2); i++){
-                    var convertMeToImg = $('#checkId-' + i)[0]
-                    console.log(convertMeToImg, 'image', convertMeToImg.offsetHeight)
-                    $('.loader-msg').html(`${currentPage + i}` + "/" + `${Math.round(totalpage/2)}`);
+                    $('.loader-msg').html(`${currentPage + i}` + "/" + `${totalPages}`);
                     try{
-                        console.log('Converting element to image (odd):', convertMeToImg);
+                        console.log('Converting element to image:', convertMeToImg);
+                        
+                        // Add additional options to handle potential rendering issues
+                        const options = {
+                            quality: 0.95,
+                            bgcolor: '#ffffff',
+                            width: convertMeToImg.offsetWidth,
+                            height: convertMeToImg.offsetHeight,
+                            style: {
+                                transform: 'scale(1)',
+                                transformOrigin: 'top left'
+                            }
+                        };
+                        
                         const dataUrl = await Promise.race([
-                            domtoimage.toJpeg(convertMeToImg, { quality: 0.95 }),
-                            new Promise((_, reject) => setTimeout(() => reject(new Error('DOM to image timeout')), 30000))
+                            domtoimage.toJpeg(convertMeToImg, options),
+                            new Promise((_, reject) => setTimeout(() => reject(new Error('DOM to image timeout after 30 seconds')), 30000))
                         ]);
+                        
+                        if (!dataUrl || dataUrl === 'data:,') {
+                            throw new Error('Empty or invalid image data generated');
+                        }
+                        
                         var imgTag = new Image();
+                        imgTag.onload = function() {
+                            console.log("Successfully converted page", i);
+                        };
+                        imgTag.onerror = function(e) {
+                            console.error("Image load error for page", i, ":", e);
+                            throw new Error(`Image failed to load for page ${i}`);
+                        };
                         imgTag.src = dataUrl;
                         imgTag.id = "imgId-" + i;
                         mainDiv.appendChild(imgTag);
-                        console.log("Successfully converted page (odd)", i);
+                        
                         var pagebreak = document.createElement("div");
                         pagebreak.setAttribute("style", "clear: both;page-break-after: always;");
                         mainDiv.appendChild(pagebreak)
                     }catch (error) {
-                        console.error("Error converting page (odd)", i, ":", error);
-                        alert(`Failed to convert page ${i} to image: ${error.message}`);
+                        console.error("Error converting page", i, ":", error);
+                        console.error("Error details:", {
+                            message: error.message,
+                            stack: error.stack,
+                            elementInfo: {
+                                id: convertMeToImg.id,
+                                className: convertMeToImg.className,
+                                offsetWidth: convertMeToImg.offsetWidth,
+                                offsetHeight: convertMeToImg.offsetHeight,
+                                childElementCount: convertMeToImg.childElementCount
+                            }
+                        });
+                        // Ask user if they want to continue with remaining pages
+                        const continueProcessing = confirm(`Failed to convert page ${i} to image: ${error.message || 'Unknown error occurred'}\n\nDo you want to continue with the remaining pages?`);
+                        if (!continueProcessing) {
+                            $("#loader").toggle();
+                            $('.loader-msg').html("")
+                            $('.loader-msg').toggle()
+                            $(".main").css({ opacity: 1 });
+                            return;
+                        }
+                        
+                        // Add a placeholder for the failed page
+                        var placeholderDiv = document.createElement("div");
+                        placeholderDiv.innerHTML = `<p style="text-align: center; color: red; font-size: 18px; padding: 50px;">Page ${i + 1} failed to convert</p>`;
+                        placeholderDiv.style.height = "500px";
+                        placeholderDiv.style.border = "2px dashed red";
+                        placeholderDiv.style.margin = "20px";
+                        mainDiv.appendChild(placeholderDiv);
+                        
+                        var pagebreak = document.createElement("div");
+                        pagebreak.setAttribute("style", "clear: both;page-break-after: always;");
+                        mainDiv.appendChild(pagebreak);
+                    }
+                }
+            }else{
+                for (var i = 0; i < Math.ceil(lenOfRooms/2); i++){
+                    var convertMeToImg = $('#checkId-' + i)[0]
+                    // Check if element exists before trying to convert
+                    if (!convertMeToImg) {
+                        console.error(`Element checkId-${i} not found`);
+                        alert(`Failed to convert page ${i} to image: Element not found`);
                         $("#loader").toggle();
                         $('.loader-msg').html("")
                         $('.loader-msg').toggle()
                         $(".main").css({ opacity: 1 });
                         return;
+                    }
+                    console.log(convertMeToImg, 'image', convertMeToImg.offsetHeight)
+                    $('.loader-msg').html(`${currentPage + i}` + "/" + `${totalPages}`);
+                    try{
+                        console.log('Converting element to image (odd):', convertMeToImg);
+                        
+                        // Add additional options to handle potential rendering issues
+                        const options = {
+                            quality: 0.95,
+                            bgcolor: '#ffffff',
+                            width: convertMeToImg.offsetWidth,
+                            height: convertMeToImg.offsetHeight,
+                            style: {
+                                transform: 'scale(1)',
+                                transformOrigin: 'top left'
+                            }
+                        };
+                        
+                        const dataUrl = await Promise.race([
+                            domtoimage.toJpeg(convertMeToImg, options),
+                            new Promise((_, reject) => setTimeout(() => reject(new Error('DOM to image timeout after 30 seconds')), 30000))
+                        ]);
+                        
+                        if (!dataUrl || dataUrl === 'data:,') {
+                            throw new Error('Empty or invalid image data generated');
+                        }
+                        
+                        var imgTag = new Image();
+                        imgTag.onload = function() {
+                            console.log("Successfully converted page (odd)", i);
+                        };
+                        imgTag.onerror = function(e) {
+                            console.error("Image load error for page", i, ":", e);
+                            throw new Error(`Image failed to load for page ${i}`);
+                        };
+                        imgTag.src = dataUrl;
+                        imgTag.id = "imgId-" + i;
+                        mainDiv.appendChild(imgTag);
+                        
+                        var pagebreak = document.createElement("div");
+                        pagebreak.setAttribute("style", "clear: both;page-break-after: always;");
+                        mainDiv.appendChild(pagebreak)
+                    }catch (error) {
+                        console.error("Error converting page (odd)", i, ":", error);
+                        console.error("Error details:", {
+                            message: error.message,
+                            stack: error.stack,
+                            elementInfo: {
+                                id: convertMeToImg.id,
+                                className: convertMeToImg.className,
+                                offsetWidth: convertMeToImg.offsetWidth,
+                                offsetHeight: convertMeToImg.offsetHeight,
+                                childElementCount: convertMeToImg.childElementCount
+                            }
+                        });
+                        // Ask user if they want to continue with remaining pages
+                        const continueProcessing = confirm(`Failed to convert page ${i} to image: ${error.message || 'Unknown error occurred'}\n\nDo you want to continue with the remaining pages?`);
+                        if (!continueProcessing) {
+                            $("#loader").toggle();
+                            $('.loader-msg').html("")
+                            $('.loader-msg').toggle()
+                            $(".main").css({ opacity: 1 });
+                            return;
+                        }
+                        
+                        // Add a placeholder for the failed page
+                        var placeholderDiv = document.createElement("div");
+                        placeholderDiv.innerHTML = `<p style="text-align: center; color: red; font-size: 18px; padding: 50px;">Page ${i + 1} failed to convert</p>`;
+                        placeholderDiv.style.height = "500px";
+                        placeholderDiv.style.border = "2px dashed red";
+                        placeholderDiv.style.margin = "20px";
+                        mainDiv.appendChild(placeholderDiv);
+                        
+                        var pagebreak = document.createElement("div");
+                        pagebreak.setAttribute("style", "clear: both;page-break-after: always;");
+                        mainDiv.appendChild(pagebreak);
                     }
                 }
             }

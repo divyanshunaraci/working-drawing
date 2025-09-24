@@ -2,25 +2,25 @@
 var APIAddress = {
     // Login User Module API
     //Test
-    // login: "http://15.207.19.54:8080/api/user/login",
+    login: "http://3.7.252.246:3000/api/user/login",
 
     //Prod
-    login: "http://35.154.121.217:8080/api/user/login",
+    // login: "http://35.154.121.217:8080/api/user/login",
     
     // User Interface API
-    readJSO: "http://65.0.215.24:4000/json",
+    readJSO: "http://localhost:4000/json",
     
     // Transaction Service API\
     //Test 
-    // getWdProject: "http://15.206.209.192:8080/api/project/wdProject",
-    // getBtnClickProject: "http://15.207.181.191:8080/api/project/wdProject",
-    // generatePDF: "http://15.206.209.192:8080/api/working-drawing/generate_pdf", 
+    getWdProject: "http://3.7.252.246:5000/api/project/wdProject",
+    getBtnClickProject: "http://3.7.252.246:5000/api/project/wdProject",
+    generatePDF: "http://3.7.252.246:5000/api/working-drawing/generate_pdf", 
     // importSaveJSON: "http://localhost:4000/static/json1.json",
 
     //Prod
-    getWdProject: "http://15.207.181.191:8080/api/project/wdProject",
-    getBtnClickProject: "http://15.207.181.191:8080/api/project/wdProject",
-    generatePDF: "http://15.207.181.191:8080/api/working-drawing/generate_pdf", 
+    // getWdProject: "http://15.207.181.191:8080/api/project/wdProject",
+    // getBtnClickProject: "http://15.207.181.191:8080/api/project/wdProject",
+    // generatePDF: "http://15.207.181.191:8080/api/working-drawing/generate_pdf", 
 }
 var decorpotOrg = {
     DPLogo: 'https://naraci-test.s3.ap-south-1.amazonaws.com/decorpot/static/decorpot.png',

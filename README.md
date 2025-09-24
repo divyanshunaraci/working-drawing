@@ -2,109 +2,61 @@
 
 A Flask-based web application for processing floor plan data with validation and outline generation capabilities.
 
-## Features
+## Quick Start
 
-- Floor plan validation and processing
-- JSON-based API for floor plan data
-- CORS-enabled for web integration
-- Mathematical processing using NumPy and Matplotlib
+### Prerequisites
+- macOS with Homebrew installed
+- Internet connection
 
-## Prerequisites
+### Setup & Run
 
-- macOS (tested on macOS 15.0)
-- Homebrew (for package management)
-- Internet connection for downloading dependencies
+1. **Install Miniconda**
+   ```bash
+   brew install miniconda
+   ```
 
-## Installation & Setup
+2. **Setup Environment**
+   ```bash
+   # Initialize conda (restart terminal after this step)
+   conda init zsh
+   
+   # Accept terms of service
+   conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main
+   conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
+   
+   # Create environment with Python 3.9
+   conda create -n working-drawing python=3.9 -y
+   
+   # Activate environment and install dependencies
+   conda activate working-drawing
+   conda install numpy matplotlib flask flask-cors requests -y
+   ```
 
-### 1. Install Miniconda
+3. **Start the Server**
+   ```bash
+   cd pyserver
+   
+   # If you have pyenv installed, disable it temporarily
+   unset PYENV_ROOT && unset PYENV_VERSION
+   export PATH="/opt/homebrew/Caskroom/miniconda/base/envs/working-drawing/bin:$PATH"
+   
+   python server.py
+   ```
 
-```bash
-# Install miniconda via Homebrew
-brew install miniconda
-```
-
-### 2. Initialize Conda
-
-```bash
-# Initialize conda for your shell
-conda init zsh
-# or for bash: conda init bash
-```
-
-### 3. Accept Conda Terms of Service
-
-```bash
-# Accept terms of service for conda channels
-conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main
-conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
-```
-
-### 4. Create Conda Environment
-
-```bash
-# Create a new conda environment with Python 3.9
-conda create -n working-drawing python=3.9 -y
-```
-
-### 5. Activate Environment and Install Dependencies
-
-```bash
-# Activate the conda environment
-conda activate working-drawing
-
-# Install all required packages via conda
-conda install numpy matplotlib flask flask-cors requests -y
-```
-
-### 6. Navigate to Project Directory
-
-```bash
-cd pyserver
-```
-
-## Running the Server
-
-### Start the Server
-
-```bash
-# Make sure you're in the pyserver directory
-cd pyserver
-
-# Activate conda environment
-conda activate working-drawing
-
-# Start the Flask server
-python server.py
-```
-
-The server will start on `http://localhost:4000`
-
-### Access the Application
-
-- **Main Interface**: `http://localhost:4000`
-- **API Endpoint**: `http://localhost:4000/json` (POST requests)
+4. **Access the Application**
+   - **Web Interface**: http://localhost:4000
+   - **API Endpoint**: http://localhost:4000/json
 
 ## API Usage
 
-### JSON Processing Endpoint
-
-**POST** `/json`
-
-Send JSON data containing floor plan information for processing.
+**POST** `/json` - Process floor plan data
 
 **Request Format:**
 ```json
 {
-  "project_details": {
-    // project information
-  },
-  "rooms": [
-    // room data
-  ],
-  "walls": [
-    // wall data
-  ]
+  "project_details": { /* project information */ },
+  "rooms": [ /* room data */ ],
+  "walls": [ /* wall data */ ]
 }
 ```
 
@@ -118,61 +70,33 @@ Send JSON data containing floor plan information for processing.
 working-drawing/
 ├── pyserver/
 │   ├── server.py                 # Main Flask application
-│   ├── floor_plan_validation.py  # Floor plan validation logic
-│   ├── floor_plan_outline.py     # Floor plan outline generation
-│   ├── static/                  # Static web assets
-│   │   ├── css/                 # Stylesheets
-│   │   ├── js/                  # JavaScript files
-│   │   └── assets/              # Images and icons
-│   └── templates/               # HTML templates
-│       └── index.html           # Main web interface
-└── README.md                    # This file
+│   ├── floor_plan_validation.py  # Validation logic
+│   ├── floor_plan_outline.py     # Outline generation
+│   ├── static/                   # Web assets (CSS, JS, images)
+│   └── templates/                # HTML templates
+└── README.md
 ```
-
-## Dependencies
-
-The application requires the following Python packages (installed via conda):
-
-- **Flask** (3.1.2) - Web framework
-- **Flask-CORS** (6.0.1) - Cross-origin resource sharing
-- **NumPy** (2.0.1) - Mathematical operations
-- **Matplotlib** (3.9.2) - Plotting and visualization
-- **Requests** (2.32.5) - HTTP library
 
 ## Troubleshooting
 
-### Common Issues
+**Server won't start?**
+- Make sure conda environment is activated: `conda activate working-drawing`
+- If using pyenv, disable it as shown in step 3 above
+- Check if port 4000 is available: `lsof -i :4000`
 
-1. **Conda not found**: Make sure to run `conda init` and restart your terminal
-2. **Python 2/3 compatibility**: The code was originally written for Python 2.7 but has been adapted for Python 3.9
-3. **Port already in use**: If port 4000 is busy, modify `server.py` to use a different port
-
-### Environment Issues
-
-If you encounter issues with the conda environment:
-
+**Environment issues?**
 ```bash
-# Deactivate current environment
+# Reset environment
 conda deactivate
-
-# Remove and recreate environment
 conda env remove -n working-drawing
 conda create -n working-drawing python=3.9 -y
 conda activate working-drawing
 conda install numpy matplotlib flask flask-cors requests -y
 ```
 
-## Development Notes
+## Features
 
-- The application processes floor plan data and generates validation reports
-- Mathematical calculations are performed using NumPy
-- Visualization capabilities are provided by Matplotlib
-- The server runs in debug mode by default for development
-
-## License
-
-This project is part of the Decorpot working drawing system.
-
-## Support
-
-For technical support or questions about the floor plan processing system, please contact the development team.
+- Floor plan validation and processing
+- JSON-based API for floor plan data
+- CORS-enabled for web integration
+- Mathematical processing using NumPy and Matplotlib

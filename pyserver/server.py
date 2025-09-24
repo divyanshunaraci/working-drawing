@@ -83,7 +83,7 @@ def request_download(url_name):
     #print(url_name)
 
     for item in url_name:
-        x = threading.Thread(request_download_image(item))
+        x = threading.Thread(target=request_download_image, args=(item,))
         x.start()
         #x.join()
         '''

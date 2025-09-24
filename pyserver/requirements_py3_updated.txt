@@ -1,0 +1,29 @@
+# Updated requirements for Python 3.13 compatibility
+# Modern versions that support Python 3.13
+
+# Core Flask framework
+Flask==3.0.0
+Flask-Cors==4.0.0
+
+# Core dependencies 
+Werkzeug==3.0.1
+Jinja2==3.1.4
+MarkupSafe==2.1.5
+itsdangerous==2.2.0
+click==8.1.7
+
+# Scientific computing (Python 3.13 compatible)
+numpy==1.26.4
+matplotlib==3.8.4
+pyparsing==3.1.2
+python-dateutil==2.9.0
+pytz==2024.1
+six==1.16.0
+kiwisolver==1.4.5
+cycler==0.12.1
+
+# HTTP requests
+requests==2.32.3
+
+# Additional dependencies that may be needed
+fonttools==4.51.0

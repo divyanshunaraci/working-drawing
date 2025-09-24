@@ -100,3 +100,21 @@ conda install numpy matplotlib flask flask-cors requests -y
 - JSON-based API for floor plan data
 - CORS-enabled for web integration
 - Mathematical processing using NumPy and Matplotlib
+
+
+
+
+Final Quick Start Commands (Divyanshu) -
+
+# Navigate to project directory
+cd pyserver
+
+# Activate conda environment and disable pyenv interference
+source /opt/homebrew/Caskroom/miniconda/base/etc/profile.d/conda.sh
+conda activate working-drawing
+unset PYENV_ROOT
+unset PYENV_VERSION
+export PATH="/opt/homebrew/Caskroom/miniconda/base/envs/working-drawing/bin:$PATH"
+
+# Start the server
+python server.py

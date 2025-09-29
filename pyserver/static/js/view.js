@@ -140,8 +140,9 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
           const pageElement = document.querySelector(pageSelector);
           
           if (pageElement) {
-            // Get room information from state if available
+            // Get room information and page header from state if available
             let roomName = 'Foyer';
+            let drawingTitle = 'Foyer';
             let electricWorks = '';
             
             // Try to get room information from state.roomViews if available
@@ -170,6 +171,12 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
               }
             }
             
+            // Get the page header title from the current page
+            const titleElement = pageElement.querySelector('#title');
+            if (titleElement && titleElement.textContent) {
+              drawingTitle = titleElement.textContent.trim();
+            }
+            
             // Check if table already exists for this page
             const existingTable = pageElement.querySelector('.dynamic-table');
             if (!existingTable) {
@@ -187,7 +194,7 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
                             NOTE:<br/>NON STANDARD DIMENSIONS
                           </td>
                           <td contenteditable='true' style="padding: 6px; border: 1px solid #000; width: 32.5%;"><strong>CLIENT NAME:</strong><br/>${projectInfo.client_name || 'Mounika'}</td>
-                          <td contenteditable='true' style="padding: 6px; border: 1px solid #000; width: 32.5%;"><strong>DRAWING TITLE:</strong><br/>${roomName}</td>
+                          <td contenteditable='true' style="padding: 6px; border: 1px solid #000; width: 32.5%;"><strong>DRAWING TITLE:</strong><br/>${drawingTitle}</td>
                         </tr>
                         <tr>
                           <td contenteditable='true' style="padding: 6px; border: 1px solid #000;"><strong>LOCATION:</strong><br/>${projectInfo.apartment_name || projectInfo.address || 'A110 -GRC Subiksha, Sarjapura Hobli, Choodasandra, Bengaluru, Karnataka 560099'}</td>

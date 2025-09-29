@@ -320,8 +320,9 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
           </div>
           <div class="col-md-4" style="text-align: right;">
             <div style="display: inline-block; text-align: center; margin-top: 10px;">
-              <img src="${orgDetail.org_logo_url}" alt="Org Logo" style="width: 120px; display: block; margin: 0 auto;">
-              <div style="font-size: 20px; font-weight: bold; color: #333; margin-top: 5px; letter-spacing: 2px;">DECORPOT</div>
+              <div style="margin-bottom: 10px; margin-top: 10px; display: flex; justify-content: center; align-items: center;">
+                <img src="assets/decorpot.png" alt="Decorpot Logo" style="max-width: 160px; max-height: 80px; width: auto; height: auto; object-fit: contain;" crossorigin="anonymous"/>
+              </div>
             </div>
           </div>
           <div class="col-md-12">
@@ -451,8 +452,9 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
           </div>
           <div class="col-md-4" style="text-align: right;">
             <div style="display: inline-block; text-align: center; margin-top: 10px;">
-              <img src="${orgDetail.org_logo_url}" alt="Org Logo" style="width: 150px; display: block; margin: 0 auto;">
-              <div style="font-size: 24px; font-weight: bold; color: #333; margin-top: 5px; letter-spacing: 2px;">DECORPOT</div>
+              <div style="margin-bottom: 10px; margin-top: 10px; display: flex; justify-content: center; align-items: center;">
+                <img src="assets/decorpot.png" alt="Decorpot Logo" style="max-width: 180px; max-height: 90px; width: auto; height: auto; object-fit: contain;" crossorigin="anonymous"/>
+              </div>
             </div>
           </div>
           <div class="col-md-12">

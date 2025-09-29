@@ -572,12 +572,9 @@ const calcScaleOrigin = (viewBoxInfo, canvasWidth, canvasHeight) => {
 
 // render ground floor plan
 const renderFloorPlan = (floorPlanView, id) => {
-  // To hide the legneds view and dimension scaling
+  // Calibrate canvases for all views (legend now visible on all pages)
   state.roomViews.forEach((elem, index) => {
     if (elem.name == "Ground floor plan" || elem.name == "room_top_view" || elem.name == "top_view" || elem.name == "front_view" || elem.name == "internal_view" || elem.name == "EXTRA_VIEW") {
-      ele1 = document.querySelector("#wd-" + index);
-      ele1.querySelectorAll("[id='legend-view']").forEach(b => b.setAttribute("class", "col-12"));
-      ele1.querySelectorAll("[id='legend-view_1']").forEach(b => b.setAttribute("style", "display: none"));
       calibrateCanvases(state.viewBoxInfo);
     }
     if (elem.name == "room_top_view") {

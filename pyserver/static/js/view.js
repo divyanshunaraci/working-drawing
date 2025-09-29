@@ -206,11 +206,11 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
                       <table class="table table-bordered" style="margin: 0; font-size: 11px; width: 100%; border-left: none; table-layout: fixed; height: 100%;">
                         <tbody>
                           <tr style="height: 100%;">
-                            <td style="padding: 6px; border: 1px solid #000; vertical-align: top; text-align: center;">
-                              <div style="margin-bottom: 10px;">
-                                <img src="assets/decorpot.png" alt="Decorpot Logo" style="max-width: 80px; max-height: 40px; object-fit: contain;" crossorigin="anonymous"/>
+                            <td style="padding: 8px; border: 1px solid #000; vertical-align: top; text-align: center;">
+                              <div style="margin-bottom: 10px; margin-top: 10px; display: flex; justify-content: center; align-items: center;">
+                                <img src="assets/decorpot.png" alt="Decorpot Logo" style="max-width: 160px; max-height: 80px; width: auto; height: auto; object-fit: contain;" crossorigin="anonymous"/>
                               </div>
-                              <div contenteditable='true' style="font-size: 10px; line-height: 1.3;">
+                              <div contenteditable='true' style="font-size: 10px; line-height: 1.3; text-align: center;">
                                 ${orgDetail.org_address || projectInfo.org_address || 'Not specified'}
                               </div>
                             </td>

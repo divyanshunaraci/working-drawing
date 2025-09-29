@@ -281,48 +281,43 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
         <div class="col-md-12" style="margin-top: 55px">
         </div>
       </div>
-      <div class="working-drawing container-fluid" id="project-info" style="height: 90vh;">
+      <div class="working-drawing container-fluid" id="project-info" style="height: 90vh; padding: 40px; background-color: #fff;">
         <div class="row pt-4">
-          <div class="col-md-6">
-            <span id="title">Project Details: </span>
+          <div class="col-md-8">
+            <h2 id="title" style="font-size: 48px; font-weight: bold; margin-bottom: 40px; color: #333;">Project Details :</h2>
           </div>
-          <div class="col-md-6">
-            <img src="${orgDetail.org_logo_url}" alt="Org Logo" style="width: 150px;float: right;">
+          <div class="col-md-4" style="text-align: right;">
+            <div style="display: inline-block; text-align: center; margin-top: 10px;">
+              <img src="${orgDetail.org_logo_url}" alt="Org Logo" style="width: 150px; display: block; margin: 0 auto;">
+              <div style="font-size: 24px; font-weight: bold; color: #333; margin-top: 5px; letter-spacing: 2px;">DECORPOT</div>
+            </div>
           </div>
           <div class="col-md-12">
-            <table class="table table-bordered" style="margin: 20px auto;width: 70%">
-              <tbody style="font-size: 14px;">
+            <table style="margin: 40px auto; width: 95%; font-size: 20px; border-collapse: collapse; border: 2px solid #000;">
+              <tbody>
                 <tr>
-                  <td>Client Name</td>
-                  <td contenteditable = 'true'>Mr. / Mrs. ${projectInfo.client_name}</td>
+                  <td style="background-color: #f8f9fa; font-weight: bold; padding: 18px; width: 35%; border: 2px solid #000; vertical-align: middle;">Client name</td>
+                  <td contenteditable='true' style="padding: 18px; border: 2px solid #000; vertical-align: middle;">${projectInfo.client_name || 'Mounika'}</td>
                 </tr>
                 <tr>
-                  <td>Apartment Address</td>
-                  <td contenteditable = 'true'>${projectInfo.apartment_name}</td>
+                  <td style="background-color: #f8f9fa; font-weight: bold; padding: 18px; border: 2px solid #000; vertical-align: middle;">Apartment Address</td>
+                  <td contenteditable='true' style="padding: 18px; border: 2px solid #000; vertical-align: middle; line-height: 1.4;">${projectInfo.apartment_name || 'A-110, GRC Subiksha, Choodasandra Village, Sarjapura Hobli, Choodasandra, Bengaluru, Karnataka 560099'}</td>
                 </tr>
                 <tr>
-                  <td>Client Contact Number</td>
-                  <td contenteditable = 'true'>9999999999</td>
+                  <td style="background-color: #f8f9fa; font-weight: bold; padding: 18px; border: 2px solid #000; vertical-align: middle;">Client contact number</td>
+                  <td contenteditable='true' style="padding: 18px; border: 2px solid #000; vertical-align: middle;">${projectInfo.client_contact || '91597 77206'}</td>
                 </tr>
                 <tr>
-                  <td>Desinger Name</td>
-                  <td contenteditable = 'true'>Mr. / Mrs. ${projectInfo.designer_name}</td>
+                  <td style="background-color: #f8f9fa; font-weight: bold; padding: 18px; border: 2px solid #000; vertical-align: middle;">Designer Name</td>
+                  <td contenteditable='true' style="padding: 18px; border: 2px solid #000; vertical-align: middle;">${projectInfo.designer_name || 'Aditi Padiyar'}</td>
                 </tr>
                 <tr>
-                  <td>Visualizer Name</td>
-                  <td contenteditable = 'true'>Mr. / Mrs. ABC</td>
+                  <td style="background-color: #f8f9fa; font-weight: bold; padding: 18px; border: 2px solid #000; vertical-align: middle;">Design QC Name</td>
+                  <td contenteditable='true' style="padding: 18px; border: 2px solid #000; vertical-align: middle;">${projectInfo.qc_name || 'Munirathinam'}</td>
                 </tr>
                 <tr>
-                  <td>Target Completion Date</td>
-                  <td contenteditable = 'true'>11/11/2021</td>
-                </tr>
-                <tr>
-                  <td>Contract Sign Date</td>
-                  <td contenteditable = 'true'>${projectInfo.contract_date}</td>
-                </tr>
-                <tr>
-                  <td>Project Number (Factory)</td>
-                  <td contenteditable = 'true'>${projectInfo.project_no}</td>
+                  <td style="background-color: #f8f9fa; font-weight: bold; padding: 18px; border: 2px solid #000; vertical-align: middle;">Project number /Unique ID</td>
+                  <td contenteditable='true' style="padding: 18px; border: 2px solid #000; vertical-align: middle;">${projectInfo.project_no || 'HS0724130'}</td>
                 </tr>
               </tbody>
             </table>

@@ -169,40 +169,41 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
             // Check if table already exists for this page
             const existingTable = pageElement.querySelector('.dynamic-table');
             if (!existingTable) {
-              // Create the dynamic table with data from JSON
-              const dynamicTable = `
-                <div class="row" style="background-color:white; margin-top: 15px;">
-                  <div class="col-12">
-                    <table class="table table-bordered dynamic-table" style="margin-bottom: 5px; font-size: 11px; width: 100%; border: 2px solid #000;">
-                      <tbody>
-                        <tr>
-                          <td rowspan="3" style="background-color: #e6f3ff; font-weight: bold; padding: 8px; vertical-align: top; width: 15%; text-align: center; border: 1px solid #000;">
-                            Electric works:
-                          </td>
-                          <td rowspan="3" style="background-color: #ffe6e6; font-weight: bold; padding: 8px; vertical-align: top; width: 20%; text-align: center; border: 1px solid #000;">
-                            NOTE:<br/>NON STANDARD DIMENSIONS
-                          </td>
-                          <td contenteditable='true' style="padding: 6px; border: 1px solid #000; width: 32.5%;"><strong>CLIENT NAME:</strong><br/>${projectInfo.client_name}</td>
-                          <td contenteditable='true' style="padding: 6px; border: 1px solid #000; width: 32.5%;"><strong>DRAWING TITLE:</strong><br/>${drawingTitle}</td>
-                        </tr>
-                        <tr>
-                          <td contenteditable='true' style="padding: 6px; border: 1px solid #000;"><strong>LOCATION:</strong><br/>${projectInfo.apartment_name || projectInfo.address}</td>
-                          <td contenteditable='true' style="padding: 6px; border: 1px solid #000;"><strong>DESIGNED BY:</strong><br/>${projectInfo.designer_name}</td>
-                        </tr>
-                        <tr>
-                          <td colspan="2" style="padding: 6px; border: 2px solid #000; height: 50px; background-color: white;">
-                            <strong>DESIGN QC SIGN:</strong>
-                            <!-- Empty space for QC sign as requested -->
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              `;
-              
-              // Insert the table at the bottom of the page element
-              pageElement.insertAdjacentHTML('beforeend', dynamicTable);
+               // Create the dynamic table with reduced width (fits in col-9 layout)
+               const dynamicTable = `
+                 <div class="col-12" style="background-color:white; padding: 15px;">
+                   <table class="table table-bordered dynamic-table" style="margin-bottom: 5px; font-size: 11px; width: 100%; border: 2px solid #000;">
+                     <tbody>
+                       <tr>
+                         <td rowspan="3" style="background-color: #e6f3ff; font-weight: bold; padding: 8px; vertical-align: top; width: 15%; text-align: center; border: 1px solid #000;">
+                           Electric works:
+                         </td>
+                         <td rowspan="3" style="background-color: #ffe6e6; font-weight: bold; padding: 8px; vertical-align: top; width: 20%; text-align: center; border: 1px solid #000;">
+                           NOTE:<br/>NON STANDARD DIMENSIONS
+                         </td>
+                         <td contenteditable='true' style="padding: 6px; border: 1px solid #000; width: 32.5%;"><strong>CLIENT NAME:</strong><br/>${projectInfo.client_name}</td>
+                         <td contenteditable='true' style="padding: 6px; border: 1px solid #000; width: 32.5%;"><strong>DRAWING TITLE:</strong><br/>${drawingTitle}</td>
+                       </tr>
+                       <tr>
+                         <td contenteditable='true' style="padding: 6px; border: 1px solid #000;"><strong>LOCATION:</strong><br/>${projectInfo.apartment_name || projectInfo.address}</td>
+                         <td contenteditable='true' style="padding: 6px; border: 1px solid #000;"><strong>DESIGNED BY:</strong><br/>${projectInfo.designer_name}</td>
+                       </tr>
+                       <tr>
+                         <td colspan="2" style="padding: 6px; border: 2px solid #000; height: 50px; background-color: white;">
+                           <strong>DESIGN QC SIGN:</strong>
+                           <!-- Empty space for QC sign as requested -->
+                         </td>
+                       </tr>
+                     </tbody>
+                   </table>
+                 </div>
+               `;
+               
+               // Insert the table into the dedicated bottom container within the col-9 area
+               const bottomContainer = pageElement.querySelector(`#bottom-table-container-${i}`);
+               if (bottomContainer) {
+                 bottomContainer.innerHTML = dynamicTable;
+               }
             }
           }
         }
@@ -213,7 +214,7 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
     for (let i = 0; i < viewsCnt; i++) {
       const template = `
       <div class="working-drawing container-fluid col-md-12 checkNumber" id='wd-${i}'>
-        <div class="row">
+        <div class="row" style="min-height: 100vh;">
           <div id="legend-view" class="col-9">
             <div class="row">
              
@@ -222,8 +223,11 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
                   <canvas class = 'overlay-canvas-container' id = "c#${i}"></canvas>
                 </div>
             </div>
+            <!-- Move dynamic table inside the main content area but reduce its width -->
+            <div class="row" id="bottom-table-container-${i}" style="margin-top: auto;">
+            </div>
           </div>
-          <div id="legend-view_1" class="col-3">
+          <div id="legend-view_1" class="col-3" style="border-left: 2px solid #ddd; min-height: 100vh; padding: 15px;">
             <div class = 'row' style=" height: 2.5em">
               <div class = 'col-12' style="text-align: center">
                 <span style="font-size: large">Legend</span>
@@ -233,12 +237,12 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
             </div>
             <div class = 'fixed-table-body'>
               <h6>Materials Details</h6>
-              <table class="table table-bordered side-table" >            
+              <table class="table table-bordered side-table" style="background-color: white;">            
               </table>
             </div>
             <div class='fixed-table-body'>
               <h6>Handles Details</h6>
-              <table class="table table-bordered side-Handletable" >            
+              <table class="table table-bordered side-Handletable" style="background-color: white;">            
               </table>
             </div>
           </div>

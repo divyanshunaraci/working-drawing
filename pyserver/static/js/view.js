@@ -93,7 +93,7 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
         document.querySelector(".main").insertAdjacentHTML("beforeend", check)
       }
     }else{
-      for (let i = 0; i < Math.ceil(viewsCnt/2); i++){
+      for (let i = 0; i < viewsCnt; i++){
         const check = `
           <div class = "container" id="checkId-${i}" style = "margin-left:1px">
             <div class = "row main-class" id = "div-${i}">
@@ -133,7 +133,7 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
     let viewsCount = []
     for (let i = 0; i < viewsCnt; i++) {
       const template = `
-      <div class="working-drawing container-fluid col-md-6 checkNumber" id='wd-${i}'>
+      <div class="working-drawing container-fluid col-md-12 checkNumber" id='wd-${i}'>
         <div class="row">
           <div id="legend-view" class="col-9">
             <div class="row">
@@ -183,22 +183,17 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
     }
     console.log(viewsCount.length, 'the count of views')
     let len = viewsCount.length
-    if (len%2 === 0){
-      console.log('even hit')
-      for (let i = 0; i < Math.ceil(len/2); i++){
-        for (let j = 0; j < len; j++){
-          if (document.getElementById(`div-${i}`).childElementCount !== 2 && j < len){
-            document.getElementById(`div-${i}`).insertAdjacentHTML('beforeend', viewsCount[j])
-            document.getElementById(`div-${i}`).insertAdjacentHTML('beforeend', viewsCount[j+1])
-            let index = viewsCount.indexOf(viewsCount[j])
-            viewsCount.splice(index,2)
-            console.log(document.getElementById(`div-${i}`))
-          }
-        }
+    // Insert each view into its own container (one view per page)
+    for (let i = 0; i < len; i++) {
+      if (document.getElementById(`div-${i}`)) {
+        document.getElementById(`div-${i}`).insertAdjacentHTML('beforeend', viewsCount[i])
       }
-    }else{
+    }
+    // Remove the old even/odd logic - now each view gets its own container
+    // Old logic kept for reference but not used
+    if (false) {
       const createdDiv = `
-      <div class="working-drawing container-fluid col-md-6 checkNumber" id='wd'>
+      <div class="working-drawing container-fluid col-md-12 checkNumber" id='wd'>
       </div>
       `
       viewsCount.push(createdDiv)
@@ -404,8 +399,7 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
         '<div class = "tempPage container-fluid"></div>'
       );
     // initialize the current and total page number in menu bar
-    document.querySelector("#totalPgNumber").textContent = viewsCnt + 1;
-    document.querySelector("#currentPageNumber").value = 1;
+    // Page number display elements removed
 
     $('.bottom-table').find('td').on("input", function (e) {
 

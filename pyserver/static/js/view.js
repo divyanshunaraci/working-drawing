@@ -63,31 +63,6 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
             <div class = "row main-class" id = "div-${i}">
 
             </div>
-            <div class="row" style = "background-color:white">
-              <table class="table table-bordered bottom-table" style="margin-bottom: ${i-1}px;">
-                <tbody>
-                  <tr>
-                    <td rowspan="3" contenteditable = 'true'>
-                    <img src = "${orgDetail.org_logo_url}" crossorigin="" width="300" height="50" alt= "logo" />
-                    <span> ${orgDetail.org_name} : ${orgDetail.org_address}</span>
-                    </td>
-                    <td class='drawing-title' contenteditable = 'true'>Drawing TITLE: Floor Plan</td>
-                    <td contenteditable = 'true'>Designed by: ${projectInfo.designer_name}</td>
-                    <td contenteditable = 'true'>Scale: NTS</td>
-                  </tr>
-                  <tr>
-                    <td contenteditable = 'true'>Project Title: ${projectInfo.project_name}</td>
-                    <td contenteditable = 'true'>Drafted by: xxx</td>
-                    <td contenteditable = 'true'>Drawing Revision: R0</td>
-                  </tr>
-                  <tr>
-                    <td contenteditable = 'true'>Location: ${projectInfo.apartment_name}</td>
-                    <td contenteditable = 'true' >Checked by: XYZ</td>
-                    <td contenteditable = 'true'>Date: ${projectInfo.contract_date}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
           </div>
           <div class="html2pdf__page-break"></div>`
         document.querySelector(".main").insertAdjacentHTML("beforeend", check)
@@ -98,31 +73,6 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
           <div class = "container" id="checkId-${i}" style = "margin-left:1px">
             <div class = "row main-class" id = "div-${i}">
 
-            </div>
-            <div class="row" style = "background-color:white">
-              <table class="table table-bordered bottom-table" style="margin-bottom: ${i-1}px;">
-                <tbody>
-                  <tr>
-                    <td rowspan="3" contenteditable = 'true'>
-                    <img src = "${orgDetail.org_logo_url}" crossorigin="" width="300" height="50" alt= "logo" />
-                    <span> ${orgDetail.org_name} : ${orgDetail.org_address}</span>
-                    </td>
-                    <td class='drawing-title' contenteditable = 'true'>Drawing TITLE: Floor Plan</td>
-                    <td contenteditable = 'true'>Designed by: ${projectInfo.designer_name}</td>
-                    <td contenteditable = 'true'>Scale: NTS</td>
-                  </tr>
-                  <tr>
-                    <td contenteditable = 'true'>Project Title: ${projectInfo.project_name}</td>
-                    <td contenteditable = 'true'>Drafted by: xxx</td>
-                    <td contenteditable = 'true'>Drawing Revision: R0</td>
-                  </tr>
-                  <tr>
-                    <td contenteditable = 'true'>Location: ${projectInfo.apartment_name}</td>
-                    <td contenteditable = 'true' >Checked by: XYZ</td>
-                    <td contenteditable = 'true'>Date: ${projectInfo.contract_date}</td>
-                  </tr>
-                </tbody>
-              </table>
             </div>
           </div>
           <div class="html2pdf__page-break"></div>`
@@ -530,17 +480,6 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
       addDynamicTableToPages();
     }, 100);
 
-    $('.bottom-table').find('td').on("input", function (e) {
-
-      $('.bottom-table').each(function () {
-        var tr = $(this).find('tr')[e.target.closest('tr').rowIndex];
-        var td = $(tr).find('td')[e.target.cellIndex]
-        if (td === e.target) {
-          return;
-        };
-        $(td).html(e.target.innerHTML);
-      })
-    })
     
     // Add event handler for dynamic tables to sync content across pages
     $(document).on("input", '.dynamic-table td[contenteditable]', function (e) {

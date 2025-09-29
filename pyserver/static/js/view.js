@@ -169,10 +169,10 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
             // Check if table already exists for this page
             const existingTable = pageElement.querySelector('.dynamic-table');
             if (!existingTable) {
-               // Create the dynamic table with reduced width (fits in col-9 layout)
+               // Create the dynamic table covering the entire col-9 space
                const dynamicTable = `
-                 <div class="col-12" style="background-color:white; padding: 15px;">
-                   <table class="table table-bordered dynamic-table" style="margin-bottom: 5px; font-size: 11px; width: 100%; border: 2px solid #000;">
+                 <div class="col-12" style="background-color:white; padding: 0; margin: 0;">
+                   <table class="table table-bordered dynamic-table" style="margin: 0; font-size: 11px; width: 100%; border: 2px solid #000;">
                      <tbody>
                        <tr>
                          <td rowspan="3" style="background-color: #e6f3ff; font-weight: bold; padding: 8px; vertical-align: top; width: 15%; text-align: center; border: 1px solid #000;">

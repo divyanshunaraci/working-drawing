@@ -64,26 +64,6 @@
               </svg>
             </button>
           </li>
-          <li>
-            <input href="#" class="" style="width: 40px !important; margin-top: 10px" id="currentPageNumber"
-              value="1" />
-          </li>
-          <li>
-            <span class="w3-bar-item" style="
-                  font-size: 25px;
-                  color: white;
-                  margin-top: 4px;
-                  margin-left: 5px;
-                ">
-              /
-            </span>
-          </li>
-          <span style="
-                color: white;
-                font-size: 20px;
-                margin-left: 5px;
-                margin-top: 7px;
-              " id="totalPgNumber">1</span>
           <li id="goForward">
             <button href="#" class="w3-bar-item w3-button my-navitem">
               <svg viewBox="0 0 512 512" width="30" height="30">
@@ -317,42 +297,42 @@
             <span id="title">Project Details: </span>
           </div>
           <div class="col-md-6">
-            <img src="https://naraci-test.s3.ap-south-1.amazonaws.com/decorpot/static/decorpot.png" alt="Org Logo" style="width: 150px;float: right;">
+            <img id="org-logo" src="https://naraci-test.s3.ap-south-1.amazonaws.com/decorpot/static/decorpot.png" alt="Org Logo" style="width: 150px;float: right;">
           </div>
           <div class="col-md-12">
             <table class="table table-bordered" style="margin: 20px auto;width: 70%">
               <tbody style="font-size: 14px;">
                 <tr>
                   <td>Client Name</td>
-                  <td>Mr. / Mrs. ABC</td>
+                  <td id="client-name">Mr. / Mrs. ABC</td>
                 </tr>
                 <tr>
                   <td>Apartment Address</td>
-                  <td>Address Address Address Address</td>
+                  <td id="apartment-address">Address Address Address Address</td>
                 </tr>
                 <tr>
                   <td>Client Contact Number</td>
-                  <td>9999999999</td>
+                  <td id="contact-number">9999999999</td>
                 </tr>
                 <tr>
-                  <td>Desinger Name</td>
-                  <td>Mr. / Mrs. ABC</td>
+                  <td>Designer Name</td>
+                  <td id="designer-name">Mr. / Mrs. ABC</td>
                 </tr>
                 <tr>
                   <td>Visualizer Name</td>
-                  <td>Mr. / Mrs. ABC</td>
+                  <td id="visualizer-name">Mr. / Mrs. ABC</td>
                 </tr>
                 <tr>
                   <td>Target Completion Date</td>
-                  <td>11/11/2021</td>
+                  <td id="target-date">11/11/2021</td>
                 </tr>
                 <tr>
                   <td>Contract Sign Date</td>
-                  <td>11/11/2021</td>
+                  <td id="contract-date">11/11/2021</td>
                 </tr>
                 <tr>
                   <td>Project Number (Factory)</td>
-                  <td>DP.1111.1</td>
+                  <td id="project-number">DP.1111.1</td>
                 </tr>
               </tbody>
             </table>
@@ -404,7 +384,7 @@
       <div class="html2pdf__page-break"></div>
       <div class = "container" id = "checkId-0">
         <div class="row  main-class" id = "div-0">
-          <div class="working-drawing container-fluid col-md-6" id="wd-0">
+          <div class="working-drawing container-fluid col-md-12" id="wd-0">
             <div class="row">
               <div class="col-9">
                 <div class="row">
@@ -483,6 +463,111 @@
   <script src="js/constantConfig.js?v=1.1"></script>
   <script>
     window.history.forward(1);
+    
+    // Function to populate project details from JSON data
+    function populateProjectDetails() {
+      console.log('Attempting to populate project details...');
+      console.log('State:', typeof state !== 'undefined' ? state : 'undefined');
+      
+      // Wait for the state to be populated
+      if (typeof state !== 'undefined' && state.projectInfo) {
+        console.log('Project info found, populating fields...');
+        console.log('Project details:', state.projectInfo);
+        const projectDetails = state.projectInfo;
+        
+        // Update client information
+        const clientNameElement = document.getElementById('client-name');
+        if (clientNameElement) {
+          clientNameElement.textContent = projectDetails.client_name || 'N/A';
+        }
+        
+        // Update apartment address
+        const addressElement = document.getElementById('apartment-address');
+        if (addressElement) {
+          addressElement.textContent = projectDetails.address || 'N/A';
+        }
+        
+        // Update contact number
+        const contactElement = document.getElementById('contact-number');
+        if (contactElement) {
+          contactElement.textContent = projectDetails.contact_no || 'N/A';
+        }
+        
+        // Update designer name
+        const designerElement = document.getElementById('designer-name');
+        if (designerElement) {
+          designerElement.textContent = projectDetails.designer_name || 'N/A';
+        }
+        
+        // For visualizer name, we'll use designer name as fallback since it's not in JSON
+        const visualizerElement = document.getElementById('visualizer-name');
+        if (visualizerElement) {
+          visualizerElement.textContent = projectDetails.designer_name || 'N/A';
+        }
+        
+        // Update target completion date
+        const targetDateElement = document.getElementById('target-date');
+        if (targetDateElement) {
+          targetDateElement.textContent = projectDetails.target_date || 'N/A';
+        }
+        
+        // Update contract sign date
+        const contractDateElement = document.getElementById('contract-date');
+        if (contractDateElement) {
+          contractDateElement.textContent = projectDetails.contract_date || 'N/A';
+        }
+        
+        // Update project number
+        const projectNumberElement = document.getElementById('project-number');
+        if (projectNumberElement) {
+          projectNumberElement.textContent = projectDetails.project_no || 'N/A';
+        }
+        
+        // Update organization logo
+        const orgLogoElement = document.getElementById('org-logo');
+        if (orgLogoElement && projectDetails.org_logo_url) {
+          orgLogoElement.src = projectDetails.org_logo_url;
+        }
+      }
+    }
+    
+    // Watch for changes to the global state variable
+    let checkStateInterval;
+    function watchForState() {
+      checkStateInterval = setInterval(function() {
+        if (typeof state !== 'undefined' && state.projectInfo) {
+          populateProjectDetails();
+          clearInterval(checkStateInterval);
+        }
+      }, 100);
+      
+      // Stop checking after 10 seconds
+      setTimeout(function() {
+        if (checkStateInterval) {
+          clearInterval(checkStateInterval);
+        }
+      }, 10000);
+    }
+    
+    // Try to populate immediately when DOM is ready
+    document.addEventListener('DOMContentLoaded', function() {
+      // Try immediately
+      populateProjectDetails();
+      
+      // Start watching for state changes
+      watchForState();
+      
+      // Also try after delays as fallback
+      setTimeout(populateProjectDetails, 500);
+      setTimeout(populateProjectDetails, 1000);
+      setTimeout(populateProjectDetails, 2000);
+    });
+    
+    // Also try when the window loads
+    window.addEventListener('load', function() {
+      setTimeout(populateProjectDetails, 100);
+      setTimeout(populateProjectDetails, 500);
+    });
   </script>
 </body>
 

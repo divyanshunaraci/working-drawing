@@ -7,9 +7,8 @@ document.querySelector("#goPrev").addEventListener("click", function (e) {
   // scroll to page
   scrollToPage(currentPageNumber - 1);
 
-  // change current page number and input field value
+  // change current page number
   currentPageNumber = currentPageNumber - 1;
-  document.querySelector("#currentPageNumber").value = currentPageNumber;
 });
 
 // go to next page
@@ -19,9 +18,8 @@ document.querySelector("#goForward").addEventListener("click", function (e) {
   // scroll to page
   scrollToPage(currentPageNumber + 1);
 
-  // change current page number and input field value
+  // change current page number
   currentPageNumber = currentPageNumber + 1;
-  document.querySelector("#currentPageNumber").value = currentPageNumber;
 });
 
 // elementary : scroll to [pageNumber] page
@@ -30,32 +28,9 @@ const scrollToPage = (pageNumber) => {
   ele.scrollIntoView({ behaviour: 'instant', block: "start" });
 };
 
-// current-page-number input field onchange event
-$("#currentPageNumber").on("change", function (e) {
-  const pageNumber = Number(e.target.value);
+// Page number input field removed
 
-  if (!pageNumber) return;
-
-  if (!state.roomViews) {
-    return;
-  }
-
-  if (
-    pageNumber < 1 ||
-    pageNumber > state.roomViews.length ||
-    !Number.isInteger(pageNumber)
-  ) {
-    alert("Wrong page number! Please insert a valid page number.");
-  } else {
-    currentPageNumber = pageNumber;
-    scrollToPage(currentPageNumber);
-  }
-});
-
-// when the current-page-number input field loses focus
-document.querySelector("#currentPageNumber").onblur = function (e) {
-  document.querySelector("#currentPageNumber").value = currentPageNumber;
-};
+// Page number input field removed
 
 // check if an element(working-drawing) is visible in the viewport
 const isInViewport = (el) => {
@@ -91,8 +66,10 @@ document.querySelector(".main").addEventListener('scroll',function() {
   const pages = document.querySelectorAll(".working-drawing");
   for(let j = 0; j < pages.length; j++) {
     if (isInViewport(pages[j])) {
-      currentPageNumber = j - 1;
-      document.querySelector("#currentPageNumber").value = currentPageNumber + 1;
+      // Fixed page numbering calculation - pages are 0-indexed but display is 1-indexed
+      currentPageNumber = j + 1;
+      // Page number display element removed
+      break; // Only update once per scroll to prevent rapid changes
     }
   }
 });
@@ -127,7 +104,6 @@ document.querySelector("#addPage").addEventListener("click", function (e) {
 
   // update currentPageNumber
   currentPageNumber += 1;
-  document.querySelector("#currentPageNumber").value = currentPageNumber;
 
   // scroll to page
   scrollToPage(currentPageNumber);
@@ -172,7 +148,6 @@ document.querySelector("#removePage").addEventListener("click", function (e) {
 
   // update currentPageNumber
   currentPageNumber -= 1;
-  document.querySelector("#currentPageNumber").value = currentPageNumber;
   // scroll to page
   scrollToPage(currentPageNumber);
   // hide loading bar

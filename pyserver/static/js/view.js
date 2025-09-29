@@ -173,7 +173,7 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
                const dynamicTable = `
                  <div style="background-color:white; padding: 0; margin: 0; display: flex;">
                    <div style="width: 75%;">
-                     <table class="table table-bordered dynamic-table" style="margin: 0; font-size: 11px; width: 100%; border: 2px solid #000; table-layout: fixed;">
+                     <table class="table table-bordered dynamic-table" style="margin: 0; font-size: 11px; width: 100%; border: 1px solid #000; table-layout: fixed;">
                        <tbody>
                          <tr>
                            <td rowspan="3" style="background-color: #e6f3ff; font-weight: bold; padding: 8px; vertical-align: top; width: 16%; text-align: center; border: 1px solid #000;">
@@ -202,8 +202,8 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
                        </tbody>
                      </table>
                    </div>
-                   <div style="width: 25%; border-left: 1px solid #000;">
-                     <table class="table table-bordered" style="margin: 0; font-size: 11px; width: 100%; border: 2px solid #000; border-left: none; table-layout: fixed; height: 100%;">
+                   <div style="width: 25%;">
+                     <table class="table table-bordered" style="margin: 0; font-size: 11px; width: 100%; border-left: none; table-layout: fixed; height: 100%;">
                        <tbody>
                          <tr style="height: 100%;">
                            <td contenteditable='true' style="padding: 6px; border: 1px solid #000; vertical-align: top;">${orgDetail.org_address || projectInfo.org_address || 'Not specified'}</td>

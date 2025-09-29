@@ -70,10 +70,9 @@ img.img-logo {
 
 /* working-drawing container style */
 .main {
-  height: 100vh;
-  overflow-y: scroll;
-  scroll-snap-type: y mandatory;
-  scroll-padding: 8%;
+  height: calc(100vh - 50px);
+  overflow-y: auto;
+  scroll-behavior: smooth;
   pointer-events: all;
 }
 
@@ -86,8 +85,7 @@ img.img-logo {
   height: auto;
   /* border: 0.3px black solid; */
   background-color: white;
-
-  scroll-snap-align: start;
+  /* scroll-snap-align: start; - Removed to fix automatic scrolling issue */
 }
 .html2pdf__page-break {
   clear: both;
@@ -113,6 +111,33 @@ img.img-logo {
   height: 100%;
   pointer-events: all;
   image-rendering: crisp-edges;
+}
+
+/* Ensure working drawing pages take full width */
+.working-drawing.col-md-12 {
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 0 15px;
+  margin-bottom: 20px;
+}
+
+/* Ensure page breaks work properly */
+.working-drawing {
+  page-break-after: always;
+  min-height: 100vh;
+}
+
+/* Ensure containers accommodate full-width views */
+.container#checkId-0, .container[id^="checkId-"] {
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 0;
+}
+
+/* Main class row styling for full width */
+.row.main-class {
+  margin: 0;
+  width: 100%;
 }
 
 div.row {

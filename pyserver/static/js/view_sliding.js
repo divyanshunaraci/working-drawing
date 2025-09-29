@@ -90,8 +90,7 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
         '<div class = "tempPage container-fluid"></div>'
       );
     // initialize the current and total page number in menu bar
-    document.querySelector("#totalPgNumber").textContent = viewsCnt;
-    document.querySelector("#currentPageNumber").value = 1;
+    // Page number display elements removed
 
     // add row to 'legend' table
     $(".legend-add-image").on("change", (e) => {

@@ -176,21 +176,20 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
                     <table class="table table-bordered dynamic-table" style="margin-bottom: 5px; font-size: 11px; width: 100%; border: 2px solid #000;">
                       <tbody>
                         <tr>
-                          <td rowspan="2" style="background-color: #e6f3ff; font-weight: bold; padding: 8px; vertical-align: middle; width: 15%; text-align: center; border: 1px solid #000;">
+                          <td rowspan="3" style="background-color: #e6f3ff; font-weight: bold; padding: 8px; vertical-align: top; width: 15%; text-align: center; border: 1px solid #000;">
                             Electric works:
                           </td>
-                          <td rowspan="2" style="background-color: #ffe6e6; font-weight: bold; padding: 8px; vertical-align: middle; width: 20%; text-align: center; border: 1px solid #000;">
+                          <td rowspan="3" style="background-color: #ffe6e6; font-weight: bold; padding: 8px; vertical-align: top; width: 20%; text-align: center; border: 1px solid #000;">
                             NOTE:<br/>NON STANDARD DIMENSIONS
                           </td>
-                          <td contenteditable='true' style="padding: 6px; border: 1px solid #000; width: 32.5%;"><strong>CLIENT NAME:</strong><br/>${projectInfo.client_name || 'Mounika'}</td>
+                          <td contenteditable='true' style="padding: 6px; border: 1px solid #000; width: 32.5%;"><strong>CLIENT NAME:</strong><br/>${projectInfo.client_name}</td>
                           <td contenteditable='true' style="padding: 6px; border: 1px solid #000; width: 32.5%;"><strong>DRAWING TITLE:</strong><br/>${drawingTitle}</td>
                         </tr>
                         <tr>
-                          <td contenteditable='true' style="padding: 6px; border: 1px solid #000;"><strong>LOCATION:</strong><br/>${projectInfo.apartment_name || projectInfo.address || 'A110 -GRC Subiksha, Sarjapura Hobli, Choodasandra, Bengaluru, Karnataka 560099'}</td>
-                          <td contenteditable='true' style="padding: 6px; border: 1px solid #000;"><strong>DESIGNED BY:</strong><br/>${projectInfo.designer_name || 'Aditi Padiyar'}</td>
+                          <td contenteditable='true' style="padding: 6px; border: 1px solid #000;"><strong>LOCATION:</strong><br/>${projectInfo.apartment_name || projectInfo.address}</td>
+                          <td contenteditable='true' style="padding: 6px; border: 1px solid #000;"><strong>DESIGNED BY:</strong><br/>${projectInfo.designer_name}</td>
                         </tr>
                         <tr>
-                          <td colspan="2" style="border: 1px solid #000;"></td>
                           <td colspan="2" style="padding: 6px; border: 2px solid #000; height: 50px; background-color: white;">
                             <strong>DESIGN QC SIGN:</strong>
                             <!-- Empty space for QC sign as requested -->

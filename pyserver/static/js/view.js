@@ -219,60 +219,129 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
  //[[0,1],[2,3],[4,5]]
     // Material Table Data Page
     const materialTableDataPage = `
-      <div class="working-drawing container-fluid" id="laminate-edgeband-info">
-        <div class="row pt-4">
-          <div class="col-md-6">
-            <span id="title">Laminates & Edge Band Required: </span>
+      <div class="working-drawing container-fluid" id="laminate-edgeband-info" style="height: 100vh; padding: 15px 40px; background-color: #fff; box-sizing: border-box;">
+        <div class="row pt-2">
+          <div class="col-md-8">
+            <h2 id="title" style="font-size: 32px; font-weight: bold; margin-bottom: 20px; color: #333;">Laminates & Edge Band Table :-</h2>
           </div>
-          <div class="col-md-6">
-            <img src="${orgDetail.org_logo_url}" alt="Org Logo" style="width: 150px;float: right;">
+          <div class="col-md-4" style="text-align: right;">
+            <div style="display: inline-block; text-align: center; margin-top: 10px;">
+              <img src="${orgDetail.org_logo_url}" alt="Org Logo" style="width: 120px; display: block; margin: 0 auto;">
+              <div style="font-size: 20px; font-weight: bold; color: #333; margin-top: 5px; letter-spacing: 2px;">DECORPOT</div>
+            </div>
           </div>
           <div class="col-md-12">
             <div id="laminateEdgeBand">
-              <table class="table table-bordered">
-                <thead style="font-weight: 700;">
-                  <tr>
-                    <td>Space (Desigenr)</td>
-                    <td>Laminate Company & Code (Designer)</td>
-                    <td>Laminate Quantity (Factory)</td>
-                    <td>Checked By</td>
-                    <td>Edge Band Code (Factory)</td>
-                    <td>Edge Band Quantity (Factory)</td>
+              <table style="width: 100%; border-collapse: collapse; border: 2px solid #000; font-size: 14px;">
+                <thead>
+                  <tr style="background-color: #f8f9fa;">
+                    <th style="border: 2px solid #000; padding: 6px; text-align: center; font-weight: bold; width: 12%;">Space/Area<br/><span style="color: red; font-weight: bold;">(Designer)</span></th>
+                    <th style="border: 2px solid #000; padding: 6px; text-align: center; font-weight: bold; width: 58%;">
+                      Laminate Code And Laminate Image<span style="color: red; font-weight: bold;">(Designer)</span><br/>
+                      <span style="font-size: 11px; font-weight: normal; color: #666;">Note : Physical Laminate Selected Will Be Final, Soft Copy For Office Use</span>
+                    </th>
+                    <th style="border: 2px solid #000; padding: 6px; text-align: center; font-weight: bold; width: 15%;">Edge Banding Code<br/><span style="color: red; font-weight: bold;">(Factory)</span></th>
                   </tr>
                 </thead>
                 <tbody id="laminatetbodyData">
+                  <!-- Dynamic content will be populated here -->
                 </tbody>
               </table>
             </div>
           </div>
         </div>
+        <div style="position: absolute; bottom: 10px; right: 40px; font-size: 28px; color: #333; font-weight: bold;">4</div>
       </div>
       <div class="html2pdf__page-break"></div>`
     document.querySelector("#checkId-0").insertAdjacentHTML("beforebegin", materialTableDataPage);
 
-    // Table body data show
-    for(let i = 0; i < matData.length; i++) {
-      const tableInfoSpace = `
-        <tr id="othertaginfo-${i}">
-          <td contenteditable = 'true' id="submaterial-${i}" rowspan="${matData[i].matlen +1 }" style="text-align: center;
-          vertical-align: middle;">${matData[i].rname}</td>
-        </tr>`
-      document.querySelector("#laminatetbodyData").insertAdjacentHTML("beforeend", tableInfoSpace);
+    // Make all table cells editable and enable dynamic content updates
+    setTimeout(() => {
+      // Make all laminate table cells editable (they're already set in the template)
+      const laminateCells = document.querySelectorAll('#laminatetbodyData td[contenteditable]');
+      laminateCells.forEach(cell => {
+        cell.style.cursor = 'text';
+      });
       
-      let mlen = `${matData[i].matlen}`;
-      let finalLength = parseInt(mlen)
-      for(let k = 1; k <= finalLength; k++) {
-        for(let j = 0; j < matData[i].materialdata.length; j++) {         
-          const subtableMatRow = `
-            <td contenteditable = 'true'>${matData[i].materialdata[j].name}</td>
-            <td contenteditable = 'true'>0</td>
-            <td contenteditable = 'true'></td>
-            <td contenteditable = 'true'>${matData[i].materialdata[j].edge_band_code}</td>
-            <td contenteditable = 'true'>0</td>`
-          document.querySelector(`#othertaginfo-${i}`).insertAdjacentHTML("afterend", subtableMatRow);
-        }
-        break
+      // Make material name cells editable
+      const materialNameCells = document.querySelectorAll('#laminatetbodyData div[contenteditable]');
+      materialNameCells.forEach(cell => {
+        cell.style.cursor = 'text';
+        cell.addEventListener('focus', function() {
+          this.style.backgroundColor = '#fff3cd';
+        });
+        cell.addEventListener('blur', function() {
+          this.style.backgroundColor = 'transparent';
+        });
+      });
+      
+      // Add click handlers for material images
+      const materialBoxes = document.querySelectorAll('#laminatetbodyData img, #laminatetbodyData div[style*="background-color"]');
+      materialBoxes.forEach(box => {
+        box.addEventListener('click', function() {
+          // Allow editing of material codes
+          const parentDiv = this.closest('div[style*="text-align: center"]');
+          if (parentDiv) {
+            const codeElement = parentDiv.querySelector('div[contenteditable][style*="font-weight: bold"]');
+            if (codeElement) {
+              codeElement.focus();
+              // Select all text for easy editing
+              const range = document.createRange();
+              range.selectNodeContents(codeElement);
+              const selection = window.getSelection();
+              selection.removeAllRanges();
+              selection.addRange(range);
+            }
+          }
+        });
+      });
+    }, 500); // Increased timeout to ensure dynamic content is loaded
+
+    // Dynamic table generation using actual material data from JSON
+    for(let i = 0; i < matData.length; i++) {
+      const roomName = matData[i].rname;
+      const materials = matData[i].materialdata;
+      
+      // Generate material boxes HTML
+      let materialsHTML = '';
+      materials.forEach((material, index) => {
+        const materialName = material.name || `Material_${index + 1}`;
+        const imageUrl = state.matThumbnails && state.matThumbnails[materialName] ? 
+                        state.matThumbnails[materialName].image_url : '';
+        const edgeBandCode = material.edge_band_code || '';
+        
+        materialsHTML += `
+          <div style="text-align: center; flex: 1; max-width: 90px;">
+            <div style="background-color: #f5f5f5; width: 70px; height: 80px; margin: 0 auto 3px; border: 1px solid #999; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+              ${imageUrl ? 
+                `<img src="${imageUrl}" alt="${materialName}" style="width: 100%; height: 100%; object-fit: cover;" crossorigin="anonymous"/>` : 
+                `<div style="font-size: 8px; text-align: center; color: #666; padding: 5px;">${materialName}</div>`
+              }
+            </div>
+            <div style="font-size: 10px; font-weight: bold;" contenteditable="true">${materialName}</div>
+            <div style="font-size: 9px; color: #666;" contenteditable="true">${materialName}</div>
+          </div>
+        `;
+      });
+      
+      // Add flexible space if there are materials
+      if (materials.length > 0) {
+        materialsHTML += `<div style="flex: ${Math.max(1, 6 - materials.length)};"></div>`;
       }
+      
+      const tableRow = `
+        <tr>
+          <td style="border: 2px solid #000; padding: 10px; text-align: center; font-weight: bold; vertical-align: middle;" contenteditable="true">${roomName}</td>
+          <td style="border: 2px solid #000; padding: 6px;">
+            <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+              ${materialsHTML || '<div style="text-align: center; width: 100%; color: #999; font-style: italic;">No materials assigned</div>'}
+            </div>
+          </td>
+          <td style="border: 2px solid #000; padding: 10px; text-align: center; vertical-align: middle;" contenteditable="true"></td>
+        </tr>
+      `;
+      
+      document.querySelector("#laminatetbodyData").insertAdjacentHTML("beforeend", tableRow);
     }
 
     // Project Details Page

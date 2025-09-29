@@ -130,6 +130,90 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
       }
     }
     
+    // Function to add dynamic table with room-specific data
+    const addDynamicTableToPages = () => {
+      // Start from (index 0) - wait a bit for DOM to be ready
+      setTimeout(() => {
+        for (let i = 0; i < viewsCnt; i++) {
+          // Look for the specific working drawing div for this page
+          const pageSelector = `#wd-${i}`;
+          const pageElement = document.querySelector(pageSelector);
+          
+          if (pageElement) {
+            // Get room information from state if available
+            let roomName = 'Foyer';
+            let electricWorks = '';
+            
+            // Try to get room information from state.roomViews if available
+            if (state.roomViews && state.roomViews[i]) {
+              const viewId = state.roomViews[i].getID ? state.roomViews[i].getID() : state.roomViews[i].id;
+              if (viewId) {
+                const roomParts = viewId.split('+');
+                roomName = roomParts[0] || 'Foyer';
+                
+                // Check for electrical works or components in this room
+                if (state.rooms && state.rooms[roomName]) {
+                  const roomData = state.rooms[roomName];
+                  // Look for electrical components or accessories
+                  Object.keys(roomData).forEach(viewKey => {
+                    if (roomData[viewKey].floor_components) {
+                      const library = roomData[viewKey].floor_components.library;
+                      Object.keys(library).forEach(compKey => {
+                        const comp = library[compKey];
+                        if (comp.comp_details && comp.comp_details.accessories) {
+                          electricWorks += comp.comp_details.accessories.join(', ') + ' ';
+                        }
+                      });
+                    }
+                  });
+                }
+              }
+            }
+            
+            // Check if table already exists for this page
+            const existingTable = pageElement.querySelector('.dynamic-table');
+            if (!existingTable) {
+              // Create the dynamic table with data from JSON
+              const dynamicTable = `
+                <div class="row" style="background-color:white; margin-top: 15px;">
+                  <div class="col-12">
+                    <table class="table table-bordered dynamic-table" style="margin-bottom: 5px; font-size: 11px; width: 100%; border: 2px solid #000;">
+                      <tbody>
+                        <tr>
+                          <td rowspan="2" style="background-color: #e6f3ff; font-weight: bold; padding: 8px; vertical-align: middle; width: 15%; text-align: center; border: 1px solid #000;">
+                            Electric works:
+                          </td>
+                          <td rowspan="2" style="background-color: #ffe6e6; font-weight: bold; padding: 8px; vertical-align: middle; width: 20%; text-align: center; border: 1px solid #000;">
+                            NOTE:<br/>NON STANDARD DIMENSIONS
+                          </td>
+                          <td contenteditable='true' style="padding: 6px; border: 1px solid #000; width: 32.5%;"><strong>CLIENT NAME:</strong><br/>${projectInfo.client_name || 'Mounika'}</td>
+                          <td contenteditable='true' style="padding: 6px; border: 1px solid #000; width: 32.5%;"><strong>DRAWING TITLE:</strong><br/>${roomName}</td>
+                        </tr>
+                        <tr>
+                          <td contenteditable='true' style="padding: 6px; border: 1px solid #000;"><strong>LOCATION:</strong><br/>${projectInfo.apartment_name || projectInfo.address || 'A110 -GRC Subiksha, Sarjapura Hobli, Choodasandra, Bengaluru, Karnataka 560099'}</td>
+                          <td contenteditable='true' style="padding: 6px; border: 1px solid #000;"><strong>DESIGNED BY:</strong><br/>${projectInfo.designer_name || 'Aditi Padiyar'}</td>
+                        </tr>
+                        <tr>
+                          <td colspan="2" style="border: 1px solid #000;"></td>
+                          <td colspan="2" style="padding: 6px; border: 2px solid #000; height: 50px; background-color: white;">
+                            <strong>DESIGN QC SIGN:</strong>
+                            <!-- Empty space for QC sign as requested -->
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              `;
+              
+              // Insert the table at the bottom of the page element
+              pageElement.insertAdjacentHTML('beforeend', dynamicTable);
+            }
+          }
+        }
+      }, 500); // Wait for all elements to be rendered
+    };
+    
     let viewsCount = []
     for (let i = 0; i < viewsCnt; i++) {
       const template = `
@@ -401,9 +485,26 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
     // initialize the current and total page number in menu bar
     // Page number display elements removed
 
+    // Add dynamic tables to pages 3+ after all containers are created
+    setTimeout(() => {
+      addDynamicTableToPages();
+    }, 100);
+
     $('.bottom-table').find('td').on("input", function (e) {
 
       $('.bottom-table').each(function () {
+        var tr = $(this).find('tr')[e.target.closest('tr').rowIndex];
+        var td = $(tr).find('td')[e.target.cellIndex]
+        if (td === e.target) {
+          return;
+        };
+        $(td).html(e.target.innerHTML);
+      })
+    })
+    
+    // Add event handler for dynamic tables to sync content across pages
+    $(document).on("input", '.dynamic-table td[contenteditable]', function (e) {
+      $('.dynamic-table').each(function () {
         var tr = $(this).find('tr')[e.target.closest('tr').rowIndex];
         var td = $(tr).find('td')[e.target.cellIndex]
         if (td === e.target) {
@@ -608,7 +709,7 @@ const renderView = (projectInfo, view, id) => {
     //}
 
     // render 'floor_components'
-    if (view.getComps() !== []) {
+    if (view.getComps().length !== 0) {
       renderComponents(view, id);
     }
 

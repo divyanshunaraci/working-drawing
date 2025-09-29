@@ -169,37 +169,52 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
             // Check if table already exists for this page
             const existingTable = pageElement.querySelector('.dynamic-table');
             if (!existingTable) {
-               // Create the dynamic table covering the entire col-9 space
+               // Create the dynamic table covering the full page width
                const dynamicTable = `
-                 <div class="col-12" style="background-color:white; padding: 0; margin: 0;">
-                   <table class="table table-bordered dynamic-table" style="margin: 0; font-size: 11px; width: 100%; border: 2px solid #000;">
-                     <tbody>
-                       <tr>
-                         <td rowspan="3" style="background-color: #e6f3ff; font-weight: bold; padding: 8px; vertical-align: top; width: 15%; text-align: center; border: 1px solid #000;">
-                           Electric works:
-                         </td>
-                         <td rowspan="3" style="background-color: #ffe6e6; font-weight: bold; padding: 8px; vertical-align: top; width: 20%; text-align: center; border: 1px solid #000;">
-                           NOTE:<br/>NON STANDARD DIMENSIONS
-                         </td>
-                         <td contenteditable='true' style="padding: 6px; border: 1px solid #000; width: 32.5%;"><strong>CLIENT NAME:</strong><br/>${projectInfo.client_name}</td>
-                         <td contenteditable='true' style="padding: 6px; border: 1px solid #000; width: 32.5%;"><strong>DRAWING TITLE:</strong><br/>${drawingTitle}</td>
-                       </tr>
-                       <tr>
-                         <td contenteditable='true' style="padding: 6px; border: 1px solid #000;"><strong>LOCATION:</strong><br/>${projectInfo.apartment_name || projectInfo.address}</td>
-                         <td contenteditable='true' style="padding: 6px; border: 1px solid #000;"><strong>DESIGNED BY:</strong><br/>${projectInfo.designer_name}</td>
-                       </tr>
-                       <tr>
-                         <td colspan="2" style="padding: 6px; border: 2px solid #000; height: 50px; background-color: white;">
-                           <strong>DESIGN QC SIGN:</strong>
-                           <!-- Empty space for QC sign as requested -->
-                         </td>
-                       </tr>
-                     </tbody>
-                   </table>
+                 <div style="background-color:white; padding: 0; margin: 0; display: flex;">
+                   <div style="width: 75%;">
+                     <table class="table table-bordered dynamic-table" style="margin: 0; font-size: 11px; width: 100%; border: 2px solid #000; table-layout: fixed;">
+                       <tbody>
+                         <tr>
+                           <td rowspan="3" style="background-color: #e6f3ff; font-weight: bold; padding: 8px; vertical-align: top; width: 16%; text-align: center; border: 1px solid #000;">
+                             Electric works:
+                           </td>
+                           <td rowspan="3" style="background-color: #ffe6e6; font-weight: bold; padding: 8px; vertical-align: top; width: 21.33%; text-align: center; border: 1px solid #000;">
+                             NOTE:<br/>NON STANDARD DIMENSIONS
+                           </td>
+                           <td contenteditable='true' style="padding: 6px; border: 1px solid #000; width: 31.33%;"><strong>CLIENT NAME:</strong><br/>${projectInfo.client_name}</td>
+                           <td contenteditable='true' style="padding: 6px; border: 1px solid #000; width: 31.33%;"><strong>DRAWING TITLE:</strong><br/>${drawingTitle}</td>
+                         </tr>
+                         <tr>
+                           <td contenteditable='true' style="padding: 6px; border: 1px solid #000;"><strong>LOCATION:</strong><br/>${projectInfo.apartment_name || projectInfo.address}</td>
+                           <td contenteditable='true' style="padding: 6px; border: 1px solid #000;"><strong>DESIGNED BY:</strong><br/>${projectInfo.designer_name}</td>
+                         </tr>
+                         <tr>
+                           <td colspan="1" style="padding: 6px; border: 1px solid #000; height: 50px; background-color: white;">
+                             <strong>DESIGN QC SIGN:</strong>
+                             <!-- Empty space for QC sign as requested -->
+                           </td>
+                            <td colspan="1" style="padding: 6px; border: 1px solid #000; height: 50px; background-color: white;">
+                              <strong>NOTES:</strong><br/>
+                              
+                            </td>
+                         </tr>
+                       </tbody>
+                     </table>
+                   </div>
+                   <div style="width: 25%; border-left: 1px solid #000;">
+                     <table class="table table-bordered" style="margin: 0; font-size: 11px; width: 100%; border: 2px solid #000; border-left: none; table-layout: fixed; height: 100%;">
+                       <tbody>
+                         <tr style="height: 100%;">
+                           <td contenteditable='true' style="padding: 6px; border: 1px solid #000; vertical-align: top;">${orgDetail.org_address || projectInfo.org_address || 'Not specified'}</td>
+                         </tr>
+                       </tbody>
+                     </table>
+                   </div>
                  </div>
                `;
                
-               // Insert the table into the dedicated bottom container within the col-9 area
+               // Insert the table into the dedicated bottom container at full width
                const bottomContainer = pageElement.querySelector(`#bottom-table-container-${i}`);
                if (bottomContainer) {
                  bottomContainer.innerHTML = dynamicTable;
@@ -223,9 +238,6 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
                   <canvas class = 'overlay-canvas-container' id = "c#${i}"></canvas>
                 </div>
             </div>
-            <!-- Move dynamic table inside the main content area but reduce its width -->
-            <div class="row" id="bottom-table-container-${i}" style="margin-top: auto;">
-            </div>
           </div>
           <div id="legend-view_1" class="col-3" style="border-left: 2px solid #ddd; min-height: 100vh; padding: 15px;">
             <div class = 'row' style=" height: 2.5em">
@@ -246,6 +258,9 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
               </table>
             </div>
           </div>
+        </div>
+        <!-- Move dynamic table to full width outside the main row -->
+        <div class="row" id="bottom-table-container-${i}" style="margin-top: 10px;">
         </div>
       </div>
       `;

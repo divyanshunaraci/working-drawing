@@ -366,27 +366,27 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
               <tbody>
                 <tr>
                   <td style="background-color: #f8f9fa; font-weight: bold; padding: 18px; width: 35%; border: 2px solid #000; vertical-align: middle;">Client name</td>
-                  <td contenteditable='true' style="padding: 18px; border: 2px solid #000; vertical-align: middle;">${projectInfo.client_name || 'Mounika'}</td>
+                  <td contenteditable='true' style="padding: 18px; border: 2px solid #000; vertical-align: middle;">${projectInfo.client_name}</td>
                 </tr>
                 <tr>
                   <td style="background-color: #f8f9fa; font-weight: bold; padding: 18px; border: 2px solid #000; vertical-align: middle;">Apartment Address</td>
-                  <td contenteditable='true' style="padding: 18px; border: 2px solid #000; vertical-align: middle; line-height: 1.4;">${projectInfo.apartment_name || 'A-110, GRC Subiksha, Choodasandra Village, Sarjapura Hobli, Choodasandra, Bengaluru, Karnataka 560099'}</td>
+                  <td contenteditable='true' style="padding: 18px; border: 2px solid #000; vertical-align: middle; line-height: 1.4;">${projectInfo.apartment_name}</td>
                 </tr>
                 <tr>
                   <td style="background-color: #f8f9fa; font-weight: bold; padding: 18px; border: 2px solid #000; vertical-align: middle;">Client contact number</td>
-                  <td contenteditable='true' style="padding: 18px; border: 2px solid #000; vertical-align: middle;">${projectInfo.client_contact || '91597 77206'}</td>
+                  <td contenteditable='true' style="padding: 18px; border: 2px solid #000; vertical-align: middle;">${projectInfo.client_contact}</td>
                 </tr>
                 <tr>
                   <td style="background-color: #f8f9fa; font-weight: bold; padding: 18px; border: 2px solid #000; vertical-align: middle;">Designer Name</td>
-                  <td contenteditable='true' style="padding: 18px; border: 2px solid #000; vertical-align: middle;">${projectInfo.designer_name || 'Aditi Padiyar'}</td>
+                  <td contenteditable='true' style="padding: 18px; border: 2px solid #000; vertical-align: middle;">${projectInfo.designer_name}</td>
                 </tr>
                 <tr>
                   <td style="background-color: #f8f9fa; font-weight: bold; padding: 18px; border: 2px solid #000; vertical-align: middle;">Design QC Name</td>
-                  <td contenteditable='true' style="padding: 18px; border: 2px solid #000; vertical-align: middle;">${projectInfo.qc_name || 'Munirathinam'}</td>
+                  <td contenteditable='true' style="padding: 18px; border: 2px solid #000; vertical-align: middle;">${projectInfo.qc_name}</td>
                 </tr>
                 <tr>
                   <td style="background-color: #f8f9fa; font-weight: bold; padding: 18px; border: 2px solid #000; vertical-align: middle;">Project number /Unique ID</td>
-                  <td contenteditable='true' style="padding: 18px; border: 2px solid #000; vertical-align: middle;">${projectInfo.project_no || 'HS0724130'}</td>
+                  <td contenteditable='true' style="padding: 18px; border: 2px solid #000; vertical-align: middle;">${projectInfo.project_no}</td>
                 </tr>
               </tbody>
             </table>

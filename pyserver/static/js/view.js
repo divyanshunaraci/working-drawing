@@ -171,10 +171,49 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
               }
             }
             
-            // Get the page header title from the current page
-            const titleElement = pageElement.querySelector('#title');
-            if (titleElement && titleElement.textContent) {
-              drawingTitle = titleElement.textContent.trim();
+            // Get the drawing title from the view object or construct it from room data
+            if (state.roomViews && state.roomViews[i]) {
+              const view = state.roomViews[i];
+              if (view.getName) {
+                const viewName = view.getName();
+                const viewId = view.getID ? view.getID() : view.id;
+                
+                if (viewId) {
+                  const roomParts = viewId.split('+');
+                  const roomName = roomParts[0] || 'Room';
+                  const viewType = roomParts[1] || '';
+                  
+                  // Construct drawing title based on view type
+                  switch (viewName) {
+                    case "room_top_view":
+                      drawingTitle = `${roomName} ROOM PLAN`;
+                      break;
+                    case "render_wall_view":
+                      drawingTitle = `${roomName} ${viewType.toUpperCase()} - RENDER VIEW`;
+                      break;
+                    case "top_view":
+                      drawingTitle = `${roomName} ${viewType.toUpperCase()} - PLAN`;
+                      break;
+                    case "front_view":
+                      drawingTitle = `${roomName} ${viewType.toUpperCase()} - ELEVATION`;
+                      break;
+                    case "internal_view":
+                      drawingTitle = `${roomName} ${viewType.toUpperCase()} - INTERNALS`;
+                      break;
+                    case "Handles & Accessories":
+                      drawingTitle = `${roomName} ${viewType.toUpperCase()} - HANDLES & ACCESSORIES`;
+                      break;
+                    case "Ground floor plan":
+                      drawingTitle = "Ground Floor Plan";
+                      break;
+                    default:
+                      drawingTitle = viewName;
+                      break;
+                  }
+                } else {
+                  drawingTitle = viewName;
+                }
+              }
             }
             
             // Check if table already exists for this page
@@ -227,12 +266,6 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
       <div class="working-drawing container-fluid col-md-12 checkNumber" id='wd-${i}'>
         <div class="row">
           <div id="legend-view" class="col-9">
-            <div class="row">
-              <div class="col-12">
-                <span id="title" style="font-size:21px">Ground Floor Plan</span>
-                <span id="extraInfo"></span>
-              </div>
-            </div>
             <div class="row">
              
                 <div class="canvas-container">

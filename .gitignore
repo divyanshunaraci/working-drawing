@@ -50,3 +50,26 @@ Thumbs.db
 *.mov
 *.wmv
 
+# PDF files (can be large)
+*.pdf
+
+# Python virtual environments
+pyserver/venv/
+pyserver/venv_py3/
+venv/
+env/
+.venv/
+
+# Python cache and compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Log files and outputs
+nohup.out
+*.out
+
+# JSON data files (if they contain large datasets)
+*.json
+

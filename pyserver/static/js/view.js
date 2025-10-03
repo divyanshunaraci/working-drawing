@@ -254,6 +254,7 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
                 <input type="file" class="legend-add-image" />
               </div>
             </div>
+            ${i === 0 ? '' : `
             <div class = 'fixed-table-body'>
               <h6>Materials Details</h6>
               <table class="table table-bordered side-table" style="background-color: white;">            
@@ -263,7 +264,7 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
               <h6>Handles Details</h6>
               <table class="table table-bordered side-Handletable" style="background-color: white;">            
               </table>
-            </div>
+            </div>`}
           </div>
         </div>
         <!-- Move dynamic table to full width outside the main row -->
@@ -600,6 +601,11 @@ const calcScaleOrigin = (viewBoxInfo, canvasWidth, canvasHeight) => {
 
 // render ground floor plan
 const renderFloorPlan = (floorPlanView, id) => {
+  // Render static scoping data for the first page (id === 0)
+  if (id === 0) {
+    renderScopingData(id);
+  }
+  
   // Calibrate canvases for all views (legend now visible on all pages)
   state.roomViews.forEach((elem, index) => {
     if (elem.name == "Ground floor plan" || elem.name == "room_top_view" || elem.name == "top_view" || elem.name == "front_view" || elem.name == "internal_view" || elem.name == "EXTRA_VIEW") {
@@ -1867,6 +1873,50 @@ const getWholeBoundRect = (dimension) => {
   return [boundRect[0], dimension.pt2];
 };
 
+// render static scoping data for first page
+const renderScopingData = (id) => {
+  // Change the title from "Legend" to "Scoping Data" for the first page
+  const titleElement = document.querySelector(`#wd-${id} .col-3 .row .col-12 span`);
+  if (titleElement) {
+    titleElement.textContent = "Scoping Data";
+  }
+
+  // Hide the legend add button for scoping data page
+  const addButton = document.querySelector(`#wd-${id} .legend-add-row`);
+  if (addButton) {
+    addButton.style.display = 'none';
+  }
+
+  // Static scoping data as provided by the user
+  const scopingData = [
+    { item: "FULL HOUSE PAINTING", scope: "" },
+    { item: "KITCHEN GRANITE MATERIAL", scope: "" },
+    { item: "KITCHEN GRANITE FIXING", scope: "" },
+    { item: "LIGHT FIXTURES", scope: "" },
+    { item: "ELECTRIC POINTS", scope: "" }
+  ];
+
+  // get side-table element
+  let table = document.querySelector(`#wd-${id} .side-table`);
+  
+  // Clear existing content
+  table.innerHTML = '';
+
+  // generate table head with fixed widths
+  const headData = ["SCOPING DATA", ""];
+  generateTableHeadWithWidths(table, headData, ["60%", "40%"]);
+
+  // generate main content of table with scoping data
+  const data = [];
+  scopingData.forEach((item) => {
+    data.push({
+      item: item.item,
+      scope: item.scope
+    });
+  });
+  generateScopingTable(table, data);
+};
+
 // render material thumbnails
 const renderMaterialThumbnails = (matThumbnails, id) => {
   if (!matThumbnails) {
@@ -1905,6 +1955,61 @@ const generateTableHead = (table, data) => {
     let text = document.createTextNode(key);
     th.appendChild(text);
     row.appendChild(th);
+  }
+};
+
+// Generate table head with specific column widths
+const generateTableHeadWithWidths = (table, data, widths) => {
+  let thead = table.createTHead();
+  let row = thead.insertRow();
+  row.setAttribute('style', 'background: #225ee5;color: #fff;letter-spacing: 1px;text-transform: capitalize;');
+  
+  for (let i = 0; i < data.length; i++) {
+    let th = document.createElement("th");
+    let text = document.createTextNode(data[i]);
+    th.appendChild(text);
+    if (widths && widths[i]) {
+      th.style.width = widths[i];
+    }
+    row.appendChild(th);
+  }
+};
+
+// generate scoping table specifically for static scoping data
+const generateScopingTable = (table, data) => {
+  // Set table layout to fixed for consistent column widths
+  table.style.tableLayout = "fixed";
+  table.style.width = "100%";
+  
+  let tbody = document.createElement("tbody");
+  table.appendChild(tbody);
+  
+  for (let element of data) {
+    let row = tbody.insertRow();
+    
+    // Item column (60% width)
+    let itemCell = row.insertCell();
+    itemCell.contentEditable = true;
+    itemCell.style.fontWeight = "bold";
+    itemCell.style.padding = "8px";
+    itemCell.style.border = "1px solid #000";
+    itemCell.style.verticalAlign = "middle";
+    itemCell.style.width = "60%";
+    let itemText = document.createTextNode(element.item);
+    itemCell.appendChild(itemText);
+    
+    // Scope column (40% width)
+    let scopeCell = row.insertCell();
+    scopeCell.contentEditable = true;
+    scopeCell.style.color = "#d60000";
+    scopeCell.style.fontWeight = "bold";
+    scopeCell.style.padding = "8px";
+    scopeCell.style.border = "1px solid #000";
+    scopeCell.style.verticalAlign = "middle";
+    scopeCell.style.textAlign = "center";
+    scopeCell.style.width = "40%";
+    let scopeText = document.createTextNode(element.scope);
+    scopeCell.appendChild(scopeText);
   }
 };
 

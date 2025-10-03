@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Scoping Data</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="pyserver/static/css/style.css" />
+</head>
+<body>
+  <div class="container-fluid mt-3">
+    <h2>Testing First Page Side Table with Scoping Data</h2>
+    <div class="row">
+      <div class="col-9">
+        <div style="border: 1px solid #ccc; height: 400px; display: flex; align-items: center; justify-content: center;">
+          <p>Floor Plan Canvas Area</p>
+        </div>
+      </div>
+      <div class="col-3">
+        <div class="row">
+          <div class="col-12" style="text-align: center">
+            <span style="font-size: large">Scoping Data</span>
+          </div>
+        </div>
+        <div class="table-responsive fixed-table-body">
+          <table class="table table-bordered side-table" id="test-table">
+            <!-- Scoping data will be rendered here -->
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Test function to verify our scoping data implementation
+    function testScopingData() {
+      // Static scoping data as provided by the user
+      const scopingData = [
+        { item: "FULL HOUSE PAINTING", scope: "CX SCOPE" },
+        { item: "KITCHEN GRANITE MATERIAL", scope: "CX SCOPE" },
+        { item: "KITCHEN GRANITE FIXING", scope: "CX SCOPE" },
+        { item: "LIGHT FIXTURES", scope: "CX SCOPE" },
+        { item: "ELECTRIC POINTS", scope: "CX SCOPE" }
+      ];
+
+      // get side-table element
+      let table = document.querySelector('#test-table');
+      
+      // Clear existing content
+      table.innerHTML = '';
+
+      // generate table head
+      const headData = ["SCOPING DATA", ""];
+      generateTableHead(table, headData);
+
+      // generate main content of table with scoping data
+      const data = [];
+      scopingData.forEach((item) => {
+        data.push({
+          item: item.item,
+          scope: item.scope
+        });
+      });
+      generateScopingTable(table, data);
+    }
+
+    // Helper functions from view.js
+    function generateTableHead(table, data) {
+      let thead = table.createTHead();
+      let row = thead.insertRow();
+      row.setAttribute('style', 'background: #225ee5;color: #fff;letter-spacing: 1px;text-transform: capitalize;');
+      for (let i = 0; i < data.length; i++) {
+        let th = document.createElement("th");
+        let text = document.createTextNode(data[i]);
+        th.appendChild(text);
+        // Set column widths: 60% for first column, 40% for second
+        if (i === 0) {
+          th.style.width = "60%";
+        } else if (i === 1) {
+          th.style.width = "40%";
+        }
+        row.appendChild(th);
+      }
+    }
+
+    function generateScopingTable(table, data) {
+      // Set table layout to fixed for consistent column widths
+      table.style.tableLayout = "fixed";
+      table.style.width = "100%";
+      
+      let tbody = document.createElement("tbody");
+      table.appendChild(tbody);
+      
+      for (let element of data) {
+        let row = tbody.insertRow();
+        
+        // Item column (60% width)
+        let itemCell = row.insertCell();
+        itemCell.contentEditable = true;
+        itemCell.style.fontWeight = "bold";
+        itemCell.style.padding = "8px";
+        itemCell.style.border = "1px solid #000";
+        itemCell.style.verticalAlign = "middle";
+        itemCell.style.width = "60%";
+        let itemText = document.createTextNode(element.item);
+        itemCell.appendChild(itemText);
+        
+        // Scope column (40% width)
+        let scopeCell = row.insertCell();
+        scopeCell.contentEditable = true;
+        scopeCell.style.color = "#d60000";
+        scopeCell.style.fontWeight = "bold";
+        scopeCell.style.padding = "8px";
+        scopeCell.style.border = "1px solid #000";
+        scopeCell.style.verticalAlign = "middle";
+        scopeCell.style.textAlign = "center";
+        scopeCell.style.width = "40%";
+        let scopeText = document.createTextNode(element.scope);
+        scopeCell.appendChild(scopeText);
+      }
+    }
+
+    // Call the test function when page loads
+    window.onload = function() {
+      testScopingData();
+    };
+  </script>
+</body>
+</html>

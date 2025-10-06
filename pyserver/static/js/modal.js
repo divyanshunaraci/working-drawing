@@ -213,45 +213,44 @@ const renderAl = () => {
             renderView(state.projectInfo, view, id);
             if (viewType.includes(view.getName())) {
             }
-            if (view.name === "front_view") {
-                // render material thumbnails
-                for (key in state.rooms) {
-                    if (key === currentRoom) {
-                        tmp = state.rooms[key]
-                        for (key2 in tmp) {
-                            if (key2 === currentView) {
-                                tmp1 = tmp[key2]["material_thumbnails"]
-                                if (Object.keys(tmp1).length > 0) {
-                                    renderMaterialThumbnails(tmp1, id);
-                                }
+            // Render material and handle details for all pages (not just front_view)
+            // render material thumbnails
+            for (key in state.rooms) {
+                if (key === currentRoom) {
+                    tmp = state.rooms[key]
+                    for (key2 in tmp) {
+                        if (key2 === currentView) {
+                            tmp1 = tmp[key2]["material_thumbnails"]
+                            if (Object.keys(tmp1).length > 0) {
+                                renderMaterialThumbnails(tmp1, id);
                             }
                         }
                     }
                 }
-                // renderMaterialThumbnails(state.matThumbnails, id);
-                let handleNames = [];
-                let dupRemoveHandleData = [];
-                for (key in state.rooms) {
-                    if (key === currentRoom) {
-                        tmp = state.rooms[key];
-                        for (key2 in tmp) {
-                            if (key2 === currentView) {
-                                tmp1 = tmp[key2]["front_view"]
-                                let lib = tmp1["floor_components"]["library"];
-                                Object.keys(lib).forEach(comp => {
-                                    let shutter = lib[comp]["external_points"]["shutter"]
-                                    if (shutter !== undefined){
-                                        Object.keys(shutter).forEach(shtr => {
-                                            let handleName = shutter[shtr]["handle"]["name"]
-                                            if (handleName !== undefined){
-                                                handleNames.push(handleName)
-                                                dupRemoveHandleData = handleNames.filter((v,i) => handleNames.findIndex(item => item == v) === i );
-                                            }
-                                        })
-                                    }
-                                })
-                                renderHandleData(dupRemoveHandleData, id)
-                            }
+            }
+            // renderMaterialThumbnails(state.matThumbnails, id);
+            let handleNames = [];
+            let dupRemoveHandleData = [];
+            for (key in state.rooms) {
+                if (key === currentRoom) {
+                    tmp = state.rooms[key];
+                    for (key2 in tmp) {
+                        if (key2 === currentView) {
+                            tmp1 = tmp[key2]["front_view"]
+                            let lib = tmp1["floor_components"]["library"];
+                            Object.keys(lib).forEach(comp => {
+                                let shutter = lib[comp]["external_points"]["shutter"]
+                                if (shutter !== undefined){
+                                    Object.keys(shutter).forEach(shtr => {
+                                        let handleName = shutter[shtr]["handle"]["name"]
+                                        if (handleName !== undefined){
+                                            handleNames.push(handleName)
+                                            dupRemoveHandleData = handleNames.filter((v,i) => handleNames.findIndex(item => item == v) === i );
+                                        }
+                                    })
+                                }
+                            })
+                            renderHandleData(dupRemoveHandleData, id)
                         }
                     }
                 }

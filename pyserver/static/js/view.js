@@ -254,9 +254,17 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
               </div>
             </div>
             <div class="col-4" style="padding: 10px;">
-              <div style="height: 100%; background-color: #f9f9f9; border: 1px solid #ddd; padding: 15px;">
-                <h6 style="margin-bottom: 15px; font-weight: bold;">Additional Content</h6>
-                <p style="color: #666; font-size: 14px;">This is the second partition of the left column for page ${i + 1}.</p>
+              <div style="height: 100%; display: flex; flex-direction: column;">
+                <!-- Top half of the right partition -->
+                <div style="flex: 1; background-color: #f9f9f9; border: 1px solid #ddd; padding: 15px; margin-bottom: 5px;">
+                  <h6 style="margin-bottom: 15px; font-weight: bold;">3D Image</h6>
+                  <p style="color: #666; font-size: 14px;">This is the top half of the right partition for page ${i + 1}.</p>
+                </div>
+                <!-- Bottom half of the right partition -->
+                <div style="flex: 1; background-color: #f0f0f0; border: 1px solid #ddd; padding: 15px; margin-top: 5px;">
+                  <h6 style="margin-bottom: 15px; font-weight: bold;">Site Image</h6>
+                  <p style="color: #666; font-size: 14px;">This is the bottom half of the right partition for page ${i + 1}.</p>
+                </div>
               </div>
             </div>
           </div>

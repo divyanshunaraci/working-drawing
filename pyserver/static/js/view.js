@@ -345,7 +345,6 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
             </div>
           </div>
         </div>
-        <div style="position: absolute; bottom: 10px; right: 40px; font-size: 28px; color: #333; font-weight: bold;">4</div>
       </div>
       <div class="html2pdf__page-break"></div>`
     document.querySelector("#checkId-0").insertAdjacentHTML("beforebegin", materialTableDataPage);

@@ -186,8 +186,8 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
                            <td contenteditable='true' style="padding: 6px; border: 1px solid #000; width: 31.33%;"><strong>DRAWING TITLE:</strong><br/>${drawingTitle}</td>
                          </tr>
                          <tr>
-                           <td contenteditable='true' style="padding: 6px; border: 1px solid #000;"><strong>LOCATION:</strong><br/>${projectInfo.apartment_name || projectInfo.address}</td>
-                           <td contenteditable='true' style="padding: 6px; border: 1px solid #000;"><strong>DESIGNED BY:</strong><br/>${projectInfo.designer_name}</td>
+                           <td contenteditable='true' style="padding: 6px; border: 1px solid #000;"><strong>LOCATION:</strong><br/>${projectInfo.address || projectInfo.apartment_name || 'N/A'}</td>
+                           <td contenteditable='true' style="padding: 6px; border: 1px solid #000;"><strong>DESIGNED BY:</strong><br/>${projectInfo.designer_name || 'N/A'}</td>
                          </tr>
                          <tr>
                            <td colspan="1" style="padding: 6px; border: 1px solid #000; height: 50px; background-color: white;">
@@ -465,19 +465,19 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
                 </tr>
                 <tr>
                   <td style="background-color: #f8f9fa; font-weight: bold; padding: 18px; border: 2px solid #000; vertical-align: middle;">Apartment Address</td>
-                  <td contenteditable='true' style="padding: 18px; border: 2px solid #000; vertical-align: middle; line-height: 1.4;">${projectInfo.apartment_name}</td>
+                  <td contenteditable='true' style="padding: 18px; border: 2px solid #000; vertical-align: middle; line-height: 1.4;">${projectInfo.address || projectInfo.apartment_name || 'N/A'}</td>
                 </tr>
                 <tr>
                   <td style="background-color: #f8f9fa; font-weight: bold; padding: 18px; border: 2px solid #000; vertical-align: middle;">Client contact number</td>
-                  <td contenteditable='true' style="padding: 18px; border: 2px solid #000; vertical-align: middle;">${projectInfo.client_contact}</td>
+                  <td contenteditable='true' style="padding: 18px; border: 2px solid #000; vertical-align: middle;">${projectInfo.contact_no || projectInfo.client_contact || 'N/A'}</td>
                 </tr>
                 <tr>
                   <td style="background-color: #f8f9fa; font-weight: bold; padding: 18px; border: 2px solid #000; vertical-align: middle;">Designer Name</td>
-                  <td contenteditable='true' style="padding: 18px; border: 2px solid #000; vertical-align: middle;">${projectInfo.designer_name}</td>
+                  <td contenteditable='true' style="padding: 18px; border: 2px solid #000; vertical-align: middle;">${projectInfo.designer_name || 'N/A'}</td>
                 </tr>
                 <tr>
                   <td style="background-color: #f8f9fa; font-weight: bold; padding: 18px; border: 2px solid #000; vertical-align: middle;">Design QC Name</td>
-                  <td contenteditable='true' style="padding: 18px; border: 2px solid #000; vertical-align: middle;">${projectInfo.qc_name}</td>
+                  <td contenteditable='true' style="padding: 18px; border: 2px solid #000; vertical-align: middle;">${projectInfo.qc_name || 'N/A'}</td>
                 </tr>
                 <tr>
                   <td style="background-color: #f8f9fa; font-weight: bold; padding: 18px; border: 2px solid #000; vertical-align: middle;">Project number /Unique ID</td>

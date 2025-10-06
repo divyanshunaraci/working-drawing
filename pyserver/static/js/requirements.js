@@ -70,7 +70,7 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
 							<td contenteditable = 'true'>Drawing Revision: R0</td>
 						</tr>
 						<tr>
-							<td contenteditable = 'true'>Location: ${projectInfo.apartment_name}</td>
+							<td contenteditable = 'true'>Location: ${projectInfo.address || projectInfo.apartment_name || 'N/A'}</td>
 							<td contenteditable = 'true' >Checked by: XYZ</td>
 							<td contenteditable = 'true'>Date: ${projectInfo.contract_date}</td>
 						</tr>

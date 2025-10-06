@@ -221,7 +221,11 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
                  </div>
                `;
                
-               // Bottom table container functionality removed
+               // Insert the table into the dedicated bottom container at full width
+               const bottomContainer = pageElement.querySelector(`#bottom-table-container-${i}`);
+               if (bottomContainer) {
+                 bottomContainer.innerHTML = dynamicTable;
+               }
             }
           }
         }
@@ -262,7 +266,9 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
             </div>
           </div>
         </div>
-        <!-- Bottom table container removed -->
+        <!-- Move dynamic table to full width outside the main row -->
+        <div class="row" id="bottom-table-container-${i}" style="margin-top: 10px;">
+        </div>
       </div>
       `;
       viewsCount.push(template)
@@ -339,6 +345,7 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
             </div>
           </div>
         </div>
+        <div style="position: absolute; bottom: 10px; right: 40px; font-size: 28px; color: #333; font-weight: bold;">4</div>
       </div>
       <div class="html2pdf__page-break"></div>`
     document.querySelector("#checkId-0").insertAdjacentHTML("beforebegin", materialTableDataPage);

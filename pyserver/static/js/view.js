@@ -170,9 +170,13 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
             const existingTable = pageElement.querySelector('.dynamic-table');
             if (!existingTable) {
                // Create the dynamic table covering the full page width
+               // Use 75%/25% layout for all pages (this is for the bottom table, not the main content area)
+               const leftWidth = "75%";
+               const rightWidth = "25%";
+               
                const dynamicTable = `
                  <div style="background-color:white; padding: 0; margin: 0; display: flex;">
-                   <div style="width: 75%;">
+                   <div style="width: ${leftWidth};">
                      <table class="table table-bordered dynamic-table" style="margin: 0; font-size: 11px; width: 100%; border: 1px solid #000; table-layout: fixed;">
                        <tbody>
                          <tr>
@@ -202,7 +206,7 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
                        </tbody>
                      </table>
                    </div>
-                    <div style="width: 25%;">
+                    <div style="width: ${rightWidth};">
                       <table class="table table-bordered" style="margin: 0; font-size: 11px; width: 100%; border-left: none; table-layout: fixed; height: 100%;">
                         <tbody>
                           <tr style="height: 100%;">
@@ -234,17 +238,46 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
     
     let viewsCount = []
     for (let i = 0; i < viewsCnt; i++) {
+      // Apply 2-partition left column layout starting from page index 3 (4th page)
+      // Pages 0-2: Project Details, Laminates, Ground Floor Plan (keep original layout)
+      // Pages 3+: Room view pages (divide left column into 2 partitions)
+      
+      let leftColumnContent;
+      if (i >= 1) {
+        // For pages 1+ (index 0+), divide the left column into 2 partitions
+        leftColumnContent = `
+          <div class="row">
+            <div class="col-8" style="border-right: 2px solid #ddd; padding: 10px;">
+              <div class="canvas-container">
+                <canvas id='checks'></canvas>
+                <canvas class = 'overlay-canvas-container' id = "c#${i}"></canvas>
+              </div>
+            </div>
+            <div class="col-4" style="padding: 10px;">
+              <div style="height: 100%; background-color: #f9f9f9; border: 1px solid #ddd; padding: 15px;">
+                <h6 style="margin-bottom: 15px; font-weight: bold;">Additional Content</h6>
+                <p style="color: #666; font-size: 14px;">This is the second partition of the left column for page ${i + 1}.</p>
+              </div>
+            </div>
+          </div>
+        `;
+      } else {
+        // For page 1, keep the original single left column layout
+        leftColumnContent = `
+          <div class="row">
+            <div class="canvas-container">
+              <canvas id='checks'></canvas>
+              <canvas class = 'overlay-canvas-container' id = "c#${i}"></canvas>
+            </div>
+          </div>
+        `;
+      }
+      
       const template = `
       <div class="working-drawing container-fluid col-md-12 checkNumber" id='wd-${i}'>
         <div class="row" style="min-height: 100vh;">
           <div id="legend-view" class="col-9">
-            <div class="row">
-             
-                <div class="canvas-container">
-                  <canvas id='checks'></canvas>
-                  <canvas class = 'overlay-canvas-container' id = "c#${i}"></canvas>
-                </div>
-            </div>
+            ${leftColumnContent}
           </div>
           <div id="legend-view_1" class="col-3" style="border-left: 2px solid #ddd; min-height: 100vh; padding: 15px;">
             <div class = 'row' style=" height: 2.5em">

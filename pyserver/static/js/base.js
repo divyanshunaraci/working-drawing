@@ -344,13 +344,15 @@ class RoomSubView extends View {
 		openings = {},
 		floor_components = [],
 		external = [],
-		imgURL = ''
+		imgURL = '',
+		renderImgUrl = ''
 	) {
 		super(id, name, outline);
 		this.openings = openings;
 		this.floorComponents = floor_components;
 		this.external = external;
 		this.imgURL = imgURL;
+		this.renderImgUrl = renderImgUrl;
 	}
 
 	getID() {
@@ -371,6 +373,11 @@ class RoomSubView extends View {
 	getImgURL() {
 		return this.imgURL;
 	}
+
+	getRenderImgUrl() {
+		return this.renderImgUrl;
+	}
+
 	getComps() {
 		return this.floorComponents;
 	}
@@ -420,9 +427,10 @@ class AdditionalView extends BaseView {
 // components' detail tabular format view
 class TableView extends BaseView {
 	type = 'TableView';
-	constructor(id, name, compsInfo) {
+	constructor(id, name, compsInfo, renderImgUrl = '') {
 		super(id, name);
 		this.compsInfo = compsInfo;
+		this.renderImgUrl = renderImgUrl;
 	}
 
 	getID() {
@@ -435,6 +443,11 @@ class TableView extends BaseView {
 	getCompsInfo() {
 		return this.compsInfo;
 	}
+
+	getRenderImgUrl() {
+		return this.renderImgUrl;
+	}
+
 	get type() {
 		return this.type;
 	}

@@ -367,7 +367,8 @@ const handleRoomTopView = (data, roomName) => {
     let tabularView = getTabularView(
       compObjectsTopView,
       `${roomName}+room_top_view+table_view`,
-      "table_view"
+      "table_view",
+      ""
     );
     return [new RoomSubView(
       `${roomName}+room_top_view`,
@@ -376,6 +377,7 @@ const handleRoomTopView = (data, roomName) => {
       openings,
       compObjects,
       externObj,
+      "",
       ""
     ), tabularView];
 
@@ -389,6 +391,7 @@ const handleRoomTopView = (data, roomName) => {
         openings,
         compObjects,
         externObj,
+        "",
         ""
       ),
     ];
@@ -398,7 +401,7 @@ const handleRoomTopView = (data, roomName) => {
 
 // create table view of components(instances)
 // return 'TableView' class instance
-const getTabularView = (compObjects, id, name) => {
+const getTabularView = (compObjects, id, name, renderImgUrl = '') => {
   if (!compObjects) return;
   let comps = [];
   compObjects.forEach((comp) => {
@@ -412,7 +415,7 @@ const getTabularView = (compObjects, id, name) => {
     comps.push(info);
   });
 
-  return new TableView(id, name, comps);
+  return new TableView(id, name, comps, renderImgUrl);
 };
 
 // py dimens
@@ -500,6 +503,16 @@ const handleIndividualCompsDimens = (data, roomName) => {
 const handleView = (data, roomName) => {
   const viewType = ["top_view", "front_view", "internal_view", "render_wall_view"];
   let roomSubViews = [];
+  let renderImgUrl = '';
+  
+  // First pass: collect render_wall_view image URL
+  Object.keys(data).forEach((viewName) => {
+    if (viewName === "render_wall_view" && data[viewName] && data[viewName]["image_url"]) {
+      renderImgUrl = data[viewName]["image_url"];
+    }
+  });
+  
+  // Second pass: create views with render image URL
   Object.keys(data).forEach((viewName) => {
     // if name of unregistered view
     if (!viewType.includes(viewName)) {
@@ -507,7 +520,7 @@ const handleView = (data, roomName) => {
     }
     // handling registered view
     else {
-      let views = handleSubView(data[viewName], roomName, viewName);
+      let views = handleSubView(data[viewName], roomName, viewName, renderImgUrl);
       roomSubViews = [...roomSubViews, ...views];
     }
   });
@@ -546,7 +559,7 @@ const handleViewDimens = (data, roomName) => {
 };
 
 // handle '[room]' => 'view_n' => 'top_view'/'front_view' .etc in json
-const handleSubView = (data, roomViewName, viewName) => {
+const handleSubView = (data, roomViewName, viewName, renderImgUrl = '') => {
   let floor_components = {},
     compObjects = [],
     compObjects2 = [],
@@ -567,7 +580,7 @@ const handleSubView = (data, roomViewName, viewName) => {
   }
   // if no data on "view"
   if (Object.keys(data).length === 0 || Object.keys(data).length === 1) {
-    return [new RoomSubView(`${roomViewName}+${viewName}`, viewName, [], {}, [], [], "")];
+    return [new RoomSubView(`${roomViewName}+${viewName}`, viewName, [], {}, [], [], "", renderImgUrl)];
   }
 
   /* Preparing objectData */
@@ -636,7 +649,8 @@ const handleSubView = (data, roomViewName, viewName) => {
     openings,
     compObjects,
     externObj,
-    imgUrl
+    imgUrl,
+    renderImgUrl
   );
 
 
@@ -645,7 +659,8 @@ const handleSubView = (data, roomViewName, viewName) => {
     let tabularView = getTabularView(
       compObjects,
       `${roomViewName}+${viewName}+table_view`,
-      "table_view"
+      "table_view",
+      renderImgUrl
     );
     // let tabularView2 = getTabularView(
     //   compObjects2,

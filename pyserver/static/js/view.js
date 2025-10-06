@@ -370,33 +370,29 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
             });
           }
           
-          // 3D Image - populate with RENDER VIEW image from the current view only
+          // 3D Image - populate with render image URL from the current view
           const renderViewContainer = document.getElementById(`render-view-image-${i}`);
           if (renderViewContainer && state.roomViews && state.roomViews[i]) {
             const currentView = state.roomViews[i];
             let renderViewImageURL = null;
             
-            // Check if current view has a render_wall_view image
-            if (currentView && currentView.getImgURL) {
-              const imgURL = currentView.getImgURL();
-              // Check if this is a render_wall_view image (contains 'render_wall_view' in URL)
-              if (imgURL && imgURL.includes('render_wall_view')) {
-                renderViewImageURL = imgURL;
-              }
+            // Check if current view has a render image URL using the new getRenderImgUrl method
+            if (currentView && currentView.getRenderImgUrl) {
+              renderViewImageURL = currentView.getRenderImgUrl();
             }
             
             // Display the render view image if found for this specific view
-            if (renderViewImageURL) {
+            if (renderViewImageURL && renderViewImageURL.trim() !== '') {
               const img = new Image();
               img.onload = function() {
                 renderViewContainer.innerHTML = `<img src="${renderViewImageURL}" style="width: 100%; height: 100%; object-fit: contain;" alt="3D Render View" />`;
               };
               img.onerror = function() {
-                renderViewContainer.innerHTML = `<p style="color: #999; font-size: 12px; text-align: center;">RENDER VIEW image failed to load</p>`;
+                renderViewContainer.innerHTML = `<p style="color: #999; font-size: 12px; text-align: center;">3D render image failed to load</p>`;
               };
               img.src = renderViewImageURL;
             } else {
-              renderViewContainer.innerHTML = `<p style="color: #999; font-size: 12px; text-align: center;">No RENDER VIEW image available for this view</p>`;
+              renderViewContainer.innerHTML = `<p style="color: #999; font-size: 12px; text-align: center;">No 3D render image available for this view</p>`;
             }
           }
         }, 100); // Small delay to ensure DOM elements are created
@@ -682,7 +678,6 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
 
 // fix dpi of canvases and calibrate the origin point
 const calibrateCanvases = (viewBoxInfoes) => {
-  console.log(viewBoxInfoes.length, 'view')
   for (let i = 0; i < viewBoxInfoes.length-1; i++) {
     // fix canvas-dpi
     const canvas = document.querySelector(`#wd-${i} canvas`);

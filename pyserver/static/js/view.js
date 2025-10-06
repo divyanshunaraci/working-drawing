@@ -18,6 +18,19 @@ const fix_dpi = (canvas) => {
   
 };
 
+// Function to remove site image and show upload box again
+const removeSiteImage = (pageIndex) => {
+  const uploadInput = document.getElementById(`site-image-upload-${pageIndex}`);
+  const uploadBox = document.getElementById(`site-image-upload-box-${pageIndex}`);
+  const previewDiv = document.getElementById(`site-image-preview-${pageIndex}`);
+  
+  if (uploadInput && uploadBox && previewDiv) {
+    uploadInput.value = ''; // Clear the file input
+    uploadBox.style.display = 'block'; // Show upload box
+    previewDiv.style.display = 'none'; // Hide preview
+  }
+};
+
 // generate views and render project_ & org_url in every views
 const renderProjectInfo = (projectInfo, viewsCnt) => {
   if (projectInfo == null || viewsCnt < 0) return;
@@ -262,8 +275,24 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
                 </div>
                 <!-- Bottom half of the right partition -->
                 <div style="flex: 1; background-color: #f0f0f0; border: 1px solid #ddd; padding: 15px; margin-top: 5px;">
-                  <h6 style="margin-bottom: 15px; font-weight: bold;">Site Image</h6>
-                  <p style="color: #666; font-size: 14px;">This is the bottom half of the right partition for page ${i + 1}.</p>
+                  <h6 style="margin-bottom: 15px; font-weight: bold; text-align: center;">Site Image</h6>
+                  
+                  <!-- Upload box (shown initially) -->
+                  <div id="site-image-upload-box-${i}" style="border: 2px dashed #ccc; padding: 20px; text-align: center; background-color: white; margin-bottom: 10px;">
+                    <p style="color: #999; font-size: 12px; margin-bottom: 10px;">Click to upload site image</p>
+                    <input type="file" accept="image/*" style="display: none;" id="site-image-upload-${i}" />
+                    <button type="button" onclick="document.getElementById('site-image-upload-${i}').click()" style="background-color: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 12px;">
+                      Upload Image
+                    </button>
+                  </div>
+                  
+                  <!-- Image preview (hidden initially) -->
+                  <div id="site-image-preview-${i}" style="display: none; margin-top: 10px; position: relative;">
+                    <img id="site-image-display-${i}" style="width: 100%; height: 200px; object-fit: cover; border: 1px solid #ddd;" />
+                    <button type="button" onclick="removeSiteImage(${i})" style="background-color: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 3px; cursor: pointer; font-size: 11px; margin-top: 8px; width: 100%;">
+                      Remove Image
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -313,6 +342,33 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
       </div>
       `;
       viewsCount.push(template)
+      
+      // Add image upload functionality for site images
+      if (i >= 1) {
+        setTimeout(() => {
+          const uploadInput = document.getElementById(`site-image-upload-${i}`);
+          const uploadBox = document.getElementById(`site-image-upload-box-${i}`);
+          const previewDiv = document.getElementById(`site-image-preview-${i}`);
+          const imageDisplay = document.getElementById(`site-image-display-${i}`);
+          
+          if (uploadInput && uploadBox && previewDiv && imageDisplay) {
+            uploadInput.addEventListener('change', function(e) {
+              const file = e.target.files[0];
+              if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                  imageDisplay.src = e.target.result;
+                  // Hide upload box and show preview
+                  uploadBox.style.display = 'none';
+                  previewDiv.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+              }
+            });
+          }
+        }, 100); // Small delay to ensure DOM elements are created
+      }
+      
       // document.querySelector(".main-class").insertAdjacentHTML("beforeend", template);
       // const pageBreak = `<div class="html2pdf__page-break"></div>`;
       // if (i %2 === 0){

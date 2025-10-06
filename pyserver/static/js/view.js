@@ -270,8 +270,10 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
               <div style="height: 100%; display: flex; flex-direction: column;">
                 <!-- Top half of the right partition -->
                 <div style="flex: 1; background-color: #f9f9f9; border: 1px solid #ddd; padding: 15px; margin-bottom: 5px;">
-                  <h6 style="margin-bottom: 15px; font-weight: bold;">3D Image</h6>
-                  <p style="color: #666; font-size: 14px;">This is the top half of the right partition for page ${i + 1}.</p>
+                  <h6 style="margin-bottom: 15px; font-weight: bold; text-align: center;">3D Image</h6>
+                  <div id="render-view-image-${i}" style="width: 100%; height: 200px; border: 1px solid #ddd; background-color: white; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                    <p style="color: #999; font-size: 12px; text-align: center;">RENDER VIEW Image will appear here</p>
+                  </div>
                 </div>
                 <!-- Bottom half of the right partition -->
                 <div style="flex: 1; background-color: #f0f0f0; border: 1px solid #ddd; padding: 15px; margin-top: 5px;">
@@ -343,9 +345,10 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
       `;
       viewsCount.push(template)
       
-      // Add image upload functionality for site images
+      // Add functionality for 3D Image and Site Image sections
       if (i >= 1) {
         setTimeout(() => {
+          // Site Image upload functionality
           const uploadInput = document.getElementById(`site-image-upload-${i}`);
           const uploadBox = document.getElementById(`site-image-upload-box-${i}`);
           const previewDiv = document.getElementById(`site-image-preview-${i}`);
@@ -365,6 +368,36 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
                 reader.readAsDataURL(file);
               }
             });
+          }
+          
+          // 3D Image - populate with RENDER VIEW image from the current view only
+          const renderViewContainer = document.getElementById(`render-view-image-${i}`);
+          if (renderViewContainer && state.roomViews && state.roomViews[i]) {
+            const currentView = state.roomViews[i];
+            let renderViewImageURL = null;
+            
+            // Check if current view has a render_wall_view image
+            if (currentView && currentView.getImgURL) {
+              const imgURL = currentView.getImgURL();
+              // Check if this is a render_wall_view image (contains 'render_wall_view' in URL)
+              if (imgURL && imgURL.includes('render_wall_view')) {
+                renderViewImageURL = imgURL;
+              }
+            }
+            
+            // Display the render view image if found for this specific view
+            if (renderViewImageURL) {
+              const img = new Image();
+              img.onload = function() {
+                renderViewContainer.innerHTML = `<img src="${renderViewImageURL}" style="width: 100%; height: 100%; object-fit: contain;" alt="3D Render View" />`;
+              };
+              img.onerror = function() {
+                renderViewContainer.innerHTML = `<p style="color: #999; font-size: 12px; text-align: center;">RENDER VIEW image failed to load</p>`;
+              };
+              img.src = renderViewImageURL;
+            } else {
+              renderViewContainer.innerHTML = `<p style="color: #999; font-size: 12px; text-align: center;">No RENDER VIEW image available for this view</p>`;
+            }
           }
         }, 100); // Small delay to ensure DOM elements are created
       }

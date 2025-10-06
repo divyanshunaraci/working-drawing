@@ -18,7 +18,7 @@ app.config['JSON_SORT_KEYS'] = False
 
 @app.route("/", methods=["GET","POST"])
 def home():
-    return render_template("index.html")
+    return app.send_static_file("wdPdf.html")
 
 @app.route("/json", methods=["POST"])
 @cross_origin()

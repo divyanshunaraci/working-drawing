@@ -400,15 +400,20 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
       let materialsHTML = '';
       materials.forEach((material, index) => {
         const materialName = material.name || `Material_${index + 1}`;
-        const imageUrl = state.matThumbnails && state.matThumbnails[materialName] ? 
-                        state.matThumbnails[materialName].image_url : '';
+        const imageUrl = material.image_url || (state.matThumbnails && state.matThumbnails[materialName] ? 
+                        state.matThumbnails[materialName].image_url : '');
         const edgeBandCode = material.edge_band_code || '';
+        
+        // Debug logging
+        console.log('Material:', material);
+        console.log('Image URL:', imageUrl);
         
         materialsHTML += `
           <div style="text-align: center; flex: 1; max-width: 90px;">
             <div style="background-color: #f5f5f5; width: 70px; height: 80px; margin: 0 auto 3px; border: 1px solid #999; display: flex; align-items: center; justify-content: center; overflow: hidden;">
               ${imageUrl ? 
-                `<img src="${imageUrl}" alt="${materialName}" style="width: 100%; height: 100%; object-fit: cover;" crossorigin="anonymous"/>` : 
+                `<img src="${imageUrl}" alt="${materialName}" style="width: 100%; height: 100%; object-fit: cover;" crossorigin="anonymous" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" onload="this.nextElementSibling.style.display='none';"/>
+                 <div style="font-size: 8px; text-align: center; color: #666; padding: 5px; display: none;">${materialName}</div>` : 
                 `<div style="font-size: 8px; text-align: center; color: #666; padding: 5px;">${materialName}</div>`
               }
             </div>
@@ -899,15 +904,48 @@ const renderRenderView = (imgURL, id) => {
   // reset the canvas transform( setTransform is absolute transformation )
   cx.setTransform(1, 0, 0, 1, 0, 0);
   cx.selectable = true;
-  const image = new Image(canvas.width, canvas.height);
+  
+  // Enable image smoothing for better quality
+  cx.imageSmoothingEnabled = true;
+  cx.imageSmoothingQuality = 'high';
+  
+  const image = new Image();
   image.setAttribute("crossorigin", "*")
   image.onload = drawImageActualSize; // Draw when image has loaded
 
-  // Load an image of intrinsic size 300x227 in CSS pixels
+  // Load the image
   image.src = imgURL;
 
   function drawImageActualSize() {
-    cx.drawImage(this, 0, 0, this.width, this.height);
+    // Get canvas dimensions
+    const canvasWidth = canvas.width;
+    const canvasHeight = canvas.height;
+    
+    // Calculate scaling to fit the image in the canvas while maintaining aspect ratio
+    const imageAspectRatio = this.width / this.height;
+    const canvasAspectRatio = canvasWidth / canvasHeight;
+    
+    let drawWidth, drawHeight, drawX, drawY;
+    
+    if (imageAspectRatio > canvasAspectRatio) {
+      // Image is wider than canvas - fit to width
+      drawWidth = canvasWidth;
+      drawHeight = canvasWidth / imageAspectRatio;
+      drawX = 0;
+      drawY = (canvasHeight - drawHeight) / 2;
+    } else {
+      // Image is taller than canvas - fit to height
+      drawHeight = canvasHeight;
+      drawWidth = canvasHeight * imageAspectRatio;
+      drawX = (canvasWidth - drawWidth) / 2;
+      drawY = 0;
+    }
+    
+    // Clear the canvas first
+    cx.clearRect(0, 0, canvasWidth, canvasHeight);
+    
+    // Draw the image with proper scaling
+    cx.drawImage(this, drawX, drawY, drawWidth, drawHeight);
   }
 };
 

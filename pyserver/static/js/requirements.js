@@ -270,14 +270,48 @@ const renderRenderView = (imgURL, id) => {
   const cx = document.querySelector(`#wd-${id} canvas`).getContext("2d");
   // reset the canvas transform( setTransform is absolute transformation )
   cx.setTransform(1, 0, 0, 1, 0, 0);
-  const image = new Image(canvas.width, canvas.height);
+  
+  // Enable image smoothing for better quality
+  cx.imageSmoothingEnabled = true;
+  cx.imageSmoothingQuality = 'high';
+  
+  const image = new Image();
+  image.setAttribute("crossorigin", "*")
   image.onload = drawImageActualSize; // Draw when image has loaded
 
-  // Load an image of intrinsic size 300x227 in CSS pixels
+  // Load the image
   image.src = imgURL;
 
   function drawImageActualSize() {
-    cx.drawImage(this, 0, 0, this.width, this.height);
+    // Get canvas dimensions
+    const canvasWidth = canvas.width;
+    const canvasHeight = canvas.height;
+    
+    // Calculate scaling to fit the image in the canvas while maintaining aspect ratio
+    const imageAspectRatio = this.width / this.height;
+    const canvasAspectRatio = canvasWidth / canvasHeight;
+    
+    let drawWidth, drawHeight, drawX, drawY;
+    
+    if (imageAspectRatio > canvasAspectRatio) {
+      // Image is wider than canvas - fit to width
+      drawWidth = canvasWidth;
+      drawHeight = canvasWidth / imageAspectRatio;
+      drawX = 0;
+      drawY = (canvasHeight - drawHeight) / 2;
+    } else {
+      // Image is taller than canvas - fit to height
+      drawHeight = canvasHeight;
+      drawWidth = canvasHeight * imageAspectRatio;
+      drawX = (canvasWidth - drawWidth) / 2;
+      drawY = 0;
+    }
+    
+    // Clear the canvas first
+    cx.clearRect(0, 0, canvasWidth, canvasHeight);
+    
+    // Draw the image with proper scaling
+    cx.drawImage(this, drawX, drawY, drawWidth, drawHeight);
   }
 };
 

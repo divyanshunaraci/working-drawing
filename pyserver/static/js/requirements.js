@@ -1163,8 +1163,14 @@ const renderPyDimensions = (dimensions, id) => {
 const renderMaterialThumbnails = (matThumbnails, id) => {
   if (matThumbnails.length === 0 || !matThumbnails) return;
 
-  // get side-table element
-  let table = document.querySelector(`#wd-${id} .side-table`);
+  // get side-table element (check for both old and new table classes)
+  let table = document.querySelector(`#wd-${id} .side-table`) || document.querySelector(`#wd-${id} .scoping-table`);
+  
+  // If no table found, skip rendering material thumbnails
+  if (!table) {
+    console.log('No table found for material thumbnails, skipping...');
+    return;
+  }
 
   // generate table head
   // const headData = ['S.No', '', 'Finishes'];

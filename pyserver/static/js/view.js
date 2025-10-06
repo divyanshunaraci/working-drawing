@@ -404,10 +404,6 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
                         state.matThumbnails[materialName].image_url : '');
         const edgeBandCode = material.edge_band_code || '';
         
-        // Debug logging
-        console.log('Material:', material);
-        console.log('Image URL:', imageUrl);
-        
         materialsHTML += `
           <div style="text-align: center; flex: 1; max-width: 90px;">
             <div style="background-color: #f5f5f5; width: 70px; height: 80px; margin: 0 auto 3px; border: 1px solid #999; display: flex; align-items: center; justify-content: center; overflow: hidden;">
@@ -686,6 +682,46 @@ const renderFloorPlan = (floorPlanView, id) => {
       canvas.renderAll();
       canvas.calcOffset();
     });
+  }
+  
+  // Add SCOPING DATA table specifically for Ground Floor Plan
+  const scopingDataHTML = `
+    <div class="fixed-table-body" style="margin-top: 20px;">
+      <h6 style="font-weight: bold; text-decoration: underline; margin-bottom: 15px;">SCOPING DATA</h6>
+      <table class="table table-bordered scoping-table" style="background-color: white; border-collapse: collapse;">            
+        <tbody>
+          <tr>
+            <td style="border: 1px solid #000; padding: 8px; font-weight: bold;">FULL HOUSE PAINTING</td>
+            <td style="border: 1px solid #000; padding: 8px; color: red; font-weight: bold;" contenteditable="true">CX SCOPE</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #000; padding: 8px; font-weight: bold;">KITCHEN GRANITE MATERIAL</td>
+            <td style="border: 1px solid #000; padding: 8px; color: red; font-weight: bold;" contenteditable="true">CX SCOPE</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #000; padding: 8px; font-weight: bold;">KITCHEN GRANITE FIXING</td>
+            <td style="border: 1px solid #000; padding: 8px; color: red; font-weight: bold;" contenteditable="true">CX SCOPE</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #000; padding: 8px; font-weight: bold;">LIGHT FIXTURES</td>
+            <td style="border: 1px solid #000; padding: 8px; color: red; font-weight: bold;" contenteditable="true">CX SCOPE</td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #000; padding: 8px; font-weight: bold;">ELECTRIC POINTS</td>
+            <td style="border: 1px solid #000; padding: 8px; color: red; font-weight: bold;" contenteditable="true">CX SCOPE</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  `;
+  
+  // Add the SCOPING DATA table to the Ground Floor Plan page
+  const groundFloorElement = document.querySelector(`#wd-${id}`);
+  if (groundFloorElement) {
+    const legendSection = groundFloorElement.querySelector('#legend-view_1');
+    if (legendSection) {
+      legendSection.insertAdjacentHTML('beforeend', scopingDataHTML);
+    }
   }
 };
 
@@ -1913,8 +1949,14 @@ const renderMaterialThumbnails = (matThumbnails, id) => {
     return;
   }
 
-  // get side-table element
-  let table = document.querySelector(`#wd-${id} .side-table`);
+  // get side-table element (check for both old and new table classes)
+  let table = document.querySelector(`#wd-${id} .side-table`) || document.querySelector(`#wd-${id} .scoping-table`);
+  
+  // If no table found, skip rendering material thumbnails
+  if (!table) {
+    console.log('No table found for material thumbnails, skipping...');
+    return;
+  }
 
   // generate table head
   // const headData = ['S.No', '', 'Finishes'];
@@ -2164,8 +2206,14 @@ const renderHandleData = (handleDetail, id) => {
   if (handleDetail.length === 0) {
     return;
   }
-  // get side-table element
-  let table = document.querySelector(`#wd-${id} .side-Handletable`);
+  // get side-table element (check for both old and new table classes)
+  let table = document.querySelector(`#wd-${id} .side-Handletable`) || document.querySelector(`#wd-${id} .scoping-table`);
+  
+  // If no table found, skip rendering handle data
+  if (!table) {
+    console.log('No table found for handle data, skipping...');
+    return;
+  }
 
   // generate table head
   // const headData = ['Handle/KNOB', 'Size/Model No', 'Quantity'];

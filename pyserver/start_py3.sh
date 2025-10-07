@@ -12,7 +12,7 @@ echo "📦 Activating Python 3 virtual environment..."
 source venv_py3/bin/activate
 
 # Check Python version
-echo "🐍 Python version: $(python3 --version)"
+echo "🐍 Python version: $(python --version)"
 
 # Install/update dependencies if needed
 echo "📋 Checking dependencies..."
@@ -23,4 +23,4 @@ echo "🌐 Starting Flask server on http://localhost:4000"
 echo "📝 Press Ctrl+C to stop the server"
 echo "=================================="
 
-python3 server.py
+python server.py

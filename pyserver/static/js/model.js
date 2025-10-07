@@ -433,7 +433,8 @@ const handleIndividualCompsDimens = (data, roomName) => {
 // handle '[room]' => 'view_1'/'view_2' .etc in json
 // return array of 'RoomSubView' class instances
 const handleView = (data, roomName) => {
-  const viewType = ["top_view", "front_view", "internal_view", "render_wall_view"];
+  // Removed "render_wall_view" from viewType to exclude RENDER VIEW pages
+  const viewType = ["top_view", "front_view", "internal_view"];
   let roomSubViews = [];
   let renderImgUrl = '';
   
@@ -446,8 +447,8 @@ const handleView = (data, roomName) => {
   
   // Second pass: create views with render image URL
   Object.keys(data).forEach((viewName) => {
-    // if name of unregistered view
-    if (!viewType.includes(viewName)) {
+    // if name of unregistered view or render_wall_view (excluded)
+    if (!viewType.includes(viewName) || viewName === "render_wall_view") {
       return;
     }
     // handling registered view
@@ -462,12 +463,13 @@ const handleView = (data, roomName) => {
 
 // py dimens:  handle '[room]' => 'view_1'/'view_2' .etc in json
 const handleViewDimens = (data, roomName) => {
-  const viewType = ["top_view", "front_view", "internal_view", "render_wall_view"];
+  // Removed "render_wall_view" from viewType to exclude RENDER VIEW pages
+  const viewType = ["top_view", "front_view", "internal_view"];
   let dimens = [],
     viewBoxInfo = [];
   Object.keys(data).forEach((viewName) => {
-    // if name of unregistered view
-    if (!viewType.includes(viewName)) {
+    // if name of unregistered view or render_wall_view (excluded)
+    if (!viewType.includes(viewName) || viewName === "render_wall_view") {
       return;
     }
     // handling registered view

@@ -3,18 +3,12 @@ var state = {};
 var currentRoom = '';
 
 // variables for overlaying comment canvas( '.overlay-canvas-container' )
-var overlayCanvasContainers = document.querySelectorAll(".overlay-canvas-container");
-var w = document.querySelector(`#wd-0 canvas`).width;
-var h = document.querySelector(`#wd-0 canvas`).height;
+var overlayCanvasContainers = [];
+var w = 0;
+var h = 0;
 var overlayCanvases = [];
-overlayCanvasContainers.forEach((canvas, id) => {
-    let canv = new fabric.Canvas(`c#${id}`, {
-        backgroundColor: "rgba(0, 0, 0, 0)",
-        width: w,
-        height: h,
-    });
-    overlayCanvases.push(canv);
-});
+// Note: Overlay canvases are now initialized inside renderAll() after views are rendered
+// This ensures all text and dimensions are added in the correct order
 
 var canvasJSONs = [];
 
@@ -184,49 +178,52 @@ const renderAll = () => {
     // empty existing WDs || reinitialize
     document.querySelector(".main").innerHTML = ``;
 
-    // render project and org info ( footer table )
-    // console.log(state.roomViews, 'First')
-    // console.log(state.viewBoxInfo, 'state.viewboxInfo')
-    renderProjectInfo(state.projectInfo, state.roomViews.length);
-    // calibrate canvas
-    calibrateCanvases(state.viewBoxInfo);
-
-
-    // reinitialize the variables
-
-    // also for overlayCanvases
-    overlayCanvasContainers = document.querySelectorAll(".overlay-canvas-container");
-    w = document.querySelector(`#wd-0 canvas`).width;
-    h = document.querySelector(`#wd-0 canvas`).height;
-    overlayCanvases = [];
-    overlayCanvasContainers.forEach((canvas, id) => {
-        let canv = new fabric.Canvas(`c#${id}`, {
-            backgroundColor: "rgba(0, 0, 0, 0)",
-            width: w,
-            height: h,
-        });
-
-        if (canvasJSONs.length !== 0) {
-            // restore canvas objects state
-            console.log(canvasJSONs[id])
-            if (Object.keys(canvasJSONs[id]) !== 0) {
-                let json = canvasJSONs[id];
-                //
-                function CallBack() {
-                    canv.renderAll();
-                    canv.calcOffset();
-                }
-                canv.loadFromJSON(json, CallBack, function (o, object) {
-                    canv.setActiveObject(object);
-                });
-            }
+    // Filter out RenderView/render_wall_view pages and sync all related arrays
+    const filteredIndices = [];
+    const filteredViews = [];
+    const filteredViewBoxInfo = [];
+    const filteredDimens = [];
+    
+    state.roomViews.forEach((view, idx) => {
+        if (view.type !== "ImageView" && view.getName() !== "render_wall_view") {
+            filteredIndices.push(idx);
+            filteredViews.push(view);
+            if (state.viewBoxInfo[idx]) filteredViewBoxInfo.push(state.viewBoxInfo[idx]);
+            if (state.dimens[idx]) filteredDimens.push(state.dimens[idx]);
         }
-
-        overlayCanvases.push(canv);
     });
+    
+    // IMPORTANT: Replace state arrays with filtered versions for rendering
+    // Store originals for reference if needed
+    window._originalViewBoxInfo = [...state.viewBoxInfo];
+    window._originalDimens = [...state.dimens];
+    state.viewBoxInfo = filteredViewBoxInfo;
+    state.dimens = filteredDimens;
 
-    // render views
-    state.roomViews.forEach((view, id) => {
+    // render project and org info ( footer table )
+    console.log('Filtered views count:', filteredViews.length);
+    console.log('Filtered viewBoxInfo count:', filteredViewBoxInfo.length);
+    console.log('Filtered dimens count:', filteredDimens.length);
+    renderProjectInfo(state.projectInfo, filteredViews.length);
+    
+    // Reset calibration flag
+    window._canvasesCalibrated = false;
+
+    // CRITICAL: Wait for DOM to be updated with all canvas elements before initializing overlayCanvases
+    // Use setTimeout to allow renderProjectInfo's template insertions to complete
+    setTimeout(() => {
+    // render views (using filtered arrays with new indices)
+    console.log('Starting to render', filteredViews.length, 'views');
+    filteredViews.forEach((view, id) => {
+        console.log(`Rendering view ${id}: ${view.getName()}, type: ${view.type}`);
+        
+        // Calibrate canvases on first view render (regardless of type)
+        if (id === 0 && !window._canvasesCalibrated) {
+            console.log('Calibrating canvases with viewBoxInfo length:', state.viewBoxInfo.length);
+            calibrateCanvases(state.viewBoxInfo);
+            window._canvasesCalibrated = true;
+        }
+        
         // floorPlanView
         // if(id === undefined){
         //     id=x;
@@ -235,7 +232,7 @@ const renderAll = () => {
             renderFloorPlan(view, id);
 
         }
-        // other views like RoomSubView, RenderView ...
+        // other views like RoomSubView ...
         else {
             // console.log(view, id, 'SDGSDFSDFSDF')
             currentRoom = view.id.split('+')[0]
@@ -288,16 +285,67 @@ const renderAll = () => {
         }
 
     });
-    if (openNewJSON) {
-        // draw py dimens
-        state.dimens.forEach((dimensions, id) => {
-            const viewName = state.roomViews[id].getName();
-            if (viewName != "table_view") {
+    
+    // NOW initialize overlay canvases AFTER views are rendered
+    overlayCanvasContainers = document.querySelectorAll(".overlay-canvas-container");
+    console.log('Overlay canvas containers found:', overlayCanvasContainers.length);
+    
+    if (overlayCanvasContainers.length > 0 && document.querySelector(`#wd-0 canvas`)) {
+        w = document.querySelector(`#wd-0 canvas`).width;
+        h = document.querySelector(`#wd-0 canvas`).height;
+        console.log('Main canvas dimensions:', w, 'x', h);
+    }
+    overlayCanvases = [];
+    overlayCanvasContainers.forEach((canvas, id) => {
+        let canv = new fabric.Canvas(`c#${id}`, {
+            backgroundColor: "rgba(0, 0, 0, 0)",
+            width: w,
+            height: h,
+        });
 
-                ; renderPyDimensions(dimensions, id);
+        if (canvasJSONs.length !== 0) {
+            // restore canvas objects state
+            console.log(canvasJSONs[id])
+            if (Object.keys(canvasJSONs[id]) !== 0) {
+                let json = canvasJSONs[id];
+                //
+                function CallBack() {
+                    canv.renderAll();
+                    canv.calcOffset();
+                }
+                canv.loadFromJSON(json, CallBack, function (o, object) {
+                    canv.setActiveObject(object);
+                });
+            }
+        }
+
+        overlayCanvases.push(canv);
+    });
+    
+    console.log('Overlay canvases created:', overlayCanvases.length);
+    
+    if (openNewJSON) {
+        // draw py dimens - state.dimens now contains filtered array
+        console.log('Rendering dimensions for', state.dimens.length, 'views');
+        state.dimens.forEach((dimensions, id) => {
+            if (!filteredViews[id]) {
+                console.warn(`No view found at index ${id}, skipping dimensions`);
+                return;
+            }
+            const viewName = filteredViews[id].getName();
+            console.log(`View ${id} (${viewName}): ${dimensions.length} dimensions`);
+            if (viewName != "table_view") {
+                console.log(`About to call renderPyDimensions for view ${id}`);
+                console.log(`  - overlayCanvases[${id}]:`, overlayCanvases[id]);
+                console.log(`  - state.viewBoxInfo[${id}]:`, state.viewBoxInfo[id]);
+                renderPyDimensions(dimensions, id);
+                console.log(`Finished renderPyDimensions for view ${id}`);
             }
         });
     }
+    console.log('Rendering complete!');
+    
+    }, 100); // End of setTimeout - wait for DOM to update
 };
 
 // Import the Save JSON

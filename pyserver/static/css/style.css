@@ -113,6 +113,17 @@ img.img-logo {
   image-rendering: crisp-edges;
 }
 
+/* Overlay canvas containers for dimensions and text */
+.overlay-canvas-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: all;
+  z-index: 10;
+}
+
 /* Ensure working drawing pages take full width */
 .working-drawing.col-md-12 {
   width: 100% !important;

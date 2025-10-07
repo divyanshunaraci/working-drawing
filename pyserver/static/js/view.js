@@ -1,6 +1,11 @@
 // fix_dpi to remove blurring
 const dpi = window.devicePixelRatio;
 const fix_dpi = (canvas) => {
+  // Safety check for null canvas
+  if (!canvas) {
+    console.warn('fix_dpi called with null canvas');
+    return;
+  }
   //create a style object that returns width and height
   let style = {
     height() {
@@ -63,34 +68,16 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
   }
   try {
     const details = state.projectInfo;
-    // const check = `
-    // <div class = "container" id="checkId">
-    //   <div class = "row main-class">
+    // Create one container per view (no longer 2 per page)
+    for (let i = 0; i < viewsCnt; i++){
+      const check = `
+        <div class = "container" id="checkId-${i}" style = "margin-left:1px">
+          <div class = "row main-class" id = "div-${i}">
 
-    //   </div>
-    // </div>`
-    if (viewsCnt%2 === 0){
-      for (let i = 0; i < viewsCnt/2; i++){
-        const check = `
-          <div class = "container" id="checkId-${i}" style="margin-left:1px">
-            <div class = "row main-class" id = "div-${i}">
-
-            </div>
           </div>
-          <div class="html2pdf__page-break"></div>`
-        document.querySelector(".main").insertAdjacentHTML("beforeend", check)
-      }
-    }else{
-      for (let i = 0; i < viewsCnt; i++){
-        const check = `
-          <div class = "container" id="checkId-${i}" style = "margin-left:1px">
-            <div class = "row main-class" id = "div-${i}">
-
-            </div>
-          </div>
-          <div class="html2pdf__page-break"></div>`
-        document.querySelector(".main").insertAdjacentHTML("beforeend", check)
-      }
+        </div>
+        <div class="html2pdf__page-break"></div>`
+      document.querySelector(".main").insertAdjacentHTML("beforeend", check)
     }
     
     // Function to add dynamic table with room-specific data
@@ -678,9 +665,16 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
 
 // fix dpi of canvases and calibrate the origin point
 const calibrateCanvases = (viewBoxInfoes) => {
-  for (let i = 0; i < viewBoxInfoes.length-1; i++) {
+  for (let i = 0; i < viewBoxInfoes.length; i++) {
     // fix canvas-dpi
     const canvas = document.querySelector(`#wd-${i} canvas`);
+    
+    // Skip if canvas doesn't exist yet
+    if (!canvas) {
+      console.warn(`Canvas #wd-${i} not found, skipping calibration`);
+      continue;
+    }
+    
     fix_dpi(canvas);
 
     const newOrigin = calcScaleOrigin(
@@ -691,9 +685,12 @@ const calibrateCanvases = (viewBoxInfoes) => {
 
     //console.log(i, newOrigin.scale, newOrigin.x, newOrigin.y);
 
-    state.viewBoxInfo[i].scale = newOrigin.scale;
-    state.viewBoxInfo[i].newOriginX = newOrigin.x;
-    state.viewBoxInfo[i].newOriginY = newOrigin.y;
+    // Update the viewBoxInfo entry
+    if (viewBoxInfoes[i]) {
+      viewBoxInfoes[i].scale = newOrigin.scale;
+      viewBoxInfoes[i].newOriginX = newOrigin.x;
+      viewBoxInfoes[i].newOriginY = newOrigin.y;
+    }
 
     // pre scaling and translating
     const cx = canvas.getContext("2d");
@@ -725,31 +722,38 @@ const calcScaleOrigin = (viewBoxInfo, canvasWidth, canvasHeight) => {
 
 // render ground floor plan
 const renderFloorPlan = (floorPlanView, id) => {
-  // Calibrate canvases for all views (legend now visible on all pages)
+  // Calibration is now handled in the main render loop
+  
   state.roomViews.forEach((elem, index) => {
-    if (elem.name == "Ground floor plan" || elem.name == "room_top_view" || elem.name == "top_view" || elem.name == "front_view" || elem.name == "internal_view" || elem.name == "EXTRA_VIEW") {
-      calibrateCanvases(state.viewBoxInfo);
+    // Skip render_wall_view pages
+    if (elem.name === "render_wall_view" || elem.type === "ImageView") {
+      return;
     }
+    
     if (elem.name == "room_top_view") {
       ele2 = document.querySelector("#wd-" + index);
-      ele2.querySelectorAll("[id='extraInfo']").forEach(b => {
-        b.innerHTML = 'Note: Components not attached to the wall are showed in room plan';
-        b.setAttribute('style', "position: absolute;top: 40px;width: 20%;right:0;font-size:13px;color: #d60000;");
-      });
+      if (ele2) {
+        ele2.querySelectorAll("[id='extraInfo']").forEach(b => {
+          b.innerHTML = 'Note: Components not attached to the wall are showed in room plan';
+          b.setAttribute('style', "position: absolute;top: 40px;width: 20%;right:0;font-size:13px;color: #d60000;");
+        });
+      }
     }
     if (elem.name === "EXTRA_VIEW"){
       ele1 = document.querySelector("#wd-" + index);
-      ele1.contentEditable = true
-    }
-    if (elem.name === "render_wall_view") {
-      ele1 = document.querySelector("#wd-" + index)
-      ele1.querySelectorAll("[id='checks']").forEach(b => {
-        b.setAttribute('style', 'height: 300px')
-      })
+      if (ele1) {
+        ele1.contentEditable = true
+      }
     }
   });
   /* draw lines */
-  const cx = document.querySelector(`#wd-${id} canvas`).getContext("2d");
+  const floorCanvas = document.querySelector(`#wd-${id} canvas`);
+  if (!floorCanvas) {
+    console.warn(`Canvas #wd-${id} not found in renderFloorPlan, skipping outline drawing`);
+    return;
+  }
+  
+  const cx = floorCanvas.getContext("2d");
   const path = floorPlanView.getOutline();
   cx.beginPath();
   cx.strokeStyle = "black";
@@ -768,6 +772,59 @@ const renderFloorPlan = (floorPlanView, id) => {
     const room_pos = floorPlanView.getRoomNamePos();
 
     const canvas = overlayCanvases[0];
+    
+    // Check if canvas is available, otherwise defer
+    if (!canvas || !state.viewBoxInfo[0]) {
+      console.warn('Canvas or viewBoxInfo missing for Ground Floor Plan, deferring room name rendering');
+      setTimeout(() => {
+        if (overlayCanvases[0] && state.viewBoxInfo[0]) {
+          console.log('Deferred room name rendering for Ground Floor Plan now executing');
+          // Recursively call renderFloorPlan to render room names
+          const tempCanvas = overlayCanvases[0];
+          const scale = state.viewBoxInfo[0]["scale"];
+          const origin = [
+            state.viewBoxInfo[0]["newOriginX"],
+            state.viewBoxInfo[0]["newOriginY"],
+          ];
+          Object.keys(room_pos).forEach((roomName) => {
+            const pos = room_pos[roomName];
+            const textbox = new fabric.Textbox(roomName, {
+              left: ((pos[0] + origin[0] - 30) * scale) / dpi,
+              top: ((-1 * pos[1] + origin[1]) * scale) / dpi,
+              width: 40,
+              fontSize: 12,
+              textAlign: "center",
+              originX: "center",
+              originY: "center",
+              borderColor: "green",
+              editingBorderColor: "orange",
+              showTextBoxBorder: true,
+              textboxBorderColor: "green",
+              backgroundColor: "transparent",
+              objectCaching: false,
+            });
+
+            textbox.setControlsVisibility({
+              mt: false,
+              mb: false,
+              br: false,
+              bl: false,
+              tl: false,
+              tr: false,
+            });
+            textbox.lockScalingY = true;
+
+            tempCanvas.getObjects();
+            tempCanvas.add(textbox);
+            tempCanvas.selection = false;
+            tempCanvas.renderAll();
+            tempCanvas.calcOffset();
+          });
+        }
+      }, 200);
+      return; // Skip rendering now, will be deferred
+    }
+    
     const scale = state.viewBoxInfo[0]["scale"];
     const origin = [
       state.viewBoxInfo[0]["newOriginX"],
@@ -860,6 +917,12 @@ const renderView = (projectInfo, view, id) => {
     "Handles & Accessories",
   ];
   if (!view) return;
+  
+  // Skip RenderView/render_wall_view pages (safety check)
+  if (view.type === "ImageView" || view.getName() === "render_wall_view") {
+    return;
+  }
+  
   const viewName = view.getName();
   // render titles
   renderTitle(view, id);
@@ -922,6 +985,26 @@ const renderViewTexts = (textObject, id) => {
 
   if (!openNewJSON) return;
   const canvas = overlayCanvases[id];
+  
+  console.log(`renderViewTexts called for id ${id}:`, {
+    canvas: !!canvas,
+    viewBoxInfo: !!state.viewBoxInfo[id],
+    textObjectKeys: Object.keys(textObject)
+  });
+  
+  // Safety check for canvas - warn but continue if possible
+  if (!canvas || !state.viewBoxInfo[id]) {
+    console.warn(`Canvas or viewBoxInfo missing for id ${id}, deferring view text rendering`);
+    // Defer text rendering until canvases are ready
+    setTimeout(() => {
+      if (overlayCanvases[id] && state.viewBoxInfo[id]) {
+        console.log(`Deferred renderViewTexts for id ${id} now executing`);
+        renderViewTexts(textObject, id);
+      }
+    }, 200);
+    return;
+  }
+  
   const scale = state.viewBoxInfo[id]["scale"];
   const origin = [
     state.viewBoxInfo[id]["newOriginX"],
@@ -1051,6 +1134,15 @@ const renderViewTexts = (textObject, id) => {
       }
       canvas.getObjects();
       canvas.add(textbox, compassHorizontalView, compassverticalView, compassCircle, triangleTop, triangleBottom, triangleLeft, triangleRight);
+      console.log(`Added view text "${textbox.text}" to canvas ${id} at position (${textbox.left}, ${textbox.top})`);
+      console.log(`View text object properties:`, {
+        visible: textbox.visible,
+        opacity: textbox.opacity,
+        fontSize: textbox.fontSize,
+        color: textbox.fill,
+        width: textbox.width,
+        height: textbox.height
+      });
       canvas.selection = false;
       canvas.renderAll();
       canvas.calcOffset();
@@ -1061,7 +1153,12 @@ const renderViewTexts = (textObject, id) => {
 // render 'render_wall_view'
 const renderRenderView = (imgURL, id) => {
   const canvas = document.querySelector(`#wd-${id} canvas`);
-  const cx = document.querySelector(`#wd-${id} canvas`).getContext("2d");
+  if (!canvas) {
+    console.warn(`Canvas #wd-${id} not found in renderRenderView, skipping`);
+    return;
+  }
+  
+  const cx = canvas.getContext("2d");
   // reset the canvas transform( setTransform is absolute transformation )
   cx.setTransform(1, 0, 0, 1, 0, 0);
   cx.selectable = true;
@@ -1480,7 +1577,14 @@ const renderOutline = (outline, id, type, dashPattern = [], view_name = '') => {
     opening: { strokeStyle: "DarkGreen", lineWidth: "8" },
   };
 
-  const cx = document.querySelector(`#wd-${id} canvas`).getContext("2d");
+  // Safety check - ensure canvas exists
+  const canvas = document.querySelector(`#wd-${id} canvas`);
+  if (!canvas) {
+    console.warn(`Canvas #wd-${id} not found for renderOutline, skipping`);
+    return;
+  }
+  
+  const cx = canvas.getContext("2d");
 
   const path = outline;
   cx.beginPath();
@@ -1537,14 +1641,32 @@ const renderTexts = (textObject, id) => {
 
   if (!openNewJSON) return;
   const canvas = overlayCanvases[id];
-  // if(state.viewBoxInfo[id] === undefined){
-  //   state.viewBoxInfo[id] = state.viewBoxInfo[id-1]
-  // }
+  
+  console.log(`renderTexts called for id ${id}:`, {
+    canvas: !!canvas,
+    viewBoxInfo: !!state.viewBoxInfo[id],
+    textObjectKeys: Object.keys(textObject)
+  });
+  
+  // Safety check - skip only if both are missing
+  if (!canvas || !state.viewBoxInfo[id]) {
+    console.warn(`Canvas or viewBoxInfo missing for id ${id}, deferring text rendering`);
+    // Defer text rendering until canvases are ready
+    setTimeout(() => {
+      if (overlayCanvases[id] && state.viewBoxInfo[id]) {
+        console.log(`Deferred renderTexts for id ${id} now executing`);
+        renderTexts(textObject, id);
+      }
+    }, 200);
+    return;
+  }
+  
   const scale = state.viewBoxInfo[id]["scale"];
   const origin = [
     state.viewBoxInfo[id]["newOriginX"],
     state.viewBoxInfo[id]["newOriginY"],
   ];
+  console.log(`renderTexts processing ${Object.keys(textObject).length} text objects for id ${id}`);
   Object.keys(textObject).forEach((text) => {
     const outline = textObject[text];
     if (outline.length !== 0) {
@@ -1580,11 +1702,21 @@ const renderTexts = (textObject, id) => {
 
       canvas.getObjects();
       canvas.add(textbox);
+      console.log(`Added text "${text}" to canvas ${id} at position (${textbox.left}, ${textbox.top})`);
+      console.log(`Text object properties:`, {
+        visible: textbox.visible,
+        opacity: textbox.opacity,
+        fontSize: textbox.fontSize,
+        color: textbox.fill,
+        width: textbox.width,
+        height: textbox.height
+      });
       canvas.selectable = true;
       canvas.renderAll();
       canvas.calcOffset();
     }
   });
+  console.log(`Canvas ${id} now has ${canvas.getObjects().length} objects total`);
 };
 
 // render roomSubView/opening(window, door) & text
@@ -1702,6 +1834,11 @@ const removeRedun = (compsCoords) => {
 // render dimensions
 const renderDimensions = (dimensions, id) => {
   const canvas = document.querySelector(`#wd-${id} canvas`);
+  if (!canvas) {
+    console.warn(`Canvas #wd-${id} not found in renderDimensions, skipping`);
+    return;
+  }
+  
   const cx = canvas.getContext("2d");
   cx.font = id == 0 ? "260px Arial" : "140px Arial";
   cx.textAlign = "center";
@@ -1776,13 +1913,23 @@ const renderDimensions = (dimensions, id) => {
 
 // render py dimens
 const renderPyDimensions = (dimensions, id) => {
-  // fabricjs
+  // Safety check - skip only if essential data is missing
   const canvas = overlayCanvases[id];
+  
+  if (!canvas || !state.viewBoxInfo[id]) {
+    console.warn(`Canvas or viewBoxInfo missing for id ${id}, skipping dimension rendering`);
+    return;
+  }
+  
+  console.log(`Rendering ${dimensions.length} dimensions for view ${id}`);
+  
   const scale = state.viewBoxInfo[id]["scale"];
   const origin = [
     state.viewBoxInfo[id]["newOriginX"],
     state.viewBoxInfo[id]["newOriginY"],
   ];
+  
+  console.log(`View ${id} scale: ${scale}, origin: [${origin[0]}, ${origin[1]}]`);
 
   dimensions.forEach((dimension) => {
     let lineGroup;
@@ -1968,6 +2115,8 @@ const renderPyDimensions = (dimensions, id) => {
     canvas.renderAll();
     canvas.calcOffset();
   });
+  
+  console.log(`Added ${dimensions.length} dimension objects to canvas ${id}. Total objects: ${canvas.getObjects().length}`);
 };
 
 // check rectangles intersect
@@ -2212,6 +2361,12 @@ const renderTableView = (tableView, id) => {
   const compsInfo = tableView.getCompsInfo();
   // get handle of view container and clean the innerHTML of container
   const container = document.querySelector(`#wd-${id} .canvas-container`);
+  
+  // Safety check - if container doesn't exist, skip rendering
+  if (!container) {
+    console.warn(`TableView container #wd-${id} not found, skipping table rendering`);
+    return;
+  }
 
   //container.style.overflow = "auto";
 
@@ -2279,11 +2434,18 @@ const renderTableView = (tableView, id) => {
 
 
   // add table to container
-  container.replaceChild(
-    table,
-    document.querySelector(`#wd-${id} .canvas-container canvas`)
-  );
-  container.style.pointerEvents = "all";
+  const canvasElement = document.querySelector(`#wd-${id} .canvas-container canvas`);
+  if (canvasElement && container) {
+    container.replaceChild(table, canvasElement);
+    container.style.pointerEvents = "all";
+  } else {
+    console.warn(`Canvas element not found for #wd-${id}, appending table directly`);
+    if (container) {
+      container.innerHTML = '';
+      container.appendChild(table);
+      container.style.pointerEvents = "all";
+    }
+  }
 };
 
 // elementary function: get drawing points for dimension

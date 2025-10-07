@@ -26,7 +26,7 @@ $("#file").on("change", function (e) {
 
     setTimeout(() => {
         $('.loader-msg').html("Processing JSON");
-    }, 3000);
+    }, CONFIG.TIMING.LOADING_MESSAGE_DELAY);
     readJSON(this);
 
     $("#file").val(null)
@@ -185,7 +185,10 @@ const renderAll = () => {
     const filteredDimens = [];
     
     state.roomViews.forEach((view, idx) => {
-        if (view.type !== "ImageView" && view.getName() !== "render_wall_view") {
+        const isExcluded = CONFIG.VIEW_FILTERS.EXCLUDED_TYPES.includes(view.type) || 
+                          CONFIG.VIEW_FILTERS.EXCLUDED_NAMES.includes(view.getName());
+        
+        if (!isExcluded) {
             filteredIndices.push(idx);
             filteredViews.push(view);
             if (state.viewBoxInfo[idx]) filteredViewBoxInfo.push(state.viewBoxInfo[idx]);
@@ -298,7 +301,7 @@ const renderAll = () => {
     overlayCanvases = [];
     overlayCanvasContainers.forEach((canvas, id) => {
         let canv = new fabric.Canvas(`c#${id}`, {
-            backgroundColor: "rgba(0, 0, 0, 0)",
+            backgroundColor: CONFIG.CANVAS.BACKGROUND_COLOR,
             width: w,
             height: h,
         });
@@ -345,7 +348,7 @@ const renderAll = () => {
     }
     console.log('Rendering complete!');
     
-    }, 100); // End of setTimeout - wait for DOM to update
+    }, CONFIG.TIMING.DOM_READY_DELAY); // End of setTimeout - wait for DOM to update
 };
 
 // Import the Save JSON

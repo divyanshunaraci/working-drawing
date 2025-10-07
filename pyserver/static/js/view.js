@@ -781,16 +781,12 @@ const renderFloorPlan = (floorPlanView, id) => {
           console.log('Deferred room name rendering for Ground Floor Plan now executing');
           // Recursively call renderFloorPlan to render room names
           const tempCanvas = overlayCanvases[0];
-          const scale = state.viewBoxInfo[0]["scale"];
-          const origin = [
-            state.viewBoxInfo[0]["newOriginX"],
-            state.viewBoxInfo[0]["newOriginY"],
-          ];
           Object.keys(room_pos).forEach((roomName) => {
             const pos = room_pos[roomName];
+            const canvasPos = CoordinateTransform.worldToCanvas(pos[0] - 30, pos[1], state.viewBoxInfo[0]);
             const textbox = new fabric.Textbox(roomName, {
-              left: ((pos[0] + origin[0] - 30) * scale) / dpi,
-              top: ((-1 * pos[1] + origin[1]) * scale) / dpi,
+              left: canvasPos.x,
+              top: canvasPos.y,
               width: 40,
               fontSize: 12,
               textAlign: "center",
@@ -825,16 +821,12 @@ const renderFloorPlan = (floorPlanView, id) => {
       return; // Skip rendering now, will be deferred
     }
     
-    const scale = state.viewBoxInfo[0]["scale"];
-    const origin = [
-      state.viewBoxInfo[0]["newOriginX"],
-      state.viewBoxInfo[0]["newOriginY"],
-    ];
     Object.keys(room_pos).forEach((roomName) => {
       const pos = room_pos[roomName];
+      const canvasPos = CoordinateTransform.worldToCanvas(pos[0] - 30, pos[1], state.viewBoxInfo[0]);
       const textbox = new fabric.Textbox(roomName, {
-        left: ((pos[0] + origin[0] - 30) * scale) / dpi,
-        top: ((-1 * pos[1] + origin[1]) * scale) / dpi,
+        left: canvasPos.x,
+        top: canvasPos.y,
         width: 40,
         fontSize: 12,
         textAlign: "center",
@@ -1023,9 +1015,10 @@ const renderViewTexts = (textObject, id) => {
       }
       let l = cntForX / (2 * state.rooms[currentRoom]["room_top_view"]["views"][j][z].length)
       let t = (cntForY / (2 * state.rooms[currentRoom]["room_top_view"]["views"][j][z].length))
+      const canvasPos = CoordinateTransform.worldToCanvas(l, t, state.viewBoxInfo[id]);
       const textbox = new fabric.Textbox(j, {
-        left: ((l + origin[0]) * scale) / dpi,
-        top: ((-1 * t + origin[1]) * scale) / dpi,
+        left: canvasPos.x,
+        top: canvasPos.y,
         width: 40,
         fontSize: 11,
         textAlign: "center",
@@ -1661,11 +1654,6 @@ const renderTexts = (textObject, id) => {
     return;
   }
   
-  const scale = state.viewBoxInfo[id]["scale"];
-  const origin = [
-    state.viewBoxInfo[id]["newOriginX"],
-    state.viewBoxInfo[id]["newOriginY"],
-  ];
   console.log(`renderTexts processing ${Object.keys(textObject).length} text objects for id ${id}`);
   Object.keys(textObject).forEach((text) => {
     const outline = textObject[text];
@@ -1674,9 +1662,10 @@ const renderTexts = (textObject, id) => {
       if (text[0] == 'd' || text[0] == 'w') {
         text = text.slice(0, text.lastIndexOf(text.match(/[a-z]/ig)[text.match(/[a-z]/ig).length - 1]) + 1)
       }
+      const canvasPos = CoordinateTransform.worldToCanvas(center[0], center[1], state.viewBoxInfo[id]);
       const textbox = new fabric.Textbox(text, {
-        left: ((center[0] + origin[0]) * scale) / dpi,
-        top: ((-1 * center[1] + origin[1]) * scale) / dpi,
+        left: canvasPos.x,
+        top: canvasPos.y,
         width: 40,
         fontSize: 11,
         textAlign: "center",
@@ -2074,9 +2063,10 @@ const renderPyDimensions = (dimensions, id) => {
     /*The value determines that if the dimension is greater than 80 it will be 
     displayed at the bottom of the dimension else in the center*/
     const textAligni = Number(dimension.label) > 99 ? "center" : "bottom"; //200
+    const canvasPos = CoordinateTransform.worldToCanvas(position[0] - 20, position[1], state.viewBoxInfo[id]);
     const textbox = new fabric.Textbox(dimension.label.toString(), {
-      left: ((position[0] + origin[0] - 20) * scale) / dpi,
-      top: ((-1 * position[1] + origin[1]) * scale) / dpi,
+      left: canvasPos.x,
+      top: canvasPos.y,
       width: 20,
       fontSize: 12,
       textAlign: "center",
@@ -2480,9 +2470,10 @@ const getDimensionDrawPts = (dimension, fontStr) => {
 
 // elementary function: convert json pos coords => real fabric drawing pos coords
 const jsonCoords2fabricCoords = (pos, scale, origin) => {
-  const x = ((pos[0] + origin[0]) * scale) / dpi;
-  const y = ((-1 * pos[1] + origin[1]) * scale) / dpi;
-  return [x, y];
+  // Using CoordinateTransform utility for consistency
+  const viewBoxInfo = { scale, newOriginX: origin[0], newOriginY: origin[1] };
+  const canvasPos = CoordinateTransform.worldToCanvas(pos[0], pos[1], viewBoxInfo);
+  return [canvasPos.x, canvasPos.y];
 };
 
 // Render Handle Data

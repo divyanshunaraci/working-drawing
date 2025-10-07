@@ -838,3 +838,23 @@ const getShutter = (name, data) => {
   });
   return new Shutter(name, outline, opening, handle);
 };
+
+/**
+ * Creates a unified view data structure that bundles all view-related data together.
+ * This eliminates the tight coupling between separate arrays and makes the code more robust.
+ * 
+ * @param {Array} views - Array of view objects
+ * @param {Array} viewBoxInfo - Array of viewBoxInfo objects  
+ * @param {Array} dimens - Array of dimension arrays
+ * @returns {Array} Array of unified view objects
+ */
+const createUnifiedViews = (views, viewBoxInfo, dimens) => {
+  return views.map((view, index) => ({
+    id: index,
+    view: view,
+    viewBoxInfo: viewBoxInfo[index] || null,
+    dimensions: dimens[index] || [],
+    canvas: null, // Will be set during rendering
+    renderState: 'pending' // 'pending', 'rendering', 'rendered', 'error'
+  }));
+};

@@ -143,7 +143,7 @@ const parseJSON = (parsedData) => {
         // state.handleData = getHandleData(parsedData);
         // get floor plan & names of rooms
         const info = getFloorPlan(parsedData);
-        state.roomViews = [info[0]]; // push floorPlanView
+        const floorPlanView = [info[0]]; // push floorPlanView
         state.roomNames = info[1];
 
         // get material thumbnails & rooms part(JSON)
@@ -154,18 +154,27 @@ const parseJSON = (parsedData) => {
         // parse 'state.rooms' to get room views
         // addExtraPageForTable();
         let subViews = getRoomObjects(state.rooms);
-        state.roomViews = [...state.roomViews, ...subViews[0]];
+        const allViews = [...floorPlanView, ...subViews[0]];
+        
         // get py dimens
-        state.dimens = [];
-        state.dimens.push(info[2]); // ground floror plan (0)
-        state.dimens = [...state.dimens, ...subViews[1]];
+        const allDimens = [];
+        allDimens.push(info[2]); // ground floor plan (0)
+        allDimens.push(...subViews[1]);
 
         // get py viewBoxInfo
-        state.viewBoxInfo = [];
+        const allViewBoxInfo = [];
         // viewbox info is required to be changed for expanding the table view
         //It contains info[3] ->  & subViews[2] -> getRoomObjects , viewBoxInfo in model.js
-        state.viewBoxInfo.push(info[3]);
-        state.viewBoxInfo = [...state.viewBoxInfo, ...subViews[2]];
+        allViewBoxInfo.push(info[3]);
+        allViewBoxInfo.push(...subViews[2]);
+
+        // Create unified view structure - this eliminates tight coupling between arrays
+        state.views = createUnifiedViews(allViews, allViewBoxInfo, allDimens);
+        
+        // Keep backward compatibility for now
+        state.roomViews = allViews;
+        state.dimens = allDimens;
+        state.viewBoxInfo = allViewBoxInfo;
     } catch (err) {
         console.log(err);
     }
@@ -178,35 +187,23 @@ const renderAll = () => {
     // empty existing WDs || reinitialize
     document.querySelector(".main").innerHTML = ``;
 
-    // Filter out RenderView/render_wall_view pages and sync all related arrays
-    const filteredIndices = [];
-    const filteredViews = [];
-    const filteredViewBoxInfo = [];
-    const filteredDimens = [];
-    
-    state.roomViews.forEach((view, idx) => {
-        const isExcluded = CONFIG.VIEW_FILTERS.EXCLUDED_TYPES.includes(view.type) || 
-                          CONFIG.VIEW_FILTERS.EXCLUDED_NAMES.includes(view.getName());
-        
-        if (!isExcluded) {
-            filteredIndices.push(idx);
-            filteredViews.push(view);
-            if (state.viewBoxInfo[idx]) filteredViewBoxInfo.push(state.viewBoxInfo[idx]);
-            if (state.dimens[idx]) filteredDimens.push(state.dimens[idx]);
-        }
+    // Filter out RenderView/render_wall_view pages using unified structure
+    // This is much simpler and eliminates index synchronization issues
+    const filteredViews = state.views.filter(viewData => {
+        const isExcluded = CONFIG.VIEW_FILTERS.EXCLUDED_TYPES.includes(viewData.view.type) || 
+                          CONFIG.VIEW_FILTERS.EXCLUDED_NAMES.includes(viewData.view.getName());
+        return !isExcluded;
     });
     
-    // IMPORTANT: Replace state arrays with filtered versions for rendering
-    // Store originals for reference if needed
-    window._originalViewBoxInfo = [...state.viewBoxInfo];
-    window._originalDimens = [...state.dimens];
-    state.viewBoxInfo = filteredViewBoxInfo;
-    state.dimens = filteredDimens;
+    // Update state with filtered views
+    state.views = filteredViews;
+    
+    // Keep backward compatibility for now - update legacy arrays
+    state.roomViews = filteredViews.map(v => v.view);
+    state.viewBoxInfo = filteredViews.map(v => v.viewBoxInfo);
+    state.dimens = filteredViews.map(v => v.dimensions);
 
     // render project and org info ( footer table )
-    console.log('Filtered views count:', filteredViews.length);
-    console.log('Filtered viewBoxInfo count:', filteredViewBoxInfo.length);
-    console.log('Filtered dimens count:', filteredDimens.length);
     renderProjectInfo(state.projectInfo, filteredViews.length);
     
     // Reset calibration flag
@@ -216,13 +213,11 @@ const renderAll = () => {
     // Use setTimeout to allow renderProjectInfo's template insertions to complete
     setTimeout(() => {
     // render views (using filtered arrays with new indices)
-    console.log('Starting to render', filteredViews.length, 'views');
-    filteredViews.forEach((view, id) => {
-        console.log(`Rendering view ${id}: ${view.getName()}, type: ${view.type}`);
+    filteredViews.forEach((viewData, id) => {
+        const view = viewData.view;
         
         // Calibrate canvases on first view render (regardless of type)
         if (id === 0 && !window._canvasesCalibrated) {
-            console.log('Calibrating canvases with viewBoxInfo length:', state.viewBoxInfo.length);
             calibrateCanvases(state.viewBoxInfo);
             window._canvasesCalibrated = true;
         }
@@ -328,25 +323,16 @@ const renderAll = () => {
     console.log('Overlay canvases created:', overlayCanvases.length);
     
     if (openNewJSON) {
-        // draw py dimens - state.dimens now contains filtered array
-        console.log('Rendering dimensions for', state.dimens.length, 'views');
-        state.dimens.forEach((dimensions, id) => {
-            if (!filteredViews[id]) {
-                console.warn(`No view found at index ${id}, skipping dimensions`);
-                return;
-            }
-            const viewName = filteredViews[id].getName();
-            console.log(`View ${id} (${viewName}): ${dimensions.length} dimensions`);
+        // draw py dimens - using unified structure
+        filteredViews.forEach((viewData, id) => {
+            const view = viewData.view;
+            const dimensions = viewData.dimensions;
+            const viewName = view.getName();
             if (viewName != "table_view") {
-                console.log(`About to call renderPyDimensions for view ${id}`);
-                console.log(`  - overlayCanvases[${id}]:`, overlayCanvases[id]);
-                console.log(`  - state.viewBoxInfo[${id}]:`, state.viewBoxInfo[id]);
                 renderPyDimensions(dimensions, id);
-                console.log(`Finished renderPyDimensions for view ${id}`);
             }
         });
     }
-    console.log('Rendering complete!');
     
     }, CONFIG.TIMING.DOM_READY_DELAY); // End of setTimeout - wait for DOM to update
 };

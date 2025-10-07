@@ -978,19 +978,11 @@ const renderViewTexts = (textObject, id) => {
   if (!openNewJSON) return;
   const canvas = overlayCanvases[id];
   
-  console.log(`renderViewTexts called for id ${id}:`, {
-    canvas: !!canvas,
-    viewBoxInfo: !!state.viewBoxInfo[id],
-    textObjectKeys: Object.keys(textObject)
-  });
-  
-  // Safety check for canvas - warn but continue if possible
+  // Safety check for canvas - defer if not ready
   if (!canvas || !state.viewBoxInfo[id]) {
-    console.warn(`Canvas or viewBoxInfo missing for id ${id}, deferring view text rendering`);
     // Defer text rendering until canvases are ready
     setTimeout(() => {
       if (overlayCanvases[id] && state.viewBoxInfo[id]) {
-        console.log(`Deferred renderViewTexts for id ${id} now executing`);
         renderViewTexts(textObject, id);
       }
     }, 200);
@@ -1635,26 +1627,17 @@ const renderTexts = (textObject, id) => {
   if (!openNewJSON) return;
   const canvas = overlayCanvases[id];
   
-  console.log(`renderTexts called for id ${id}:`, {
-    canvas: !!canvas,
-    viewBoxInfo: !!state.viewBoxInfo[id],
-    textObjectKeys: Object.keys(textObject)
-  });
-  
-  // Safety check - skip only if both are missing
+  // Safety check - defer if canvas or viewBoxInfo not ready
   if (!canvas || !state.viewBoxInfo[id]) {
-    console.warn(`Canvas or viewBoxInfo missing for id ${id}, deferring text rendering`);
     // Defer text rendering until canvases are ready
     setTimeout(() => {
       if (overlayCanvases[id] && state.viewBoxInfo[id]) {
-        console.log(`Deferred renderTexts for id ${id} now executing`);
         renderTexts(textObject, id);
       }
     }, 200);
     return;
   }
   
-  console.log(`renderTexts processing ${Object.keys(textObject).length} text objects for id ${id}`);
   Object.keys(textObject).forEach((text) => {
     const outline = textObject[text];
     if (outline.length !== 0) {
@@ -1691,21 +1674,11 @@ const renderTexts = (textObject, id) => {
 
       canvas.getObjects();
       canvas.add(textbox);
-      console.log(`Added text "${text}" to canvas ${id} at position (${textbox.left}, ${textbox.top})`);
-      console.log(`Text object properties:`, {
-        visible: textbox.visible,
-        opacity: textbox.opacity,
-        fontSize: textbox.fontSize,
-        color: textbox.fill,
-        width: textbox.width,
-        height: textbox.height
-      });
       canvas.selectable = true;
       canvas.renderAll();
       canvas.calcOffset();
     }
   });
-  console.log(`Canvas ${id} now has ${canvas.getObjects().length} objects total`);
 };
 
 // render roomSubView/opening(window, door) & text

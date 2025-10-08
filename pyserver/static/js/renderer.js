@@ -162,8 +162,7 @@ class ViewRenderer {
     }
 
     // Extract and render handle data (more complex logic)
-    let handleNames = [];
-    let dupRemoveMaterialData = [];
+    let handleData = [];
     
     for (const roomKey in this.state.rooms) {
       if (roomKey === currentRoom) {
@@ -181,16 +180,16 @@ class ViewRenderer {
                   Object.keys(shutter).forEach(shtr => {
                     const handleName = shutter[shtr]["handle"]["name"];
                     if (handleName !== undefined) {
-                      handleNames.push(handleName);
-                      dupRemoveMaterialData = handleNames.filter((v, i) => 
-                        handleNames.findIndex(item => item == v) === i
-                      );
+                      handleData.push({
+                        component: comp,
+                        handle: handleName
+                      });
                     }
                   });
                 }
               });
               
-              renderHandleData(dupRemoveMaterialData, id);
+              renderHandleData(handleData, id);
             }
           }
         }

@@ -638,7 +638,7 @@ class floor_plan_component1(object):
                         #Getting the dimension list from dictionary and the list of demarkation of rooms
                 
                 dimension_list = self.__creating_dimensions_room_top_view(self,dict_for_view,drawing_1_list)
-                for x, y in dimension_list['IDs'].items():
+                for x, y in list(dimension_list['IDs'].items()):
                     if 'cover_panel' in x:
                         dimension_list['IDs'].pop(x)
                 """ t_d2 = dict1[keys]['dims']

@@ -2195,15 +2195,13 @@ const renderMaterialThumbnails = (matThumbnails, id) => {
   }
 
   // generate table head
-  // const headData = ['S.No', '', 'Finishes'];
-  // const headData = ["", "Finishes"];
+  // const headData = ['', 'Finishes'];
   // generateTableHead(table, headData);
 
-  // generate main content of table
+  // generate main content of table (no quantities)
   const data = [];
-  Object.keys(matThumbnails).forEach((key, id) => {
+  Object.keys(matThumbnails).forEach((key) => {
     data.push({
-      // id: id + 1,
       imageURL: matThumbnails[key]["image_url"],
       name: key,
     });
@@ -2466,15 +2464,15 @@ const renderHandleData = (handleDetail, id) => {
   }
 
   // generate table head
-  // const headData = ['Handle/KNOB', 'Size/Model No', 'Quantity'];
+  // const headData = ['Component', 'Handle/KNOB'];
   // generateTableHead(table, headData);
 
-  // generate main content of table
+  // Generate table data with component names (no quantities)
   const data = [];
-  Object.keys(handleDetail).forEach((key, id) => {
+  handleDetail.forEach((item) => {
     data.push({
-      srNo: id + 1,
-      name: handleDetail[key],
+      component: item.component,
+      handle: item.handle,
     });
   });
   generateTable(table, data);

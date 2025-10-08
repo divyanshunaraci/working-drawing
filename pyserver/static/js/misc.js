@@ -706,7 +706,7 @@ function addLegendRowToTable(e, tableClass) {
     if (tableClass === "side-table") {
       table.innerHTML = '<thead><tr><th></th><th>Finishes</th></tr></thead><tbody></tbody>';
     } else if (tableClass === "side-Handletable") {
-      table.innerHTML = '<thead><tr><th>Handle/KNOB</th><th>Size/Model No</th><th>Quantity</th></tr></thead><tbody></tbody>';
+      table.innerHTML = '<thead><tr><th>Component</th><th>Handle/KNOB</th></tr></thead><tbody></tbody>';
     }
     console.log("Headers created, table innerHTML:", table.innerHTML);
   } else if (headers.length == 0 && existingRows.length > 0) {
@@ -723,14 +723,11 @@ function addLegendRowToTable(e, tableClass) {
       headerRow.appendChild(th2);
     } else if (tableClass === "side-Handletable") {
       const th1 = document.createElement('th');
-      th1.textContent = 'Handle/KNOB';
+      th1.textContent = 'Component';
       const th2 = document.createElement('th');
-      th2.textContent = 'Size/Model No';
-      const th3 = document.createElement('th');
-      th3.textContent = 'Quantity';
+      th2.textContent = 'Handle/KNOB';
       headerRow.appendChild(th1);
       headerRow.appendChild(th2);
-      headerRow.appendChild(th3);
     }
     
     // Insert thead before the first child (likely tbody)
@@ -760,26 +757,21 @@ function addLegendRowToTable(e, tableClass) {
 
     let cell2 = row.insertCell();
     cell2.contentEditable = true;
-    let text = document.createTextNode("XXX");
+    let text = document.createTextNode("Material Name");
     cell2.appendChild(text);
     console.log("Materials table cells created");
   } else if (tableClass === "side-Handletable") {
     console.log("Creating cells for handles table");
-    // Handles table: 3 cells
+    // Handles table: 2 cells (Component + Handle)
     let cell1 = row.insertCell();
     cell1.contentEditable = true;
-    let text1 = document.createTextNode("Handle Name");
+    let text1 = document.createTextNode("Component Name");
     cell1.appendChild(text1);
 
     let cell2 = row.insertCell();
     cell2.contentEditable = true;
-    let text2 = document.createTextNode("Model/Size");
+    let text2 = document.createTextNode("Handle Name");
     cell2.appendChild(text2);
-
-    let cell3 = row.insertCell();
-    cell3.contentEditable = true;
-    let text3 = document.createTextNode("1");
-    cell3.appendChild(text3);
     console.log("Handles table cells created");
   }
   console.log("Function completed successfully");

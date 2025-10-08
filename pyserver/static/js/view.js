@@ -174,56 +174,56 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
                const leftWidth = "75%";
                const rightWidth = "25%";
                
-               const dynamicTable = `
-                 <div style="background-color:white; padding: 0; margin: 0; display: flex;">
-                   <div style="width: ${leftWidth};">
-                     <table class="table table-bordered dynamic-table" style="margin: 0; font-size: 11px; width: 100%; border: 1px solid #000; table-layout: fixed;">
-                       <tbody>
-                         <tr>
-                           <td rowspan="3" style="background-color: #e6f3ff; font-weight: bold; padding: 8px; vertical-align: top; width: 16%; text-align: center; border: 1px solid #000;">
-                             Electric works:
-                           </td>
-                           <td rowspan="3" style="background-color: #ffe6e6; font-weight: bold; padding: 8px; vertical-align: top; width: 21.33%; text-align: center; border: 1px solid #000;">
-                             NOTE:<br/>NON STANDARD DIMENSIONS
-                           </td>
-                           <td contenteditable='true' style="padding: 6px; border: 1px solid #000; width: 31.33%;"><strong>CLIENT NAME:</strong><br/>${projectInfo.client_name}</td>
-                           <td contenteditable='true' style="padding: 6px; border: 1px solid #000; width: 31.33%;"><strong>DRAWING TITLE:</strong><br/>${drawingTitle}</td>
-                         </tr>
-                         <tr>
-                           <td contenteditable='true' style="padding: 6px; border: 1px solid #000;"><strong>LOCATION:</strong><br/>${projectInfo.address || projectInfo.apartment_name || 'N/A'}</td>
-                           <td contenteditable='true' style="padding: 6px; border: 1px solid #000;"><strong>DESIGNED BY:</strong><br/>${projectInfo.designer_name || 'N/A'}</td>
-                         </tr>
-                         <tr>
+              const dynamicTable = `
+                <div style="background-color:white; padding: 0; margin: 0; display: flex;">
+                  <div style="width: ${leftWidth};">
+                    <table class="table table-bordered dynamic-table" style="margin: 0; font-size: 11px; width: 100%; border: 1px solid #000; table-layout: fixed;">
+                      <tbody>
+                       <tr>
+                         <td rowspan="3" contenteditable='true' id="electric-works-${i}" data-page="${i}" style="background-color: #e6f3ff; font-weight: bold; padding: 8px; vertical-align: top; width: 16%; text-align: center; border: 1px solid #000;">
+                           Electric works:<br/><span style="font-weight: normal; font-size: 10px; color: #666;"></span>
+                         </td>
+                         <td rowspan="3" contenteditable='true' id="note-dimensions-${i}" data-page="${i}" style="background-color: #ffe6e6; font-weight: bold; padding: 8px; vertical-align: top; width: 21.33%; text-align: center; border: 1px solid #000;">
+                           NOTE:<br/>NON STANDARD DIMENSIONS<br/><span style="font-weight: normal; font-size: 10px; color: #666;"></span>
+                         </td>
+                         <td contenteditable='true' id="client-name-${i}" data-page="${i}" style="padding: 6px; border: 1px solid #000; width: 31.33%;"><strong>CLIENT NAME:</strong><br/>${projectInfo.client_name}</td>
+                         <td contenteditable='true' id="drawing-title-${i}" data-page="${i}" style="padding: 6px; border: 1px solid #000; width: 31.33%;"><strong>DRAWING TITLE:</strong><br/>${drawingTitle}</td>
+                       </tr>
+                        <tr>
+                          <td contenteditable='true' id="location-${i}" data-page="${i}" style="padding: 6px; border: 1px solid #000;"><strong>LOCATION:</strong><br/>${projectInfo.address || projectInfo.apartment_name || 'N/A'}</td>
+                          <td contenteditable='true' id="designed-by-${i}" data-page="${i}" style="padding: 6px; border: 1px solid #000;"><strong>DESIGNED BY:</strong><br/>${projectInfo.designer_name || 'N/A'}</td>
+                        </tr>
+                        <tr>
+                          <td colspan="1" style="padding: 6px; border: 1px solid #000; height: 50px; background-color: white;">
+                            <strong>DESIGN QC SIGN:</strong>
+                            <!-- Empty space for QC sign as requested -->
+                          </td>
                            <td colspan="1" style="padding: 6px; border: 1px solid #000; height: 50px; background-color: white;">
-                             <strong>DESIGN QC SIGN:</strong>
-                             <!-- Empty space for QC sign as requested -->
+                             <strong>NOTES:</strong><br/>
+                             
                            </td>
-                            <td colspan="1" style="padding: 6px; border: 1px solid #000; height: 50px; background-color: white;">
-                              <strong>NOTES:</strong><br/>
-                              
-                            </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                   <div style="width: ${rightWidth};">
+                     <table class="table table-bordered" style="margin: 0; font-size: 11px; width: 100%; border-left: none; table-layout: fixed; height: 100%;">
+                       <tbody>
+                         <tr style="height: 100%;">
+                           <td style="padding: 8px; border: 1px solid #000; vertical-align: top; text-align: center;">
+                             <div style="margin-bottom: 10px; margin-top: 10px; display: flex; justify-content: center; align-items: center;">
+                               <img src="assets/decorpot.png" alt="Decorpot Logo" style="max-width: 160px; max-height: 80px; width: auto; height: auto; object-fit: contain;" crossorigin="anonymous"/>
+                             </div>
+                             <div contenteditable='true' id="org-address-${i}" data-page="${i}" style="font-size: 10px; line-height: 1.3; text-align: center;">
+                               ${orgDetail.org_address || projectInfo.org_address || 'Not specified'}
+                             </div>
+                           </td>
                          </tr>
                        </tbody>
                      </table>
                    </div>
-                    <div style="width: ${rightWidth};">
-                      <table class="table table-bordered" style="margin: 0; font-size: 11px; width: 100%; border-left: none; table-layout: fixed; height: 100%;">
-                        <tbody>
-                          <tr style="height: 100%;">
-                            <td style="padding: 8px; border: 1px solid #000; vertical-align: top; text-align: center;">
-                              <div style="margin-bottom: 10px; margin-top: 10px; display: flex; justify-content: center; align-items: center;">
-                                <img src="assets/decorpot.png" alt="Decorpot Logo" style="max-width: 160px; max-height: 80px; width: auto; height: auto; object-fit: contain;" crossorigin="anonymous"/>
-                              </div>
-                              <div contenteditable='true' style="font-size: 10px; line-height: 1.3; text-align: center;">
-                                ${orgDetail.org_address || projectInfo.org_address || 'Not specified'}
-                              </div>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                 </div>
-               `;
+                </div>
+              `;
                
                // Insert the table into the dedicated bottom container at full width
                const bottomContainer = pageElement.querySelector(`#bottom-table-container-${i}`);
@@ -620,17 +620,19 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
     }, 100);
 
     
-    // Add event handler for dynamic tables to sync content across pages
-    $(document).on("input", '.dynamic-table td[contenteditable]', function (e) {
-      $('.dynamic-table').each(function () {
-        var tr = $(this).find('tr')[e.target.closest('tr').rowIndex];
-        var td = $(tr).find('td')[e.target.cellIndex]
-        if (td === e.target) {
-          return;
-        };
-        $(td).html(e.target.innerHTML);
-      })
-    })
+    // Event handler removed - each page now has independent editable fields
+    // Previously, this code synced content across all pages, which is not desired
+    // $(document).on("input", '.dynamic-table td[contenteditable]', function (e) {
+    //   $('.dynamic-table').each(function () {
+    //     var tr = $(this).find('tr')[e.target.closest('tr').rowIndex];
+    //     var td = $(tr).find('td')[e.target.cellIndex]
+    //     if (td === e.target) {
+    //       return;
+    //     };
+    //     $(td).html(e.target.innerHTML);
+    //   })
+    // })
+    
     // add row to 'legend' table
     $(".legend-add-row").on("click", (e) => {
       $(e.target).next().click()

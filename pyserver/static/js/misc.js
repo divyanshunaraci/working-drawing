@@ -633,15 +633,157 @@ $("#blueDimen").click((e) => {
   });
 });
 
-// add row to 'legend' table
-$(".legend-add-row").on("click", (e) => {
-  $(e.target).next().click()
+// add row to 'legend' table - use event delegation for dynamically created buttons
+$(document).on("click", ".legend-add-row", (e) => {
+  console.log("Legend add row clicked", e.target);
+  const tableType = $(e.target).data("table");
+  console.log("Table type:", tableType);
+  
+  if (tableType === "materials") {
+    console.log("Adding row to materials table");
+    // Add row to materials table
+    addLegendRowToTable(e, "side-table");
+  } else if (tableType === "handles") {
+    console.log("Adding row to handles table");
+    // Add row to handles table
+    addLegendRowToTable(e, "side-Handletable");
+  } else {
+    console.log("Using fallback behavior");
+    // Fallback to original behavior
+    $(e.target).next().click();
+  }
 });
 
 $(".legend-add-image").on("change", (e) => {
   addLegendRow(e);
   $(".legend-add-image").val(null);
 })
+
+// Add row to specific table (Materials or Handles)
+function addLegendRowToTable(e, tableClass) {
+  console.log("addLegendRowToTable called with tableClass:", tableClass);
+  
+  if (!state.roomViews) {
+    alert("You first need to load JSON file!!!");
+    return;
+  }
+
+  // Find the closest working-drawing container to determine which page we're on
+  const button = e.target;
+  const workingDrawingContainer = $(button).closest('.working-drawing');
+  const pageId = workingDrawingContainer.attr('id');
+  
+  console.log("Button's working-drawing container:", workingDrawingContainer);
+  console.log("Page ID:", pageId);
+  
+  if (!pageId) {
+    console.log("Could not find page ID");
+    return;
+  }
+
+  // Extract the page number from the id (e.g., "wd-0", "wd-1", etc.)
+  const pageSelector = `#${pageId}`;
+  const table = document.querySelector(`${pageSelector} .${tableClass}`);
+
+  console.log("Found table:", table);
+  console.log("Table selector used:", `${pageSelector} .${tableClass}`);
+
+  if (!table) {
+    console.log(`Table with class ${tableClass} not found`);
+    return;
+  }
+
+  // Create table headers if they don't exist
+  const headers = $(`${pageSelector} .${tableClass} thead`);
+  console.log("Headers found:", headers.length);
+  
+  // Check if table is completely empty (no thead AND no tbody with rows)
+  const existingRows = table.querySelectorAll('tbody tr');
+  console.log("Existing rows:", existingRows.length);
+  
+  if (headers.length == 0 && existingRows.length == 0) {
+    console.log("Creating headers for tableClass:", tableClass);
+    if (tableClass === "side-table") {
+      table.innerHTML = '<thead><tr><th></th><th>Finishes</th></tr></thead><tbody></tbody>';
+    } else if (tableClass === "side-Handletable") {
+      table.innerHTML = '<thead><tr><th>Handle/KNOB</th><th>Size/Model No</th><th>Quantity</th></tr></thead><tbody></tbody>';
+    }
+    console.log("Headers created, table innerHTML:", table.innerHTML);
+  } else if (headers.length == 0 && existingRows.length > 0) {
+    // Table has rows but no headers - create headers without destroying rows
+    console.log("Creating headers without destroying existing rows");
+    const thead = document.createElement('thead');
+    const headerRow = thead.insertRow();
+    
+    if (tableClass === "side-table") {
+      const th1 = document.createElement('th');
+      const th2 = document.createElement('th');
+      th2.textContent = 'Finishes';
+      headerRow.appendChild(th1);
+      headerRow.appendChild(th2);
+    } else if (tableClass === "side-Handletable") {
+      const th1 = document.createElement('th');
+      th1.textContent = 'Handle/KNOB';
+      const th2 = document.createElement('th');
+      th2.textContent = 'Size/Model No';
+      const th3 = document.createElement('th');
+      th3.textContent = 'Quantity';
+      headerRow.appendChild(th1);
+      headerRow.appendChild(th2);
+      headerRow.appendChild(th3);
+    }
+    
+    // Insert thead before the first child (likely tbody)
+    table.insertBefore(thead, table.firstChild);
+    console.log("Headers created without destroying rows");
+  }
+
+  // Get or create tbody
+  let tbody = table.querySelector('tbody');
+  if (!tbody) {
+    console.log("Creating tbody");
+    tbody = document.createElement('tbody');
+    table.appendChild(tbody);
+  }
+  console.log("tbody found/created:", tbody);
+
+  console.log("About to insert row into tbody");
+  let row = tbody.insertRow();
+  console.log("Row inserted:", row);
+
+  if (tableClass === "side-table") {
+    console.log("Creating cells for materials table");
+    // Materials table: image cell + text cell
+    let cell1 = row.insertCell();
+    cell1.contentEditable = true;
+    cell1.innerHTML = '<div style="width: 20px; height: 30px; border: 1px solid #ccc; background: #f9f9f9;"></div>';
+
+    let cell2 = row.insertCell();
+    cell2.contentEditable = true;
+    let text = document.createTextNode("XXX");
+    cell2.appendChild(text);
+    console.log("Materials table cells created");
+  } else if (tableClass === "side-Handletable") {
+    console.log("Creating cells for handles table");
+    // Handles table: 3 cells
+    let cell1 = row.insertCell();
+    cell1.contentEditable = true;
+    let text1 = document.createTextNode("Handle Name");
+    cell1.appendChild(text1);
+
+    let cell2 = row.insertCell();
+    cell2.contentEditable = true;
+    let text2 = document.createTextNode("Model/Size");
+    cell2.appendChild(text2);
+
+    let cell3 = row.insertCell();
+    cell3.contentEditable = true;
+    let text3 = document.createTextNode("1");
+    cell3.appendChild(text3);
+    console.log("Handles table cells created");
+  }
+  console.log("Function completed successfully");
+}
 
 function addLegendRow(e) {
 

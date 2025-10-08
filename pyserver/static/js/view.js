@@ -306,20 +306,19 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
             ${leftColumnContent}
           </div>
           <div id="legend-view_1" class="col-3" style="border-left: 2px solid #ddd; min-height: 100vh; padding: 15px;">
-            <div class = 'row' style=" height: 2.5em">
-              <div class = 'col-12' style="text-align: center">
-                <span style="font-size: large">Legend</span>
-                <button class="legend-add-row">+</button>
-                <input type="file" class="legend-add-image" />
-              </div>
-            </div>
             <div class = 'fixed-table-body'>
-              <h6>Materials Details</h6>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h6 style="margin: 0;">Materials Details</h6>
+                <button class="legend-add-row" data-table="materials" onclick="console.log('Materials button clicked')">+</button>
+              </div>
               <table class="table table-bordered side-table" style="background-color: white;">            
               </table>
             </div>
             <div class='fixed-table-body'>
-              <h6>Handles Details</h6>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h6 style="margin: 0;">Handles Details</h6>
+                <button class="legend-add-row" data-table="handles" onclick="console.log('Handles button clicked')">+</button>
+              </div>
               <table class="table table-bordered side-Handletable" style="background-color: white;">            
               </table>
             </div>

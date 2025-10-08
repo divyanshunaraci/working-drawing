@@ -96,8 +96,7 @@ document.querySelector("#addPage").addEventListener("click", function (e) {
   state.dimens.splice(currentPageNumber - 1, 0, []);
   state.viewBoxInfo.splice(currentPageNumber - 1, 0, {});
 
-  // set the flag(open new json) to false
-  openNewJSON = false;
+  // Don't reset openNewJSON - keep it true to preserve text rendering
 
   // rerender
   renderAll();
@@ -140,8 +139,7 @@ document.querySelector("#removePage").addEventListener("click", function (e) {
   // update canvasJsons
   canvasJSONs.splice(currentPageNumber - 1, 1);
 
-  // set the flag(open new json) to false
-  openNewJSON = false;
+  // Don't reset openNewJSON - keep it true to preserve text rendering
 
   // rerender
   renderAll();

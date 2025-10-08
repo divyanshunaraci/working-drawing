@@ -1623,7 +1623,7 @@ const getOutlineCenter = (outline) => {
 const renderTexts = (textObject, id) => {
   if (!textObject || Object.keys(textObject) === 0) return;
 
-  if (!openNewJSON) return;
+  // Always render text if we have valid data - removed openNewJSON check
   const canvas = overlayCanvases[id];
   
   // Safety check - defer if canvas or viewBoxInfo not ready

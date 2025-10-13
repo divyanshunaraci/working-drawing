@@ -276,42 +276,48 @@ $("#printAlternative").on("click", async function (e) {
             }
         }
         
-        // Next, capture the laminate/edge band information page if it exists
-        const edgeBandElement = document.getElementById('laminate-edgeband-info');
-        if (edgeBandElement) {
-            $('.loader-msg').html('Capturing materials information page...');
-            
-            try {
-                if (!isFirstPage) {
-                    pdf.addPage();
-                }
+        // Next, capture all laminate/edge band information pages if they exist
+        // Find all laminate pages (they have class 'laminate-edgeband-info')
+        const laminateElements = document.querySelectorAll('.laminate-edgeband-info');
+        
+        if (laminateElements.length > 0) {
+            for (let laminatePageIndex = 0; laminatePageIndex < laminateElements.length; laminatePageIndex++) {
+                const edgeBandElement = laminateElements[laminatePageIndex];
                 
-                const canvas = await html2canvas(edgeBandElement, {
-                    scale: 1.5,
-                    useCORS: true,
-                    allowTaint: true,
-                    backgroundColor: '#ffffff',
-                    width: edgeBandElement.offsetWidth,
-                    height: edgeBandElement.offsetHeight
-                });
+                $('.loader-msg').html(`Capturing materials information page ${laminatePageIndex + 1} of ${laminateElements.length}...`);
+                
+                try {
+                    if (!isFirstPage) {
+                        pdf.addPage();
+                    }
+                    
+                    const canvas = await html2canvas(edgeBandElement, {
+                        scale: 1.5,
+                        useCORS: true,
+                        allowTaint: true,
+                        backgroundColor: '#ffffff',
+                        width: edgeBandElement.offsetWidth,
+                        height: edgeBandElement.offsetHeight
+                    });
 
-                const imgData = canvas.toDataURL('image/png');
-                const imgWidth = pageWidth - 20;
-                const imgHeight = (canvas.height * imgWidth) / canvas.width;
-                
-                pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, Math.min(imgHeight, pageHeight - 20));
-                isFirstPage = false;
-                pageCount++;
-                
-                console.log('Successfully captured materials information page');
-            } catch (pageError) {
-                console.error('Failed to capture materials info page:', pageError);
-                pdf.setFontSize(16);
-                pdf.setTextColor(255, 0, 0);
-                pdf.text('Error: Failed to capture materials information page', 20, 50);
-                pdf.text(`${pageError.message}`, 20, 70);
-                isFirstPage = false;
-                pageCount++;
+                    const imgData = canvas.toDataURL('image/png');
+                    const imgWidth = pageWidth - 20;
+                    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                    
+                    pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, Math.min(imgHeight, pageHeight - 20));
+                    isFirstPage = false;
+                    pageCount++;
+                    
+                    console.log(`Successfully captured materials information page ${laminatePageIndex + 1} of ${laminateElements.length}`);
+                } catch (pageError) {
+                    console.error(`Failed to capture materials info page ${laminatePageIndex + 1}:`, pageError);
+                    pdf.setFontSize(16);
+                    pdf.setTextColor(255, 0, 0);
+                    pdf.text(`Error: Failed to capture materials information page ${laminatePageIndex + 1}`, 20, 50);
+                    pdf.text(`${pageError.message}`, 20, 70);
+                    isFirstPage = false;
+                    pageCount++;
+                }
             }
         }
         

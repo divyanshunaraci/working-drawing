@@ -190,8 +190,8 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
                          <td contenteditable='true' id="drawing-title-${i}" data-page="${i}" style="padding: 6px; border: 1px solid #000; width: 31.33%;"><strong>DRAWING TITLE:</strong><br/>${drawingTitle}</td>
                        </tr>
                         <tr>
-                          <td contenteditable='true' id="location-${i}" data-page="${i}" style="padding: 6px; border: 1px solid #000;"><strong>LOCATION:</strong><br/>${projectInfo.address || projectInfo.apartment_name || 'N/A'}</td>
-                          <td contenteditable='true' id="designed-by-${i}" data-page="${i}" style="padding: 6px; border: 1px solid #000;"><strong>DESIGNED BY:</strong><br/>${projectInfo.designer_name || 'N/A'}</td>
+                          <td contenteditable='true' id="location-${i}" data-page="${i}" style="padding: 6px; border: 1px solid #000;"><strong>LOCATION:</strong><br/>${projectInfo.address || projectInfo.apartment_name || 'Prestige Lakeside Habitat'}</td>
+                          <td contenteditable='true' id="designed-by-${i}" data-page="${i}" style="padding: 6px; border: 1px solid #000;"><strong>DESIGNED BY:</strong><br/>${projectInfo.designer_name || 'Deepna Sai'}</td>
                         </tr>
                         <tr>
                           <td colspan="1" style="padding: 6px; border: 1px solid #000; height: 50px; background-color: white;">
@@ -451,12 +451,19 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
     }
 
  //[[0,1],[2,3],[4,5]]
-    // Material Table Data Page
-    const materialTableDataPage = `
-      <div class="working-drawing container-fluid" id="laminate-edgeband-info" style="height: 100vh; padding: 15px 40px; background-color: #fff; box-sizing: border-box;">
+    // Material Table Data Page with Pagination Support
+    // Calculate how many rooms per page (4 rooms fit comfortably on one page)
+    const ROOMS_PER_PAGE = 4;
+    const totalRooms = matData.length;
+    const totalLaminatePages = Math.ceil(totalRooms / ROOMS_PER_PAGE);
+    
+    // Function to create a laminate table page
+    const createLaminateTablePage = (pageNum, isLastPage) => {
+      return `
+      <div class="working-drawing container-fluid laminate-edgeband-info" id="laminate-edgeband-info-${pageNum}" style="height: 100vh; padding: 15px 40px; background-color: #fff; box-sizing: border-box;">
         <div class="row pt-2">
           <div class="col-md-8">
-            <h2 id="title" style="font-size: 32px; font-weight: bold; margin-bottom: 20px; color: #333;">Laminates & Edge Band Table :-</h2>
+            <h2 id="title" style="font-size: 32px; font-weight: bold; margin-bottom: 20px; color: #333;">Laminates & Edge Band Table ${totalLaminatePages > 1 ? `(Page ${pageNum + 1} of ${totalLaminatePages})` : ''}:-</h2>
           </div>
           <div class="col-md-4" style="text-align: right;">
             <div style="display: inline-block; text-align: center; margin-top: 10px;">
@@ -466,7 +473,7 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
             </div>
           </div>
           <div class="col-md-12">
-            <div id="laminateEdgeBand">
+            <div id="laminateEdgeBand-${pageNum}">
               <table style="width: 100%; border-collapse: collapse; border: 2px solid #000; font-size: 14px;">
                 <thead>
                   <tr style="background-color: #f8f9fa;">
@@ -478,7 +485,7 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
                     <th style="border: 2px solid #000; padding: 6px; text-align: center; font-weight: bold; width: 15%;">Edge Banding Code<br/><span style="color: red; font-weight: bold;">(Factory)</span></th>
                   </tr>
                 </thead>
-                <tbody id="laminatetbodyData">
+                <tbody id="laminatetbodyData-${pageNum}">
                   <!-- Dynamic content will be populated here -->
                 </tbody>
               </table>
@@ -486,19 +493,26 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
           </div>
         </div>
       </div>
-      <div class="html2pdf__page-break"></div>`
-    document.querySelector("#checkId-0").insertAdjacentHTML("beforebegin", materialTableDataPage);
+      <div class="html2pdf__page-break"></div>`;
+    };
+    
+    // Create all necessary laminate pages
+    for (let pageNum = 0; pageNum < totalLaminatePages; pageNum++) {
+      const isLastPage = pageNum === totalLaminatePages - 1;
+      const materialTableDataPage = createLaminateTablePage(pageNum, isLastPage);
+      document.querySelector("#checkId-0").insertAdjacentHTML("beforebegin", materialTableDataPage);
+    }
 
     // Make all table cells editable and enable dynamic content updates
     setTimeout(() => {
       // Make all laminate table cells editable (they're already set in the template)
-      const laminateCells = document.querySelectorAll('#laminatetbodyData td[contenteditable]');
+      const laminateCells = document.querySelectorAll('[id^="laminatetbodyData-"] td[contenteditable]');
       laminateCells.forEach(cell => {
         cell.style.cursor = 'text';
       });
       
       // Make material name cells editable
-      const materialNameCells = document.querySelectorAll('#laminatetbodyData div[contenteditable]');
+      const materialNameCells = document.querySelectorAll('[id^="laminatetbodyData-"] div[contenteditable]');
       materialNameCells.forEach(cell => {
         cell.style.cursor = 'text';
         cell.addEventListener('focus', function() {
@@ -510,7 +524,7 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
       });
       
       // Add click handlers for material images
-      const materialBoxes = document.querySelectorAll('#laminatetbodyData img, #laminatetbodyData div[style*="background-color"]');
+      const materialBoxes = document.querySelectorAll('[id^="laminatetbodyData-"] img, [id^="laminatetbodyData-"] div[style*="background-color"]');
       materialBoxes.forEach(box => {
         box.addEventListener('click', function() {
           // Allow editing of material codes
@@ -531,10 +545,13 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
       });
     }, 500); // Increased timeout to ensure dynamic content is loaded
 
-    // Dynamic table generation using actual material data from JSON
+    // Dynamic table generation using actual material data from JSON with pagination
     for(let i = 0; i < matData.length; i++) {
       const roomName = matData[i].rname;
       const materials = matData[i].materialdata;
+      
+      // Calculate which page this room should go on
+      const pageNum = Math.floor(i / ROOMS_PER_PAGE);
       
       // Generate material boxes HTML
       let materialsHTML = '';
@@ -576,7 +593,11 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
         </tr>
       `;
       
-      document.querySelector("#laminatetbodyData").insertAdjacentHTML("beforeend", tableRow);
+      // Insert the row into the appropriate page's tbody
+      const targetTbody = document.querySelector(`#laminatetbodyData-${pageNum}`);
+      if (targetTbody) {
+        targetTbody.insertAdjacentHTML("beforeend", tableRow);
+      }
     }
 
     // Project Details Page
@@ -606,7 +627,7 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
                 </tr>
                 <tr>
                   <td style="background-color: #f8f9fa; font-weight: bold; padding: 18px; border: 2px solid #000; vertical-align: middle;">Apartment Address</td>
-                  <td contenteditable='true' style="padding: 18px; border: 2px solid #000; vertical-align: middle; line-height: 1.4;">${projectInfo.address || projectInfo.apartment_name || 'N/A'}</td>
+                  <td contenteditable='true' style="padding: 18px; border: 2px solid #000; vertical-align: middle; line-height: 1.4;">${projectInfo.address || projectInfo.apartment_name || 'Prestige Lakeside Habitat'}</td>
                 </tr>
                 <tr>
                   <td style="background-color: #f8f9fa; font-weight: bold; padding: 18px; border: 2px solid #000; vertical-align: middle;">Client contact number</td>
@@ -614,7 +635,7 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
                 </tr>
                 <tr>
                   <td style="background-color: #f8f9fa; font-weight: bold; padding: 18px; border: 2px solid #000; vertical-align: middle;">Designer Name</td>
-                  <td contenteditable='true' style="padding: 18px; border: 2px solid #000; vertical-align: middle;">${projectInfo.designer_name || 'N/A'}</td>
+                  <td contenteditable='true' style="padding: 18px; border: 2px solid #000; vertical-align: middle;">${projectInfo.designer_name || 'Deepna Sai'}</td>
                 </tr>
                 <tr>
                   <td style="background-color: #f8f9fa; font-weight: bold; padding: 18px; border: 2px solid #000; vertical-align: middle;">Design QC Name</td>
@@ -622,7 +643,7 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
                 </tr>
                 <tr>
                   <td style="background-color: #f8f9fa; font-weight: bold; padding: 18px; border: 2px solid #000; vertical-align: middle;">Project number /Unique ID</td>
-                  <td contenteditable='true' style="padding: 18px; border: 2px solid #000; vertical-align: middle;">${projectInfo.project_no}</td>
+                  <td contenteditable='true' style="padding: 18px; border: 2px solid #000; vertical-align: middle;">${projectInfo.project_no || 'HS1025044'}</td>
                 </tr>
               </tbody>
             </table>
@@ -630,7 +651,7 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
         </div>
       </div>
       <div class="html2pdf__page-break"></div>`
-    document.querySelector("#laminate-edgeband-info").insertAdjacentHTML("beforebegin", topProjectInfoDetailPage);
+    document.querySelector("#laminate-edgeband-info-0").insertAdjacentHTML("beforebegin", topProjectInfoDetailPage);
     
     // add space
     document

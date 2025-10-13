@@ -2276,23 +2276,10 @@ const generateTable =
         }
       }
     }
+    // Delete button removed - not functional
     for (let i = 0; i < data.length; i++){
       if (data[i].hasOwnProperty("imageURL")){
         tbody.classList.add("finishes")
-        let btn3 = document.createElement("button")
-        btn3.innerHTML = "-"
-        btn3.classList.add("delete-finish")
-        table.appendChild(btn3)
-        let tf = document.querySelector('.finishes')
-        if (tf.rows.length > 1){
-          btn3.onclick = () => {
-            tf.deleteRow(tf.rows.length-1)
-          }
-        }else{
-          btn3.onclick = () => {
-            tf.deleteRow(tf.rows.length)
-          }
-        } 
       }
       break
     }

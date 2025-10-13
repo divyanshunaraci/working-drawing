@@ -228,9 +228,9 @@ $("#printAlternative").on("click", async function (e) {
 
         // Create PDF using jsPDF
         const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF('p', 'mm', 'a4');
-        const pageWidth = 210; // A4 width in mm
-        const pageHeight = 297; // A4 height in mm
+        const pdf = new jsPDF('l', 'mm', 'a4'); // 'l' for landscape orientation
+        const pageWidth = 297; // A4 landscape width in mm
+        const pageHeight = 210; // A4 landscape height in mm
         
         let isFirstPage = true;
         let pageCount = 0;

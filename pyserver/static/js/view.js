@@ -306,22 +306,50 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
             ${leftColumnContent}
           </div>
           <div id="legend-view_1" class="col-3" style="border-left: 2px solid #ddd; min-height: 100vh; padding: 15px;">
-            <div class = 'fixed-table-body'>
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                <h6 style="margin: 0;">Materials Details</h6>
-                <button class="legend-add-row" data-table="materials" onclick="console.log('Materials button clicked')">+</button>
+            ${i === 0 ? `
+              <div style="margin-bottom: 20px;">
+                <h5 style="margin: 0 0 15px 0; font-weight: bold; text-decoration: underline;">SCOPING DATA</h5>
+                <div style="line-height: 1.8;">
+                  <div style="margin-bottom: 8px;">
+                    <span style="color: black;">FULL HOUSE PAINTING</span>
+                    <span style="color: red; margin-left: 5px;">- CX SCOPE</span>
+                  </div>
+                  <div style="margin-bottom: 8px;">
+                    <span style="color: black;">KITCHEN GRANITE MATERIAL</span>
+                    <span style="color: red; margin-left: 5px;">- CX SCOPE</span>
+                  </div>
+                  <div style="margin-bottom: 8px;">
+                    <span style="color: black;">KITCHEN GRANITE FIXING</span>
+                    <span style="color: red; margin-left: 5px;">- CX SCOPE</span>
+                  </div>
+                  <div style="margin-bottom: 8px;">
+                    <span style="color: black;">LIGHT FIXTURES</span>
+                    <span style="color: red; margin-left: 5px;">- CX SCOPE</span>
+                  </div>
+                  <div style="margin-bottom: 8px;">
+                    <span style="color: black;">ELECTRIC POINTS</span>
+                    <span style="color: red; margin-left: 5px;">- CX SCOPE</span>
+                  </div>
+                </div>
               </div>
-              <table class="table table-bordered side-table" style="background-color: white;">            
-              </table>
-            </div>
-            <div class='fixed-table-body'>
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                <h6 style="margin: 0;">Handles Details</h6>
-                <button class="legend-add-row" data-table="handles" onclick="console.log('Handles button clicked')">+</button>
+            ` : `
+              <div class = 'fixed-table-body'>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                  <h6 style="margin: 0;">Materials Details</h6>
+                  <button class="legend-add-row" data-table="materials" onclick="console.log('Materials button clicked')">+</button>
+                </div>
+                <table class="table table-bordered side-table" style="background-color: white;">            
+                </table>
               </div>
-              <table class="table table-bordered side-Handletable" style="background-color: white;">            
-              </table>
-            </div>
+              <div class='fixed-table-body'>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                  <h6 style="margin: 0;">Handles Details</h6>
+                  <button class="legend-add-row" data-table="handles" onclick="console.log('Handles button clicked')">+</button>
+                </div>
+                <table class="table table-bordered side-Handletable" style="background-color: white;">            
+                </table>
+              </div>
+            `}
           </div>
         </div>
         <!-- Move dynamic table to full width outside the main row -->
@@ -859,54 +887,6 @@ const renderFloorPlan = (floorPlanView, id) => {
     });
   }
   
-  // Replace legend content with SCOPING DATA for Ground Floor Plan
-  const scopingDataHTML = `
-    <div style="margin-bottom: 20px;">
-      <h5 style="margin: 0 0 15px 0; font-weight: bold; text-decoration: underline;">SCOPING DATA</h5>
-      <div style="line-height: 1.8;">
-        <div style="margin-bottom: 8px;">
-          <span style="color: black;">FULL HOUSE PAINTING</span>
-          <span style="color: red; margin-left: 5px;">- CX SCOPE</span>
-        </div>
-        <div style="margin-bottom: 8px;">
-          <span style="color: black;">KITCHEN GRANITE MATERIAL</span>
-          <span style="color: red; margin-left: 5px;">- CX SCOPE</span>
-        </div>
-        <div style="margin-bottom: 8px;">
-          <span style="color: black;">KITCHEN GRANITE FIXING</span>
-          <span style="color: red; margin-left: 5px;">- CX SCOPE</span>
-        </div>
-        <div style="margin-bottom: 8px;">
-          <span style="color: black;">LIGHT FIXTURES</span>
-          <span style="color: red; margin-left: 5px;">- CX SCOPE</span>
-        </div>
-        <div style="margin-bottom: 8px;">
-          <span style="color: black;">ELECTRIC POINTS</span>
-          <span style="color: red; margin-left: 5px;">- CX SCOPE</span>
-        </div>
-      </div>
-    </div>
-    <div style="margin-top: auto; padding-top: 20px; border-top: 1px solid #ddd;">
-      <div style="display: flex; align-items: center; margin-bottom: 10px;">
-        <div style="width: 20px; height: 20px; background-color: black; margin-right: 10px; flex-shrink: 0;"></div>
-        <div style="font-size: 12px; color: #666;">
-          No 17, 2nd floor, 18th Cross Rd,<br>
-          Sector 4, HSR Layout,<br>
-          Bengaluru, Karnataka 560102
-        </div>
-      </div>
-    </div>
-  `;
-  
-  // Replace the legend content with SCOPING DATA for Ground Floor Plan page
-  const groundFloorElement = document.querySelector(`#wd-${id}`);
-  if (groundFloorElement) {
-    const legendSection = groundFloorElement.querySelector('#legend-view_1');
-    if (legendSection) {
-      // Clear existing content and replace with SCOPING DATA
-      legendSection.innerHTML = scopingDataHTML;
-    }
-  }
 };
 
 // render individual view

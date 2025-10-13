@@ -22,8 +22,10 @@
 <body onresize="renderAll()">
   <!-- Top Nav Bar -->
   <header>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="z-index: 9;">
-      <a class="navbar-brand" href="#" style="padding-top: 0; padding-bottom: 2"><small>2D Floor Plan</small></a>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="z-index: 9; padding: 10px 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+      <a class="navbar-brand" href="#" style="font-weight: 600; font-size: 1.2rem; color: #fff;">
+        <i class="fas fa-drafting-compass" style="margin-right: 8px;"></i>Working Drawing
+      </a>
 
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -31,104 +33,17 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
-          <li id="print" class="button">
-            <button class="w3-bar-item w3-button my-navitem" title="Generate PDF (Server)">
-              <svg viewBox="0 0 512 512" width="30" height="30">
-                <g>
-                  <path
-                    d="M511.293,143.133h-114.81V42.48H115.544v100.653H0.707v257.523H92.57v68.863h326.857v-68.863h91.865V143.133 L511.293,143.133z M143.887,70.823h224.251v72.311H143.887V70.823z M391.084,441.177H120.915v-109.44h270.169V441.177z M482.95,372.312h-63.522v-68.92H92.571v68.92H29.05V171.477h453.901L482.95,372.312L482.95,372.312z">
-                  </path>
-                  <rect x="418.18" y="206.628" width="28.346" height="28.343"></rect>
-                </g>
-              </svg>
-            </button>
-          </li>
           <li id="printAlternative" class="button">
-            <button class="w3-bar-item w3-button my-navitem" title="Generate PDF (Local)" style="background-color: #28a745;">
-              <svg viewBox="0 0 512 512" width="25" height="25">
-                <g fill="white">
-                  <path
-                    d="M511.293,143.133h-114.81V42.48H115.544v100.653H0.707v257.523H92.57v68.863h326.857v-68.863h91.865V143.133 L511.293,143.133z M143.887,70.823h224.251v72.311H143.887V70.823z M391.084,441.177H120.915v-109.44h270.169V441.177z M482.95,372.312h-63.522v-68.92H92.571v68.92H29.05V171.477h453.901L482.95,372.312L482.95,372.312z">
-                  </path>
-                  <rect x="418.18" y="206.628" width="28.346" height="28.343"></rect>
-                </g>
-              </svg>
+            <button class="btn btn-success btn-sm" title="Generate PDF" style="border-radius: 20px; padding: 8px 16px; font-weight: 500; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+              <i class="fas fa-file-pdf" style="margin-right: 6px;"></i>Generate PDF
             </button>
           </li>
-          <li id="goPrev" class="button">
-            <button href="#" class="w3-bar-item w3-button my-navitem">
-              <svg viewBox="0 0 512 512" width="30" height="30">
-                <polygon
-                  points="62.805,256.017 345.135,30.704 345.135,145.226 449.195,145.226 449.195,366.773 345.135,366.773 345.135,481.297 ">
-                </polygon>
-              </svg>
-            </button>
-          </li>
-          <li id="goForward">
-            <button href="#" class="w3-bar-item w3-button my-navitem">
-              <svg viewBox="0 0 512 512" width="30" height="30">
-                <polygon
-                  points="449.195,256.017 166.865,30.704 166.865,145.226 62.805,145.226 62.805,366.773 166.865,366.773 166.865,481.297 ">
-                </polygon>
-              </svg>
-            </button>
-          </li>
-
-          <li id="addPage">
-            <button href="#" class="w3-bar-item w3-button my-navitem">
-              <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
-                xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 469.706 469.706"
-                style="enable-background: new 0 0 469.706 469.706" xml:space="preserve" width="30" height="30">
-                <g>
-                  <g>
-                    <path style="fill: white" d="M426.19,115.25c-0.036-0.525-0.131-1.032-0.304-1.533c-0.072-0.191-0.119-0.376-0.197-0.561
-											c-0.292-0.632-0.656-1.235-1.169-1.748L314.86,1.748c-0.513-0.507-1.116-0.877-1.748-1.164c-0.185-0.09-0.376-0.137-0.561-0.203
-											c-0.501-0.167-1.014-0.269-1.539-0.304C310.886,0.072,310.767,0,310.635,0H136.486c-3.294,0-5.967,2.673-5.967,5.967v91.854
-											H49.406c-3.294,0-5.967,2.673-5.967,5.967v359.951c0,3.3,2.673,5.967,5.967,5.967H333.22c3.294,0,5.967-2.667,5.967-5.967v-91.854
-											H420.3c3.294,0,5.967-2.667,5.967-5.967V115.626C426.267,115.495,426.202,115.375,426.19,115.25z M405.896,109.659h-89.288V20.371
-											L405.896,109.659z M327.253,457.766H55.373V109.755h81.114h81.108v103.692c0,3.294,2.673,5.967,5.967,5.967h103.692v146.505
-											V457.766z M229.528,118.192l89.288,89.288h-89.288V118.192z M339.187,359.951V213.447c0-0.131-0.066-0.251-0.078-0.376
-											c-0.036-0.525-0.131-1.032-0.304-1.533c-0.072-0.191-0.119-0.376-0.197-0.561c-0.292-0.632-0.656-1.235-1.169-1.748
-											L227.779,99.569c-0.513-0.513-1.116-0.877-1.748-1.17c-0.185-0.084-0.37-0.131-0.561-0.197c-0.501-0.173-1.008-0.274-1.539-0.304
-											c-0.125-0.006-0.245-0.078-0.376-0.078h-81.102V11.934h162.221v103.692c0,3.294,2.667,5.967,5.967,5.967h103.692v238.359H339.187z
-											" />
-                    <polygon style="fill: white"
-                      points="197.283,235.28 185.349,235.28 185.349,277.794 142.835,277.794 142.835,289.727 
-											185.349,289.727 185.349,332.241 197.283,332.241 197.283,289.727 239.797,289.727 239.797,277.794 197.283,277.794 		" />
-                  </g>
-                </g>
-              </svg>
-            </button>
-          </li>
-          <li id="removePage">
-            <button href="#" class="w3-bar-item w3-button my-navitem">
-              <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px"
-                y="0px" viewBox="0 0 1000 1000" enable-background="new 0 0 1000 1000" xml:space="preserve" width="30"
-                height="30">
-                <g>
-                  <g transform="translate(0.000000,512.000000) scale(0.100000,-0.100000)">
-                    <path
-                      d="M712.5,120v-4900H5000h4287.5v4283.7v4281.8l-618.2,618.2L8052.9,5020H4381.8H712.5V120z M7430.9,3795v-612.5h608.7h610.6l11.5-1133.1c7.7-624,13.4-2277.7,13.4-3675v-2541.9H5000H1325V120v4287.5h3052.9h3052.9V3795z" />
-                    <path d="M3162.5,120v-612.5H5000h1837.5V120v612.5H5000H3162.5V120z" />
-                  </g>
-                </g>
-              </svg>
-            </button>
-          </li>
-          <!-- <li id="saveProgress" class="button my-2 my-lg-0"">
-            <button href="#" class="w3-bar-item w3-button my-navitem" height="30">
-              Save Progress
-            </button>
-          </li>
-          <li id="importSaveJSON" class="button my-2 my-lg-0"">
-            <button href="#" class="w3-bar-item w3-button my-navitem" height="30">
-              Import Save JSON
-            </button>
-          </li> -->
         </ul>
 
-        <button class="btn btn-primary" id="myBtn" style="margin-right: 2%; border-radius: 20px;display: none;"
-          disabled>Generate</button>
+        <button class="btn btn-primary btn-sm" id="myBtn" style="margin-right: 10px; border-radius: 20px; display: none; padding: 8px 16px; font-weight: 500; box-shadow: 0 2px 4px rgba(0,0,0,0.1);"
+          disabled>
+          <i class="fas fa-cog fa-spin" style="margin-right: 6px;"></i>Generate
+        </button>
 
         <!-- The Modal -->
         <div id="myModal" class="modal">
@@ -155,18 +70,12 @@
           </div>
         </div>
 
-        <form class="form-inline my-2 my-lg-0">
-          <div class="nav-item dropdown">
-            <img src="assets/icons/settings.ico" class="img-logo dropdown-toggle" data-toggle="dropdown" alt="settings"
-              id="settings_button" />
-            <div class="dropdown-menu dropdown-menu-right md-form" id="settings_dropdown">
-              <label class="dropdown-item" href="#" for="file" class="a_file">
-                Import JSON
-                <input type="file" id="file" class="file" />
-              </label>
-            </div>
-          </div>
-        </form>
+        <div class="form-inline my-2 my-lg-0">
+          <label class="btn btn-outline-light btn-sm" for="file" style="margin-right: 10px; border-radius: 20px;">
+            <i class="fas fa-upload"></i> Import JSON
+            <input type="file" id="file" class="file" style="display: none;" />
+          </label>
+        </div>
       </div>
     </nav>
   </header>

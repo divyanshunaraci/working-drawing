@@ -859,43 +859,52 @@ const renderFloorPlan = (floorPlanView, id) => {
     });
   }
   
-  // Add SCOPING DATA table specifically for Ground Floor Plan
+  // Replace legend content with SCOPING DATA for Ground Floor Plan
   const scopingDataHTML = `
-    <div class="fixed-table-body" style="margin-top: 20px;">
-      <h6 style="font-weight: bold; text-decoration: underline; margin-bottom: 15px;">SCOPING DATA</h6>
-      <table class="table table-bordered scoping-table" style="background-color: white; border-collapse: collapse;">            
-        <tbody>
-          <tr>
-            <td style="border: 1px solid #000; padding: 8px; font-weight: bold;">FULL HOUSE PAINTING</td>
-            <td style="border: 1px solid #000; padding: 8px; color: red; font-weight: bold;" contenteditable="true">CX SCOPE</td>
-          </tr>
-          <tr>
-            <td style="border: 1px solid #000; padding: 8px; font-weight: bold;">KITCHEN GRANITE MATERIAL</td>
-            <td style="border: 1px solid #000; padding: 8px; color: red; font-weight: bold;" contenteditable="true">CX SCOPE</td>
-          </tr>
-          <tr>
-            <td style="border: 1px solid #000; padding: 8px; font-weight: bold;">KITCHEN GRANITE FIXING</td>
-            <td style="border: 1px solid #000; padding: 8px; color: red; font-weight: bold;" contenteditable="true">CX SCOPE</td>
-          </tr>
-          <tr>
-            <td style="border: 1px solid #000; padding: 8px; font-weight: bold;">LIGHT FIXTURES</td>
-            <td style="border: 1px solid #000; padding: 8px; color: red; font-weight: bold;" contenteditable="true">CX SCOPE</td>
-          </tr>
-          <tr>
-            <td style="border: 1px solid #000; padding: 8px; font-weight: bold;">ELECTRIC POINTS</td>
-            <td style="border: 1px solid #000; padding: 8px; color: red; font-weight: bold;" contenteditable="true">CX SCOPE</td>
-          </tr>
-        </tbody>
-      </table>
+    <div style="margin-bottom: 20px;">
+      <h5 style="margin: 0 0 15px 0; font-weight: bold; text-decoration: underline;">SCOPING DATA</h5>
+      <div style="line-height: 1.8;">
+        <div style="margin-bottom: 8px;">
+          <span style="color: black;">FULL HOUSE PAINTING</span>
+          <span style="color: red; margin-left: 5px;">- CX SCOPE</span>
+        </div>
+        <div style="margin-bottom: 8px;">
+          <span style="color: black;">KITCHEN GRANITE MATERIAL</span>
+          <span style="color: red; margin-left: 5px;">- CX SCOPE</span>
+        </div>
+        <div style="margin-bottom: 8px;">
+          <span style="color: black;">KITCHEN GRANITE FIXING</span>
+          <span style="color: red; margin-left: 5px;">- CX SCOPE</span>
+        </div>
+        <div style="margin-bottom: 8px;">
+          <span style="color: black;">LIGHT FIXTURES</span>
+          <span style="color: red; margin-left: 5px;">- CX SCOPE</span>
+        </div>
+        <div style="margin-bottom: 8px;">
+          <span style="color: black;">ELECTRIC POINTS</span>
+          <span style="color: red; margin-left: 5px;">- CX SCOPE</span>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top: auto; padding-top: 20px; border-top: 1px solid #ddd;">
+      <div style="display: flex; align-items: center; margin-bottom: 10px;">
+        <div style="width: 20px; height: 20px; background-color: black; margin-right: 10px; flex-shrink: 0;"></div>
+        <div style="font-size: 12px; color: #666;">
+          No 17, 2nd floor, 18th Cross Rd,<br>
+          Sector 4, HSR Layout,<br>
+          Bengaluru, Karnataka 560102
+        </div>
+      </div>
     </div>
   `;
   
-  // Add the SCOPING DATA table to the Ground Floor Plan page
+  // Replace the legend content with SCOPING DATA for Ground Floor Plan page
   const groundFloorElement = document.querySelector(`#wd-${id}`);
   if (groundFloorElement) {
     const legendSection = groundFloorElement.querySelector('#legend-view_1');
     if (legendSection) {
-      legendSection.insertAdjacentHTML('beforeend', scopingDataHTML);
+      // Clear existing content and replace with SCOPING DATA
+      legendSection.innerHTML = scopingDataHTML;
     }
   }
 };

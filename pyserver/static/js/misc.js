@@ -633,22 +633,37 @@ $("#blueDimen").click((e) => {
 
 // add row to 'legend' table - use event delegation for dynamically created buttons
 $(document).on("click", ".legend-add-row", (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  
   console.log("Legend add row clicked", e.target);
   const tableType = $(e.target).data("table");
-  console.log("Table type:", tableType);
+  const pageNum = $(e.target).data("page");
+  console.log("Table type:", tableType, "Page:", pageNum);
+  
+  if (!state.roomViews) {
+    alert("You first need to load JSON file!!!");
+    return;
+  }
   
   if (tableType === "materials") {
     console.log("Adding row to materials table");
     // Add row to materials table
-    addLegendRowToTable(e, "side-table");
+    const table = document.querySelector(`#wd-${pageNum} .side-table`);
+    if (!table) {
+      console.log("Materials table not found");
+      return;
+    }
+    addRowToTable(table, "materials");
   } else if (tableType === "handles") {
     console.log("Adding row to handles table");
     // Add row to handles table
-    addLegendRowToTable(e, "side-Handletable");
-  } else {
-    console.log("Using fallback behavior");
-    // Fallback to original behavior
-    $(e.target).next().click();
+    const table = document.querySelector(`#wd-${pageNum} .side-Handletable`);
+    if (!table) {
+      console.log("Handles table not found");
+      return;
+    }
+    addRowToTable(table, "handles");
   }
 });
 
@@ -656,6 +671,70 @@ $(".legend-add-image").on("change", (e) => {
   addLegendRow(e);
   $(".legend-add-image").val(null);
 })
+
+// Simple function to add a row to a table
+function addRowToTable(table, tableType) {
+  console.log("addRowToTable called for", tableType);
+  
+  // Create table headers if they don't exist
+  let thead = table.querySelector('thead');
+  if (!thead) {
+    console.log("Creating headers");
+    thead = document.createElement('thead');
+    const headerRow = thead.insertRow();
+    
+    if (tableType === "materials") {
+      const th1 = document.createElement('th');
+      const th2 = document.createElement('th');
+      th2.textContent = 'Finishes';
+      headerRow.appendChild(th1);
+      headerRow.appendChild(th2);
+    } else if (tableType === "handles") {
+      const th1 = document.createElement('th');
+      th1.textContent = 'Component';
+      const th2 = document.createElement('th');
+      th2.textContent = 'Handle/KNOB';
+      headerRow.appendChild(th1);
+      headerRow.appendChild(th2);
+    }
+    
+    table.insertBefore(thead, table.firstChild);
+  }
+  
+  // Get or create tbody
+  let tbody = table.querySelector('tbody');
+  if (!tbody) {
+    console.log("Creating tbody");
+    tbody = document.createElement('tbody');
+    table.appendChild(tbody);
+  }
+  
+  // Insert new row
+  const row = tbody.insertRow();
+  console.log("Row inserted");
+  
+  if (tableType === "materials") {
+    // Materials table: image cell + text cell
+    let cell1 = row.insertCell();
+    cell1.contentEditable = true;
+    cell1.innerHTML = '<div style="width: 20px; height: 30px; border: 1px solid #ccc; background: #f9f9f9;"></div>';
+    
+    let cell2 = row.insertCell();
+    cell2.contentEditable = true;
+    cell2.textContent = "Material Name";
+  } else if (tableType === "handles") {
+    // Handles table: 2 cells (Component + Handle)
+    let cell1 = row.insertCell();
+    cell1.contentEditable = true;
+    cell1.textContent = "Component Name";
+    
+    let cell2 = row.insertCell();
+    cell2.contentEditable = true;
+    cell2.textContent = "Handle Name";
+  }
+  
+  console.log("Row added successfully");
+}
 
 // Add row to specific table (Materials or Handles)
 function addLegendRowToTable(e, tableClass) {

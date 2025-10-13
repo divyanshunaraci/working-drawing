@@ -336,7 +336,7 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
               <div class = 'fixed-table-body'>
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                   <h6 style="margin: 0;">Materials Details</h6>
-                  <button class="legend-add-row" data-table="materials" onclick="console.log('Materials button clicked')">+</button>
+                  <button class="legend-add-row btn-add-material" data-table="materials" data-page="${i}">+</button>
                 </div>
                 <table class="table table-bordered side-table" style="background-color: white;">            
                 </table>
@@ -344,7 +344,7 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
               <div class='fixed-table-body'>
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                   <h6 style="margin: 0;">Handles Details</h6>
-                  <button class="legend-add-row" data-table="handles" onclick="console.log('Handles button clicked')">+</button>
+                  <button class="legend-add-row btn-add-handle" data-table="handles" data-page="${i}">+</button>
                 </div>
                 <table class="table table-bordered side-Handletable" style="background-color: white;">            
                 </table>
@@ -452,8 +452,8 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
 
  //[[0,1],[2,3],[4,5]]
     // Material Table Data Page with Pagination Support
-    // Calculate how many rooms per page (4 rooms fit comfortably on one page)
-    const ROOMS_PER_PAGE = 4;
+    // Calculate how many rooms per page (3 rooms fit comfortably on one page)
+    const ROOMS_PER_PAGE = 3;
     const totalRooms = matData.length;
     const totalLaminatePages = Math.ceil(totalRooms / ROOMS_PER_PAGE);
     
@@ -682,10 +682,38 @@ const renderProjectInfo = (projectInfo, viewsCnt) => {
     //   })
     // })
     
-    // add row to 'legend' table
-    $(".legend-add-row").on("click", (e) => {
-      $(e.target).next().click()
-    });
+    // add row to 'legend' table - Attach handlers directly after DOM is ready
+    setTimeout(() => {
+      $(".legend-add-row").off("click").on("click", function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const tableType = $(this).data("table");
+        const pageNum = $(this).data("page");
+        
+        console.log("Plus button clicked - Table:", tableType, "Page:", pageNum);
+        
+        if (!state.roomViews) {
+          alert("You first need to load JSON file!!!");
+          return;
+        }
+        
+        if (tableType === "materials") {
+          const table = document.querySelector(`#wd-${pageNum} .side-table`);
+          console.log("Materials table found:", table);
+          if (table) {
+            addRowToMaterialsTable(table);
+          }
+        } else if (tableType === "handles") {
+          const table = document.querySelector(`#wd-${pageNum} .side-Handletable`);
+          console.log("Handles table found:", table);
+          if (table) {
+            addRowToHandlesTable(table);
+          }
+        }
+      });
+      console.log("Legend add row handlers attached to", $(".legend-add-row").length, "buttons");
+    }, 1000);
 
     $(".legend-add-image").on("change", (e) => {
       addLegendRow(e);
@@ -2475,4 +2503,83 @@ const renderHandleData = (handleDetail, id) => {
     });
   });
   generateTable(table, data);
+};
+
+// Helper function to add row to materials table
+const addRowToMaterialsTable = (table) => {
+  console.log("Adding row to materials table");
+  
+  // Create table headers if they don't exist
+  let thead = table.querySelector('thead');
+  if (!thead) {
+    thead = document.createElement('thead');
+    const headerRow = thead.insertRow();
+    const th1 = document.createElement('th');
+    const th2 = document.createElement('th');
+    th2.textContent = 'Finishes';
+    headerRow.appendChild(th1);
+    headerRow.appendChild(th2);
+    table.insertBefore(thead, table.firstChild);
+  }
+  
+  // Get or create tbody
+  let tbody = table.querySelector('tbody');
+  if (!tbody) {
+    tbody = document.createElement('tbody');
+    table.appendChild(tbody);
+  }
+  
+  // Insert new row
+  const row = tbody.insertRow();
+  
+  // Materials table: image cell + text cell
+  let cell1 = row.insertCell();
+  cell1.contentEditable = true;
+  cell1.innerHTML = '<div style="width: 20px; height: 30px; border: 1px solid #ccc; background: #f9f9f9;"></div>';
+  
+  let cell2 = row.insertCell();
+  cell2.contentEditable = true;
+  cell2.textContent = "Material Name";
+  
+  console.log("Materials row added successfully");
+};
+
+// Helper function to add row to handles table
+const addRowToHandlesTable = (table) => {
+  console.log("Adding row to handles table");
+  
+  // Create table headers if they don't exist
+  let thead = table.querySelector('thead');
+  if (!thead) {
+    thead = document.createElement('thead');
+    const headerRow = thead.insertRow();
+    const th1 = document.createElement('th');
+    th1.textContent = 'Component';
+    const th2 = document.createElement('th');
+    th2.textContent = 'Handle/KNOB';
+    headerRow.appendChild(th1);
+    headerRow.appendChild(th2);
+    table.insertBefore(thead, table.firstChild);
+  }
+  
+  // Get or create tbody
+  let tbody = table.querySelector('tbody');
+  if (!tbody) {
+    tbody = document.createElement('tbody');
+    table.appendChild(tbody);
+  }
+  
+  // Insert new row
+  const row = tbody.insertRow();
+  
+  // Handles table: 2 cells (Component + Handle)
+  let cell1 = row.insertCell();
+  cell1.contentEditable = true;
+  cell1.textContent = "Component Name";
+  
+  let cell2 = row.insertCell();
+  cell2.contentEditable = true;
+  cell2.textContent = "Handle Name";
+  
+  console.log("Handles row added successfully");
 };
